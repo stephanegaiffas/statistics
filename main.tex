@@ -812,7 +812,7 @@ The patient has cancer if some parameter $\theta \in (0, 1)$ about him satisfies
 $\theta \geq 0.42$.
 We \emph{choose} $\Theta_0 = [0.42, 1]$ and $\Theta_1 = [0, 0.42)$.
 We need to construct a testing function $\varphi : E \goes \{ 0, 1 \}$ that maps $X \mapsto \phi(X)$, our decision being the value of $\varphi(X)$.
-We are correct if $\vaprhi(X) = i$ whenever $\theta \in \Theta_i$ for $i \in \{ 0, 1 \}$and incorrect whenever  $\vaprhi(X) = 1 - i$ whenever $\theta \in \Theta_i$.
+We are correct if $\varphi(X) = i$ whenever $\theta \in \Theta_i$ for $i \in \{ 0, 1 \}$ and incorrect whenever  $\varphi(X) = 1 - i$ whenever $\theta \in \Theta_i$.
 We have two types of errors: the \emph{Type-I error} or \emph{first-order error}, given by 
 \begin{equation}
 	\label{eq:type-1-error}
@@ -831,7 +831,13 @@ In the above cancer detection example, if the Type I error corresponds to
 The function $\beta : \Theta \goes [0, 1]$ that maps $\theta \mapsto \beta(\theta) = \E_\theta \varphi(X)$ is called the \emph{power function} of the test $\varphi$.
 \todo{definition}
 
-Ideally, we would like $\beta(\theta) \approx 0$ for $\theta \in \Theta_1$ and $\beta(\theta) \approx 1$ for $\theta \in ???$ \todo{correct} but this is impossible: if $\Theta$ is a connex set then $\Theta_0$ and $\Theta_1$ share a common frontier and $\beta$ must therefore be discontinuous on it.
+Ideally, we would like $\beta(\theta) \approx 0$ for $\theta \in \Theta_1$ and $\beta(\theta) \approx 1$ for $\theta \in ???$ \todo{correct} but this is impossible: if $\Theta$ is a connex set then $\Theta_0$ and $\Theta_1$ share a common frontier and $\beta$ must therefore be discontinuous on it, while $\beta$ is in general a continuous function.
+Therefore, It is hard to make both Type I and Type II errors at the same time, namely to make $\beta$ small both on $\Theta_0$ and $\Theta_1$
+
+\paragraph{The Neyman and Pearson approach: dissymetrization of the problem} % (fold)
+\label{par:paragraph_name}
+
+% paragraph paragraph_name (end)
 
 
 % section tests (end)
