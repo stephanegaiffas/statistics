@@ -1,0 +1,1815 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% kaobook
+% LaTeX Template
+% Version 1.2 (4/1/2020)
+%
+% This template originates from:
+% https://www.LaTeXTemplates.com
+%
+% For the latest template development version and to make contributions:
+% https://github.com/fmarotta/kaobook
+%
+% Authors:
+% Federico Marotta (federicomarotta@mail.com)
+% Based on the doctoral thesis of Ken Arroyo Ohori (https://3d.bk.tudelft.nl/ken/en)
+% and on the Tufte-LaTeX class.
+% Modified for LaTeX Templates by Vel (vel@latextemplates.com)
+%
+% License:
+% CC0 1.0 Universal (see included MANIFEST.md file)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+	fontsize=11pt, % Base font size
+	twoside=false, % Use different layouts for even and odd pages (in particular, if twoside=true, the margin column will be always on the outside)
+	%open=any, % If twoside=true, uncomment this to force new chapters to start on any page, not only on right (odd) pages
+	%chapterprefix=true, % Uncomment to use the word "Chapter" before chapter numbers everywhere they appear
+	%chapterentrydots=true, % Uncomment to output dots from the chapter name to the page number in the table of contents
+	numbers=noenddot, % Comment to output dots after chapter numbers; the most common values for this option are: enddot, noenddot and auto (see the KOMAScript documentation for an in-depth explanation)
+	%draft=true, % If uncommented, rulers will be added in the header and footer
+	%overfullrule=true, % If uncommented, overly long lines will be marked by a black box; useful for correcting spacing problems
+]{kaobook}
+
+% Set the language
+\usepackage[english]{babel} % Load characters and hyphenation
+\usepackage[english=british]{csquotes} % English quotes
+
+% Load packages for testing
+\usepackage{blindtext}
+%\usepackage{showframe} % Uncomment to show boxes around the text area, margin, header and footer
+%\usepackage{showlabels} % Uncomment to output the content of \label commands to the document where they are used
+
+% Load the bibliography package
+\usepackage{styles/kaobiblio}
+\addbibresource{main.bib} % Bibliography file
+
+% Load mathematical packages for theorems and related environments. NOTE: choose only one between 'mdftheorems' and 'plaintheorems'.
+\usepackage{styles/mdftheorems}
+%\usepackage{styles/plaintheorems}
+
+\graphicspath{{images/}} % Paths in which to look for images
+
+
+\DeclareMathOperator{\cA}{\mathcal A}
+\DeclareMathOperator{\cB}{\mathcal B}
+\DeclareMathOperator{\cC}{\mathcal C}
+\DeclareMathOperator{\cD}{\mathcal D}
+\DeclareMathOperator{\cE}{\mathcal E}
+\DeclareMathOperator{\cF}{\mathcal F}
+\DeclareMathOperator{\cG}{\mathcal G}
+\DeclareMathOperator{\cM}{\mathcal M}
+\DeclareMathOperator{\cN}{\mathcal N}
+\DeclareMathOperator{\cP}{\mathcal P}
+
+\DeclareMathOperator{\nor}{Normal}
+\DeclareMathOperator{\ber}{Bernoulli}
+\DeclareMathOperator{\bin}{Binomial}
+\DeclareMathOperator{\mul}{Multinomial}
+
+
+\renewcommand{\P}{\mathbb P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\var}{\mathbb V}
+
+\newcommand{\ind}[1]{\mathbf 1_{#1}}
+
+% \newcommand{\cB}{\Bernouilli}
+
+
+
+\makeindex[columns=3, title=Alphabetical Index, intoc] % Make LaTeX produce the files required to compile the index
+
+\makeglossaries % Make LaTeX produce the files required to compile the glossary
+
+\makenomenclature % Make LaTeX produce the files required to compile the nomenclature
+
+% Reset sidenote counter at chapters
+%\counterwithin*{sidenote}{chapter}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	BOOK INFORMATION
+%----------------------------------------------------------------------------------------
+
+\titlehead{Some stuff about statistics}
+\subject{Lecture notes for the ENS course of Statistics}
+
+\title[Some stuff about Statistics]{Some stuff about Statistics}
+% \subtitle{Customise this page according to your needs}
+
+\author[St\'ephane Ga\"iffas"]{St\'ephane Ga\"iffas\thanks{}}
+
+\date{\today}
+
+\publishers{}
+
+%----------------------------------------------------------------------------------------
+
+\frontmatter % Denotes the start of the pre-document content, uses roman numerals
+
+%----------------------------------------------------------------------------------------
+%	OPENING PAGE
+%----------------------------------------------------------------------------------------
+
+%\makeatletter
+%\extratitle{
+%	% In the title page, the title is vspaced by 9.5\baselineskip
+%	\vspace*{9\baselineskip}
+%	\vspace*{\parskip}
+%	\begin{center}
+%		% In the title page, \huge is set after the komafont for title
+%		\usekomafont{title}\huge\@title
+%	\end{center}
+%}
+%\makeatother
+
+%----------------------------------------------------------------------------------------
+%	COPYRIGHT PAGE
+%----------------------------------------------------------------------------------------
+
+% \makeatletter
+% \uppertitleback{\@titlehead} % Header
+
+% \lowertitleback{
+% 	\textbf{Disclaimer}\\
+% 	You can edit this page to suit your needs. For instance, here we have a no copyright statement, a colophon and some other information. This page is based on the corresponding page of Ken Arroyo Ohori's thesis, with minimal changes.
+	
+% 	\medskip
+	
+% 	\textbf{No copyright}\\
+% 	\cczero\ This book is released into the public domain using the CC0 code. To the extent possible under law, I waive all copyright and related or neighbouring rights to this work.
+	
+% 	To view a copy of the CC0 code, visit: \\\url{http://creativecommons.org/publicdomain/zero/1.0/}
+	
+% 	\medskip
+	
+% 	\textbf{Colophon} \\
+% 	This document was typeset with the help of \href{https://sourceforge.net/projects/koma-script/}{\KOMAScript} and \href{https://www.latex-project.org/}{\LaTeX} using the \href{https://github.com/fmarotta/kaobook/}{kaobook} class.
+	
+% 	The source code of this book is available at:\\\url{https://github.com/fmarotta/kaobook}
+	
+% 	(You are welcome to contribute!)
+	
+% 	\medskip
+	
+% 	\textbf{Publisher} \\
+% 	First printed in May 2019 by \@publishers
+% }
+% \makeatother
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+
+% \dedication{
+% 	The harmony of the world is made manifest in Form and Number, and the heart and soul and all the poetry of Natural Philosophy are embodied in the concept of mathematical beauty.\\
+% 	\flushright -- D'Arcy Wentworth Thompson
+% }
+
+%----------------------------------------------------------------------------------------
+%	OUTPUT TITLE PAGE AND PREVIOUS
+%----------------------------------------------------------------------------------------
+
+% Note that \maketitle outputs the pages before here
+
+% If twoside=false, \uppertitleback and \lowertitleback are not printed
+% To overcome this issue, we set twoside=semi just before printing the title pages, and set it back to false just after the title pages
+\KOMAoptions{twoside=semi}
+\maketitle
+\KOMAoptions{twoside=false}
+
+%----------------------------------------------------------------------------------------
+%	PREFACE
+%----------------------------------------------------------------------------------------
+
+% \chapter*{Preface}
+% \addcontentsline{toc}{chapter}{Preface} % Add the preface to the table of contents as a chapter
+
+% I am of the opinion that every \LaTeX\xspace geek, at least once during 
+% his life, feels the need to create his or her own class: this is what 
+% happened to me and here is the result, which, however, should be seen as 
+% a work still in progress. Actually, this class is not completely 
+% original, but it is a blend of all the best ideas that I have found in a 
+% number of guides, tutorials, blogs and tex.stackexchange.com posts. In 
+% particular, the main ideas come from two sources:
+
+% \begin{itemize}
+% 	\item \href{https://3d.bk.tudelft.nl/ken/en/}{Ken Arroyo Ohori}'s 
+% 	\href{https://3d.bk.tudelft.nl/ken/en/nl/ken/en/2016/04/17/a-1.5-column-layout-in-latex.html}{Doctoral 
+% 	Thesis}, which served, with the author's permission, as a backbone 
+% 	for the implementation of this class;
+% 	\item The 
+% 		\href{https://github.com/Tufte-LaTeX/tufte-latex}{Tufte-Latex 
+% 			Class}, which was a model for the style.
+% \end{itemize}
+
+% The first chapter of this book is introductive and covers the most 
+% essential features of the class. Next, there is a bunch of chapters 
+% devoted to all the commands and environments that you may use in writing 
+% a book; in particular, it will be explained how to add notes, figures 
+% and tables, and references. The second part deals with the page layout 
+% and design, as well as additional features like coloured boxes and 
+% theorem environments.
+
+% I started writing this class as an experiment, and as such it should be 
+% regarded. Since it has always been indended for my personal use, it may 
+% not be perfect but I find it quite satisfactory for the use I want to 
+% make of it. I share this work in the hope that someone might find here 
+% the inspiration for writing his or her own class.
+
+% \begin{flushright}
+% 	\textit{Federico Marotta}
+% \end{flushright}
+
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS & LIST OF FIGURES/TABLES
+%----------------------------------------------------------------------------------------
+
+% \begingroup % Local scope for the following commands
+
+% % Define the style for the TOC, LOF, and LOT
+% %\setstretch{1} % Uncomment to modify line spacing in the ToC
+% %\hypersetup{linkcolor=blue} % Uncomment to set the colour of links in the ToC
+% \setlength{\textheight}{23cm} % Manually adjust the height of the ToC pages
+
+% % Turn on compatibility mode for the etoc package
+% \etocstandarddisplaystyle % "toc display" as if etoc was not loaded
+% \etocstandardlines % toc lines as if etoc was not loaded
+
+% \tableofcontents % Output the table of contents
+
+% \listoffigures % Output the list of figures
+
+% % Comment both of the following lines to have the LOF and the LOT on different pages
+% \let\cleardoublepage\bigskip
+% \let\clearpage\bigskip
+
+% \listoftables % Output the list of tables
+
+% \endgroup
+
+%----------------------------------------------------------------------------------------
+%	MAIN BODY
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
+\setchapterstyle{kao} % Choose the default chapter heading style
+
+
+\setchapterpreamble[u]{\margintoc}
+\chapter{Introduction}
+\labch{intro}
+
+\section{Aim of the course}
+
+The aim of this course is, as the title indicated, to learn some stuff about statistics, and to try to exhibit some good looking mathematics from this field of applied mathematics, beyond convincing you that statistics are useful\sidenote{We won't list here, exhaustively, the numerous fields that make a regular use of mathematical statistics: marketing, medicine and more broadly health, finance, insurance, banking, etc.}
+
+We will try to provide, all along the course, at material featuring 60\% of classical and unavoidable material from a course about statistics, and 40\% of more recent research results and some open questions.
+
+The tentative agenda for the course is as follows:
+
+\begin{itemize}
+ 	\item Modelization and the main statistical inference problems (estimation, confidence regions and tests)
+ 	\item Gaussian vectors and the Gaussian linear model
+ 	\item Theoretical guarantees and the optimality of least-squares
+ 	\item Estimation methods: methods of moments, maximum likelihood and other things
+ 	\item Exponential models and generalized linear models, logistic regression (optimal rates and some open questions)
+ 	\item Tests and multiple tests
+ \end{itemize} 
+
+
+
+\setchapterpreamble[u]{\margintoc}
+\chapter{Modelization and the main three problems in statistical inference}
+\label{chap:modelization-statistical-inference}
+
+
+
+\section{Probability versus statistics} % (fold)
+\label{sec:probability_versus_statistics}
+
+
+Let us start with the most classical and simplest statistical experiment: the coin flip experience.
+We launch $n$ times a coin, that we model using $n$ random variables $X_1, \ldots, X_n$ that are i.i.d\sidenote{i.i.d stands for independent and identically distributed. More about this fundamental assumption will follow later}\todo{where?}with distribution $\ber(1/2)$\sidenote{The notation $\ber(p)$ for $p \in (0, 1)$ stands for the \emph{Bernoulli distribution}: we will denote $X \sim \ber(p)$ to say that $X \in \{ 0, 1\}$ and that $\P(X = 1) = p = 1 - \P(X = 0)$.}
+or even $X_i = \ind{Y_i \in A}$ where $Y_1, \ldots, Y_n$ are i.i.d random variables valued in $(E, \cE)$ and $A \in \cE$ so that $X_i \sim \ber(p)$ with $p = \P(Y_i \in A)$.
+
+
+\paragraph{Probability.} % (fold)
+\label{par:probability}
+
+% paragraph probability (end)
+In the field of probabilities, we suppose that $p \in (0, 1)$ is known, and we study the properties of the sequence $(X_i)_{i \geq 1}$, for instance the distribution of $S_n = \sum_{i=1}^n X_i$ that is distributed as $\bin(n, p)$,  
+We know that $\P(S_n = k) = \binom{n}{k} p^k (1 - p)^{n-k}$ for $k \in \{0, \ldots, n\}$ (once again we denote $S_n \sim \bin(n, p)$.)
+It is easy to see that $\E(S_n) = np$ and $\var(S_n) = np (1 - p)$.
+\todo{Recall expectation and variance}
+We can study its asymptotic properties, such as 
+\begin{equation}
+	\label{eq:lln-binomial}
+	\frac{S_n}{n} \rightarrow p	\quad \text{almost surely}
+\end{equation}
+and
+\begin{equation}
+	\label{eq:tcl-binomial}
+	\sqrt n \Big(\frac{S_n}{n} - p\Big) \leadsto \nor(0, p(1-p))
+\end{equation}
+as $n \rightarrow +\infty$\sidenote{$X_n \leadsto X$ means that $X_n$ converges to $X$ in distribution.}.
+Note that statement~\eqref{eq:lln-binomial} comes from the law of large numbers, while~\eqref{eq:tcl-binomial} comes from the central limit theorem.
+In the field of probability, the object of interest is the \emph{random variable}.
+
+\paragraph{Statistics.} % (fold)
+\label{par:statistics}
+
+% paragraph statistics (end)
+In statistics, the reasoning is somewhat inverse. We do not know $p$ but we observe \emph{realizations} (also called \emph{data}, \emph{samples} or \emph{observations})
+\begin{equation*}
+	x_i = X_i(\omega).
+\end{equation*}
+We can do whatever we want with the $x_i$ in order to say things about $p$.
+We build measurable functions of $(X_1, \ldots, X_n)$ (that we call \emph{statistics}) in order to tell things about their common distribution (still working under the i.i.d assumption).
+The object of interest in the field of statistics is the \emph{distribution of the observations}, namely $\P_{X_1}$.
+
+
+\section{Statistical models and experiences} % (fold)
+\label{sec:statistical_models_and_experiences}
+
+Let us consider another very classical problem: the election poll problem, where people can vote in a set $\{A, B\}$ of candidates in a population of size $N$.
+There are $N_A$ people voting for $A$ while $N - N_A$ vote for $B$, and we wish to know about $\theta_0 = N_A / N$.
+
+We perform of poll including $n \ll N$ voters and obtain observations $x_1, \ldots, x_n \in \{ 0, 1 \}$, where $x_i = 0$ (resp. $x_i = 1$) means that voter $i$ votes for $B$ (resp. $A$).
+The problem here is that $N_A$ and $N$ are so large that we can suppose that
+\begin{equation*}
+	(x_1, \ldots, x_n) = (X_1(\omega), \ldots, X_n(\omega))
+\end{equation*}
+where $X_i \sim \ber(\theta_0)$ are random variables $X_i : (\Omega, \cA, \P) \rightarrow (\{0, 1\}, \cP(\{ 0, 1\})$.
+
+Let's look a little bit at all these mathematical objects. 
+In statistics, we are mainly only interested by the fact that the observations are valued in $(\{0, 1\}, \cP(\{ 0, 1\})$ and the distribution of $\P_{X_i}$, which is in this fully carried by the value of $p \in (0, 1)$.
+\todo{dire qu'on s'en fout de $\Omega, \cA, \P$ etc.}
+
+\paragraph{Statistical model.}
+
+The \emph{statistical model} for $X = (X_1, \ldots, X_n) \in \{0, 1\}^n$ is a family of distributions
+\begin{equation}
+	\{ \P_\theta^{\otimes n} : \theta \in (0, 1) \}	= \{ \ber(\theta)^{\otimes n} : \theta \in (0, 1) \}
+\end{equation}
+indexed here by $\theta \in (0, 1)$.
+
+Once again, let us insist on the following: we do whatever we want with $X_1, \ldots, X_n$ but never to $\theta_0$, which is the unknown parameter.
+
+\todo{faudrait definir $\otimes$}
+
+\paragraph{Another (naive) example.}
+
+The length of screws coming out of a production chain.
+We want to study the production quality by selecting at random a set of $n$ screws, and we measure their length leading to random variables $X_1, \ldots, X_n \in \R$.
+We can choose to model them as Gaussian variable $\nor(\mu, \sigma^2)$, where $\mu$ corresponds to the theoretical average length of the screws, while $\sigma^2$ corresponds to a variance coming from small production errors and measurement errors.
+\emph{A model is a simplification of the reality.} For this screws example, we made some modeling assumptions:
+
+\begin{description}
+	\item[Distribution choice] If we choose a $\nor(\mu, \sigma^2)$, then we implicitely assume that the true underlying distribution of the screws lengths is, among other things, symmetrical\sidenote{DEFINE SYMMETRICAL} and highly concentrated around $\mu$.
+	\item[The i.i.d assumption] Assuming that measurments are i.i.d means that weve been careful in the way we selected the screws produced (not the same days, not from the same producing machine, in order to avoid time and machine biases.)
+\end{description}
+
+A statistical model is \emph{always a simplification and an approximation of the truth}.
+By truth we mean the true distribution $\P_{(X_1, \ldots, X_n})$ of $(X_1, \ldots, X_n)$.
+
+Let us look at the $\nor(0, 1)$ distribution with density $\phi(x) = e^{-x^2/2} / \sqrt{2 \pi}$ supported on $\R$, while observations are usually bounded.
+We can prove that if $Z \sim \nor(0, 1)$, then
+\begin{equation*}
+	\Big( \frac 1t - \frac{1}{t^3} \Big) \frac{1}{\sqrt{2\pi}} e^{-t^2 / 2} \leq \P(Z > t) \leq \frac{1}{t \sqrt{2 \pi}} e^{-t^2 / 2}
+\end{equation*}
+which means that the queues of the $\nor$ distribution are very tight.
+For $t=6$ this entails that $\P(Z > t) \leq 10^{-9}$: we cannot distinguish between a variable supported in $[-6, 6]$ and a $\nor(0, 1)$.\todo{bof bof attention}
+
+\begin{definition}
+	A statistical experiment consists o
+	\begin{itemize}
+		\item A random object $X$ valued in a probability space $(E, \cE)$
+		\item A family of distributions $\cP = \{ P_\theta : \theta \in \Theta\}$ on $(E, \cE)$.
+	\end{itemize}
+	We suppose that $\P_X = \P \circ X^{-1} \in \cP$. We say that $\cP$ is a \emph{statistical model} for $X$.
+\end{definition}
+The random variable $X : (\Omega, \cA, \P) \rightarrow (E, \cE)$ has distribution  $\P_X = \P \circ X^{-1}$ which is the probability image of $\P$ by $X$ on $(\Omega, \cA)$.
+
+We will always suppose that there is a family $\{ \P_\theta : \theta \in \Theta\}$ on $(\Omega, \cA)$ that induce $\{ P_\theta : \theta \in \Theta\}$ on $(E, \cE)$ and we will use the notations
+\begin{equation*}
+	P_\theta(A) = \P_\theta(X \in A) = \P_\theta[ \{ \omega \in \Omega : X(\omega) \in A \}] \quad \forall A \in \cE.
+\end{equation*}
+
+Let us insist on the fact that $(\Omega, \cA, \P)$ is  purely mathematical build and has no interest in statistics.
+We can alway assume that $X$ is the identity function and that $(\Omega, \cA) = (E, \cE)$, and let us recall the transfer formula
+\begin{equation*}
+	\int f(X(\omega)) \P_\theta(d \omega) = \int f(x) P_\theta(dx).
+\end{equation*}
+Because of this formula, we can always work only with $P_\theta$ and forget about $\P_\theta$ and the space $(\Omega, \cA)$.
+We will often work with a space of parameters $\Theta \subset \R^d$, but this space can be much more complicated (such as infinite dimensional sets of functions with some smoothness properties, in this case we talk about nonparametric statistics.)
+
+We will use the notation
+\begin{equation*}
+	\E_Q f(Y) := \int f(y) Q(dy)
+\end{equation*}
+where we implicitly assume, when computing this expectation, that $Y \sim Q$, and we wil shorten as following:
+\begin{equation*}
+	\E_\theta f(X) = \E_\theta f(X) = \int f(x) P_\theta(dx).
+\end{equation*}
+We will never work on $(\Omega, \cA, \P)$ but rather on $(E, \cE)$ and with the family $\cP$ (the statistical model).
+\begin{definition}[Sampled experiment]
+We have observations $X = (X_1, \ldots, X_n)$ with $X_i$ i.i.d and $\cP = \{ \P_\theta^{\otimes n} : \theta \in \Theta\}$, namely for $A = \prod_{i=1}^n A_i$ we have
+\begin{align*}
+	P_\theta^{\otimes n}(A) &= \P_\theta^{\otimes n}( (X_1, \ldots, X_n) \in A_1 \times \cdots A_n) = \prod_{i=1}^n \P_\theta(X_i \in A_i) \\
+	&= \prod_{i=1}^n P_\theta(A_i).
+\end{align*}
+\end{definition}
+
+Warning: we will quickly forget to distinguish between $\P_\theta$ and $P_\theta$ and $\P_\theta^{\otimes n}$ and $P_\theta^{\otimes n}$. 
+
+
+Back to Bernoulli. We have $(E, \cE) = ({0, 1}^n, \cP(\{0, 1\}^n))$ and $P_\theta^{\otimes n} = \ber(\theta)^{\otimes n}$, $X = (X_1, \ldots, X_n)$ and $\Theta = (0, 1)$.
+A ``roughly equivalent'' model is $S_n = \sum_{i=1}^n$ and $(E, \cE) = (\{ 0, \ldots, n\}, \cP(\{0, \ldots, n\}))$ with the same $\Theta = (0, 1)$.
+Indeed, we have
+\begin{equation*}
+	\P_\theta^{\otimes n} (X_1 = x_1, \ldots, X_n = x_n | S_n=k) =
+	\begin{cases}
+	 & 0 \text{ if } k \neq \sum_{i=1}^n x_i \\
+	 & \frac{\theta^k (1 - \theta)^{n-k}}{\binom{n}{k} 
+	 \theta^k (1 - \theta)^{n-k}} = \frac{1}{\binom{n}{k} } \text{ otherwise.}
+	\end{cases}
+\end{equation*}
+We observe that the conditional distribution of $(X_1, \ldots, X_n) | S$ \emph{does not depend} on $\theta$.
+If we know $S$, then we can, without knowing $\theta$, build a sample $(X_1', \ldots, X_n')$ with the same distribution as $(X_1, \ldots, X_n)$, simply by choosing the $k$ among $n$ uniformly at random.
+This means that $(X_1, \ldots, X_n)$ brings to more information about $\theta$ than $S_n$ alone.
+In such a case, we say that $S_n$ is an \emph{exhaustive statistic}.
+
+\begin{definition}
+	Given a statistical experiment $X$, $\{ P_\theta : \theta \in \Theta \}$, we call \emph{statistic} any $X$-measurable function (a measurable function of $X$) which does not depend on $\theta$).
+\end{definition}
+\todo{doob lemma}
+A statistic is therefore a quantity that we can compute using the data only.
+
+\todo{Why $\theta_0$, we should say that there is a true parameter, well-specified model ?}
+
+We want to say things about $\theta_0$ using $X$, but through $X$ we only have access to $\P_{\theta_0} = \P \circ X^{-1} = \P_X$.
+
+\begin{definition}
+	We say that a model $\cP = \{ P_\theta : \theta \in \Theta \}$ is \emph{identifiable} whenever the function
+	\begin{align*}
+		\Theta &\rightarrow \cP \\
+		\theta &\mapsto P_\theta
+	\end{align*}
+	is injective.
+\end{definition}
+
+% paragraph statistical_model (end)
+
+
+
+
+% section statistical_models_and_experiences (end)
+
+% section probability_versus_statistics (end)
+
+
+% Many modern printed textbooks have adopted a layout with prominent 
+% margins where small figure
+% s, tables, remarks and just about everything 
+% else can be displayed. Arguably, this layout helps to organise the 
+% 	discussion by separating the main text from the ancillary material, 
+% 	which at the same time is very close to the point in the text where 
+% 	it is referenced.
+
+% This document does not aim to be an apology of wide margins, for there 
+% are many better suited authors for this task; the purpose of all these 
+% words is just to fill the space so that the reader can see how a book 
+% written with the kaobook class looks like. Meanwhile, I shall also try 
+% to illustrate the features of the class.
+
+% The main ideas behind kaobook come from this 
+% \href{https://3d.bk.tudelft.nl/ken/en/2016/04/17/a-1.5-column-layout-in-latex.html}{blog 
+% 	post}, and actually the name of the class is dedicated to the author 
+% of the post, Ken Arroyo Ohori, which has kindly allowed me to create a 
+% class based on his thesis. Therefore, if you want to know more reasons 
+% to prefer a 1.5-column layout for your books, be sure to read his blog 
+% post.
+
+% Another source of inspiration, as you may have noticed, is the 
+% \href{https://github.com/Tufte-LaTeX/tufte-latex}{Tufte-Latex Class}. 
+% The fact that the design is similar is due to the fact that it is very 
+% difficult to improve something wich is already so good. However, I like 
+% to think that this class is more flexible than Tufte-Latex. For 
+% instance, I have tried to use only standard packages and to implement as 
+% little as possible from scratch;\sidenote{This also means that 
+% understanding and contributing to the class development is made easier. 
+% Indeed, many things still need to be improved, so if you are interested, 
+% check out the repository on github!} therefore, it should be pretty easy 
+% to customise anything, provided that you read the documentation of the 
+% package that provides that feature.
+
+% In this book I shall illustrate the main features of the class and 
+% provide information about how to use and change things. Let us get 
+% started.
+
+% \section{What This Class Does}
+% \labsec{does}
+
+% The \Class{kaobook} class focuses more about the document structure than 
+% about the style. Indeed, it is a well-known \LaTeX\xspace principle that 
+% structure and style should be separated as much as possible (see also 
+% \vrefsec{doesnot}). This means that this class will only provide 
+% commands, environments and in general, the opportunity to do things, 
+% which the user may or may not use. Actually, some stylistic matters are 
+% embedded in the class, but the user is able to customise them with ease.
+
+% The main features are the following:
+
+% \begin{description}
+% 	\item[Page Layout] The text width is reduced to improve readability 
+% 	and make space for the margins, where any sort of elements can be 
+% 	displayed.
+% 	\item[Chapter Headings] As opposed to Tufte-Latex, we provide a 
+% 	variety of chapter headings among which to choose; examples will be 
+% 	seen in later chapters.
+% 	\item[Page Headers] They span the whole page, margins included, and, 
+% 	in twoside mode, display alternatively the chapter and the section 
+% 	name.\sidenote[][-2mm]{This is another departure from Tufte's 
+% 	design.}
+% 	\item[Matters] The commands \Command{frontmatter}, 
+% 	\Command{mainmatter} and \Command{backmatter} have been redefined in 
+% 	order to have automatically wide margins in the main matter, and 
+% 	narrow margins in the front and back matters. However, the page 
+% 	style can be changed at any moment, even in the middle of the 
+% 	document.
+% 	\item[Margin text] We provide commands \Command{sidenote} and 
+% 	\Command{marginnote} to put text in the 
+% 	margins.\sidenote[][-2mm]{Sidenotes (like this!) are numbered while 
+% 	marginnotes are not}
+% 	\item[Margin figs/tabs] A couple of useful environments is 
+% 	\Environment{marginfigure} and \Environment{margintable}, which, not 
+% 	surprisingly, allow you to put figures and tables in the margins 
+% 	(\cfr \reffig{marginmonalisa}).
+% 	\item[Margin toc] Finally, since we have wide margins, why don't add 
+% 	a little table of contents in them? See \Command{margintoc} for 
+% 	that.
+% 	\item[Hyperref] \Package{hyperref} is loaded and by default we try 
+% 	to add bookmarks in a sensible way; in particular, the bookmarks 
+% 	levels are automatically reset at \Command{appendix} and 
+% 	\Command{backmatter}. Moreover, we also provide a small package to 
+% 	ease the hyperreferencing of other parts of the text.
+% 	\item[Bibliography] We want the reader to be able to know what has 
+% 	been cited without having to go to the end of the document every 
+% 	time, so citations go in the margins as well as at the end, as in 
+% 	Tufte-Latex. Unlike that class, however, you are free to customise 
+% 	the citations as you wish.
+% \end{description}
+
+% \begin{marginfigure}[-5.5cm]
+% 	\includegraphics{monalisa}
+% 	\caption[The Mona Lisa]{The Mona Lisa.\\ 
+% 	\url{https://commons.wikimedia.org/wiki/File:Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg}}
+% 	\labfig{marginmonalisa}
+% \end{marginfigure}
+
+% The order of the title pages, table of contents and preface can be 
+% easily changed, as in any \LaTeX\ document. In addition, the class is 
+% based on \KOMAScript's \Class{scrbook}, therefore it inherits all the 
+% goodies of that.
+
+% \section{What This Class Does Not Do}
+% \labsec{doesnot}
+
+% As anticipated, further customisation of the book is left to the user. 
+% Indeed, every book may have sidenotes, margin figures and so on, but 
+% each book will have its own fonts, toc style, special environments and 
+% so on. For this reason, in addition to the class, we provide only 
+% sensible defaults, but if these features are not needed, they can be 
+% left out. These special packages are located in the \Path{style} 
+% directory, which is organised as follows:
+
+% \begin{description}
+% 	\item[kao.sty] This package contains the most important definitions 
+% 	of macros and specifications of page layout. It is the heart of the 
+% 	\Class{kaobook}.
+% 	\item[kaobiblio.sty] Contains commands to add citations and 
+% 	customise the bibliography.
+% 	\item[packages.sty] Loads additional packages to decorate the 
+% 	writing with special contents (for instance, the \Package{listing} 
+% 	package is loaded here as it is not required in every book). There 
+% 	are also defined some useful commands to print the same words always 
+% 	in the same way, \eg latin words in italics or \Package{packages} in 
+% 	verbatim.
+% 	\item[kaorefs.sty] Some useful commands to manage labeling and 
+% 	referencing, again to ensure that the same elements are referenced 
+% 	always in a consistent way.
+% 	\item[environments.sty] Provides special environments, like boxes. 
+% 	Both simple and complex environments are available; by complex we 
+% 	mean that they are endowed with a counter, floating and can be put 
+% 	in a special table of contents.\sidenote[][-2mm]{See 
+% 	\vrefch{mathematics} for some examples.}
+% 	\item[theorems.sty] The style of mathematical environments. 
+% 	Acutally, there are two such packages: one is for plain theorems, 
+% 	\ie the theorems are printed in plain text; the other uses 
+% 	\Package{mdframed} to draw a box around theorems. You can plug the 
+% 	most appropriate style into its document.
+% \end{description}
+
+% \marginnote[2mm]{The audacious users might feel tempted to edit some of 
+% these packages. I'd be immensely happy if they sent me examples of what 
+% they have been able to do!}
+
+% In the rest of the book, I shall assume that the reader is not a novice 
+% in the use of \LaTeX, and refer to the documentation of the packages 
+% used in this class for things that are already explained there. 
+% Moreover, I assume that the reader is willing to make minor edits to the 
+% provided packages for styles, environments and commands, if he or she 
+% does not like the default settings.
+
+% \section{How to Use This Class}
+
+% Either if you are using the template from 
+% \href{https://latextemplates.org/template/kaobook}{latextemplates}, or if 
+% you cloned the GitHub 
+% \href{https://www.github.com/fmarotta/kaobook}{repository}, there are 
+% infinite ways to use the \Class{kaobook} class in practice. To get started,
+% find the \Path{main.tex} file which I used to write this book, and edit it; this 
+% will probably involve a lot of text-deleting, copying-and-pasting, and rewriting.
+
+% To compile the document, assuming that its name is \Path{main.tex}, you 
+% will have to run the following sequence of commands:
+
+% \begin{lstlisting}[style=kaolstplain,linewidth=1.5\textwidth]
+% pdflatex main # Compile template
+% makeindex main.nlo -s nomencl.ist -o main.nls # Compile nomenclature
+% makeindex main # Compile index
+% biber main # Compile bibliography
+% makeglossaries main # Compile glossary
+% pdflatex main # Compile template again
+% pdflatex main # Compile template again
+% \end{lstlisting}
+
+% You may need to compile the template some more times in order for some 
+% errors to disappear. For any support requests, please ask a question on 
+% \url{tex.stackexchange.org} with the tag \enquote{kaobook}, open an 
+% issue on GitHub, or contact the author via e-mail.
+
+
+% \pagelayout{wide} % No margins
+% \addpart{Class Options, Commands and Environments}
+% \pagelayout{margin} % Restore margins
+
+
+
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Class Options}
+% \labch{options}
+
+% In this chapter I will describe the most common options used, both the 
+% ones inherited from \Class{scrbook} and the \Class{kao}-specific ones. 
+% Options passed to the class modifies its default behaviour; beware 
+% though that some options may lead to unexpected results\ldots
+
+% \section{\Class{KOMA} Options}
+
+% The \Class{kaobook} class is based on \Class{scrbook}, therefore it 
+% understands all of the options you would normally pass to that class. If 
+% you have a lot of patience, you can read the \KOMAScript\xspace 
+% guide.\sidenote{The guide can be downloaded from 
+% \url{https://ctan.org/pkg/koma-script?lang=en}.} Actually, the reading 
+% of such guide is suggested as it is very instructive.
+
+% Every \KOMAScript\xspace option you pass to the class when you load it 
+% is automatically activated. In addition, in \Class{kaobook} some options 
+% have modified default values. For instance, the font size is 9.5pt and 
+% the paragraphs are separated by space,\sidenote[][-7mm]{To be precise, 
+% they are separated by half a line worth of space: the \Option{parskip} 
+% value is \enquote{half}.} not marked by indentation.
+
+% \section{\Class{kao} Options}
+
+% In the future I plan to add more options to set the paragraph formatting 
+% (justified or ragged) and the position of the margins (inner or outer in 
+% twoside mode, left or right in oneside mode).\sidenote{As of now, 
+% paragraphs are justified, formatted with \Command{singlespacing} (from 
+% the \Package{setspace} package) and \Command{frenchspacing}.}
+
+% I take this opportunity to renew the call for help: everyone is 
+% encouraged to add features or reimplement existing ones, and to send me 
+% the results. You can find the GitHub repository at 
+% \url{https://github.com/fmarotta/kaobook}.
+
+% \begin{kaobox}[frametitle=To Do]
+% Implement the \Option{justified} and \Option{margin} options. To be 
+% consistent with the \KOMAScript\xspace style, they should accept a 
+% simple switch as a parameter, where the simple switch should be 
+% \Option{true} or \Option{false}, or one of the other standard values for 
+% simple switches supported by \KOMAScript. See the \KOMAScript\xspace 
+% documentation for further information.
+% \end{kaobox}
+
+% The above box is an example of a \Environment{kaobox}, which will be 
+% discussed more thoroughly in \frefch{mathematics}. Throughout the book I 
+% shall use these boxes to remarks what still needs to be done.
+
+% \section{Other Things Worth Knowing}
+
+% A bunch of packages are already loaded in the class because they are 
+% needed for the implementation. These include:
+
+% \begin{itemize}
+% 	\item etoolbox
+% 	\item calc
+% 	\item xifthen
+% 	\item xkeyval
+% 	\item xparse
+% 	\item xstring
+% \end{itemize}
+
+% Many more packages are loaded, but they will be discussed in due time. 
+% Here, we will mention only one more set of packages, needed to change 
+% the paragraph formatting (recall that in the future there will be 
+% options to change this). In particular, the packages we load are:
+
+% \begin{itemize}
+% 	\item ragged2e
+% 	\item setspace
+% 	\item hyphenat
+% 	\item microtype
+% 	\item needspace
+% 	\item xspace
+% 	\item xcolor (with options \Option{usenames,dvipsnames})
+% \end{itemize}
+
+% Some of the above packages do not concern paragraph formatting, but we 
+% nevertheless grouped them with the others. By default, the main text is 
+% justified and formatted with singlespacing and frenchspacing; the margin 
+% text is the same, except that the font is a bit smaller.
+
+% As a last warning, please be aware that the \Package{cleveref} package 
+% is not compatible with \Class{kaobook}. You should use the commands 
+% discussed in \refsec{hyprefs} instead.
+
+% \section{Document Structure}
+
+% We provide optional arguments to the \Command{title} and 
+% \Command{author} commands so that you can insert short, plain text 
+% versions of this fields, which can be used, typically in the half-title 
+% or somewhere else in the front matter, through the commands 
+% \Command{@plaintitle} and \Command{@plainauthor}, respectively. The PDF 
+% properties \Option{pdftitle} and \Option{pdfauthor} are automatically 
+% set by hyperref to the plain values if present, otherwise to the normal 
+% values.\sidenote[][*-1]{We think that this is an important point so 
+% we remark it here. If you compile the document with pdflatex, the PDF 
+% metadata will be altered so that they match the plain title and author 
+% you have specified; if you did not specify them, the metadata will be 
+% set to the normal title and author.}
+
+% There are defined two page layouts, \Option{margin} and \Option{wide}, 
+% and two page styles, \Option{plain} and \Option{fancy}. The layout 
+% basically concern the width of the margins, while the style refers to 
+% headers and footer; these issues will be 
+% discussed in \frefch{layout}.\sidenote[][6mm]{For now, suffice it to say that pages with 
+% the \Option{margin} layout have wide margins, while with the 
+% \Option{wide} layout the margins are absent. In \Option{plain} pages the 
+% headers and footer are suppressed, while in \Option{fancy} pages there 
+% is a header.} 
+
+% The commands \Command{frontmatter}, \Command{mainmatter}, and 
+% \Command{backmatter} have been redefined in order to automatically 
+% change page layout and style for these sections of the book. The front 
+% matter uses the \Option{margin} layout and the \Option{plain} page 
+% style. In the mainmatter the margins are wide and the headings are 
+% fancy. In the appendix the style and the layout do not change; however 
+% we use \Command{bookmarksetup\{startatroot\}} so that the bookmarks of 
+% the chapters are on the root level (without this, they would be under 
+% the preceding part). In the backmatter the margins shrink again and we 
+% also reset the bookmarks root.
+
+
+
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Margin Stuff}
+
+% Sidenotes are a distinctive feature of all 1.5-column-layout books. 
+% Indeed, having wide margins means that some material can be displayed 
+% there. We use margins for all kind of stuff: sidenotes, marginnotes, 
+% small tables of contents, citations, and, why not?, special boxes and 
+% environments.
+
+% \section{Sidenotes}
+
+% Sidenotes are like footnotes, except that they go in the margin, where 
+% they are more readable. To insert a sidenote, just use the command 
+% \Command{sidenote\{Text of the note\}}. You can specify a 
+% mark\sidenote[O]{This sidenote has a special mark, a big O!} with \\ 
+% \Command{sidenote[mark]\{Text\}}, but you can also specify an offset, 
+% which moves the sidenote upwards or downwards, so that the full syntax is:
+
+% \begin{lstlisting}[style=kaolstplain]
+% \sidenote[mark][offset]{Text}
+% \end{lstlisting}
+
+% If you use an offset, you always have to add the brackets for the mark, 
+% but they can be empty.\sidenote{If you want to know more about the usage 
+% of the \Command{sidenote} command, read the documentation of the 
+% \Package{sidenotes} package.}
+
+% In \Class{kaobook} we copied a feature from the \Package{snotez} 
+% package: the possibility to specify a multiple of \Command{baselineskip} 
+% as an offset. For example, if you want to enter a sidenote with the 
+% normal mark and move it upwards one line, type:
+
+% \begin{lstlisting}[style=kaolstplain]
+% \sidenote[][*-1]{Text of the sidenote.}
+% \end{lstlisting}
+
+% As we said, sidenotes are handled through the \Package{sidenotes} 
+% package, which in turn relies on the \Package{marginnote} package.
+
+% \section{Marginnotes}
+
+% This command is very similar to the previous one. You can create a 
+% marginnote with \Command{marginnote[offset]\{Text\}}, where the offset 
+% argument can be left out, or it can be a multiple of 
+% \Command{baselineskip},\marginnote[-1cm]{While the command for margin 
+% notes comes from the \Package{marginnote} package, it has been redefined 
+% in order to change the position of the optional offset argument, which 
+% now precedes the text of the note, whereas in the original version it 
+% was at the end. We have also added the possibility to use a multiple of 
+% \Command{baselineskip} as offset. These things were made only to make 
+% everything more consistent, so that you have to remember less things!} 
+% \eg
+
+% \begin{lstlisting}[style=kaolstplain]
+% \marginnote[-12pt]{Text} or \marginnote[*-3]{Text}
+% \end{lstlisting}
+
+% \begin{kaobox}[frametitle=To Do]
+% A small thing that needs to be done is to renew the \Command{sidenote} 
+% command so that it takes only one optional argument, the offset. The 
+% special mark argument can go somewhere else. In other words, we want the 
+% syntax of \Command{sidenote} to resemble that of \Command{marginnote}.
+% \end{kaobox}
+
+% We load the packages \Package{marginnote}, \Package{marginfix} and 
+% \Package{placeins}. Since \Package{sidenotes} uses \Package{marginnote}, 
+% what we said for marginnotes is also valid for sidenotes. Side- and 
+% margin- notes are shifted slightly upwards 
+% (\Command{renewcommand\{\textbackslash marginnotevadjust\}\{3pt\}}) in 
+% order to allineate them to the bottom of the line of text where the note 
+% is issued.
+
+% \section{Footnotes}
+
+% Even though they are not displayed in the margin, we will discuss about 
+% footnotes here, since sidenotes are mainly intended to be a replacement 
+% of them. Footnotes force the reader to constantly move from one area of 
+% the page to the other. Arguably, marginnotes solve this issue, so you 
+% should not use footnotes. Nevertheless, for completeness, we have left 
+% the standard command \Command{footnote}, just in case you want to put a 
+% footnote once in a while.\footnote{And this is how they look like. 
+% Notice that in the PDF file there is a back reference to the text; 
+% pretty cool, uh?}
+
+% \section{Margintoc}
+
+% Since we are talking about margins, we introduce here the 
+% \Command{margintoc} command, which allows one to put small table of 
+% contents in the margin. Like other commands we have discussed, 
+% \Command{margintoc} accepts a parameter for the vertical offset, like 
+% so: \Command{margintoc[offset]}.
+
+% The command can be used in any point of the document, but we think it 
+% makes sense to use it just at the beginning of chapters or parts. In 
+% this document I make use of a \KOMAScript\xspace feature and put it in 
+% the chapter preamble, with the following code:
+
+% \marginnote{The font used in the margintoc is the same as the one for 
+% 	the chapter entries in the main table of contents at the beginning 
+% 	of the document.}
+
+% \begin{lstlisting}[style=kaolstplain]
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Chapter title}
+% \end{lstlisting}
+
+% \section{Marginlisting}
+
+% On some occasions it may happen that you have a very short piece of code 
+% that doesn't look good in the body of the text because it breaks the 
+% flow of narration: for that occasions, you can use a 
+% \Environment{marginlisting}. The support for this feature is still 
+% limited, especially for the captions, but you can try the following 
+% code:
+
+% \begin{marginlisting}[-1.35cm]
+% 	\caption{An example of a margin listing.}
+% 	\vspace{0.6cm}
+% 	\begin{lstlisting}[language=Python,style=kaolstplain]
+% print("Hello World!")
+% 	\end{lstlisting}
+% \end{marginlisting}
+
+% \begin{verbatim}
+% \begin{marginlisting}[-0.5cm]
+% 	\caption{My caption}
+% 	\vspace{0.2cm}
+% 	\begin{lstlisting}[language=Python,style=kaolstplain]
+% 	... code ...
+% 	\end{lstlisting}
+% \end{marginlisting}
+% \end{verbatim}
+
+% Unfortunately, the space between the caption and the listing must be 
+% adjusted manually; if you find a better way, please let me know.
+
+% Not only textual stuff can be displayed in the margin, but also figures. 
+% Those will be the focus of the next chapter.
+
+
+
+% \setchapterimage[6.5cm]{seaside}
+% \setchapterpreamble[u]{\margintoc}
+% \chapter[Figures and Tables]{Figures and Tables\footnotemark[0]}
+
+% \footnotetext{The credits for the image above the chapter title go to:
+% 	Bushra Feroz --- Own work, CC~BY-SA~4.0, 
+% 	\url{https://commons.wikimedia.org/w/index.php?curid=68724647}}
+
+% \section{Normal Figures and Tables}
+
+% Figures and tables can be inserted just like in any standard 
+% \LaTeX\xspace document. The \Package{graphicx} package is already loaded 
+% and configured in such a way that the figure width is equal to the 
+% textwidth and the height is adjusted in order to maintain the original 
+% aspect ratio. As you may have imagined, the captions will be 
+% positioned\ldots well, in the margins. This is achieved with the help of 
+% the \Package{floatrow} package.
+
+% Here is a picture of Mona Lisa (\reffig{normalmonalisa}), as an example. 
+% The captions are formatted as the margin- and the side-notes; If you 
+% want to change something about captions you can use the command 
+% \Command{captsetup} from the \Package{caption} package. Remember that if 
+% you want to reference a figure, the label must come \emph{after} the 
+% caption!
+
+% \begin{figure}[hb]
+% 	\includegraphics[width=0.45\textwidth]{monalisa}
+% 	\caption[Mona Lisa, again]{It's Mona Lisa again. \blindtext}
+% 	\labfig{normalmonalisa}
+% \end{figure}
+
+% While the format of the caption is managed by \Package{caption}, its 
+% position is handled by the \Package{floatrow} package. Achieving this 
+% result has been quite hard, but now I am pretty satisfied. In two-side 
+% mode, the captions are printed in the correct margin.
+
+% Tables can be inserted just as easily as figures, as exemplified by the 
+% following code:
+
+% \begin{lstlisting}[caption={Caption of a listing.}]
+% \begin{table}
+% \begin{tabular}{ c c c c }
+% 	\toprule
+% 	col1 & col2 & col3 & col 4 \\
+% 	\midrule
+% 	\multirow{3}{4em}{Multiple row} & cell2 & cell3 & cell4\\ &
+% 	cell5 & cell6 & cell7 \\ &
+% 	cell8 & cell9 & cell10 \\
+% 	\multirow{3}{4em}{Multiple row} & cell2 & cell3 & cell4 \\ &
+% 	cell5 & cell6 & cell7 \\ &
+% 	cell8 & cell9 & cell10 \\
+% 	\bottomrule
+% \end{tabular}
+% \end{table}
+% \end{lstlisting}
+
+% which results in the useless \vreftab{useless}.
+
+% \begin{table}[h]
+% \caption[A useless table]{A useless table.}
+% \labtab{useless}
+% \begin{tabular}{ c c c c }
+% 	\toprule
+% 	col1 & col2 & col3 & col 4 \\
+% 	\midrule
+% 	\multirow{3}{4em}{Multiple row} & cell2 & cell3 & cell4\\ &
+% 	cell5 & cell6 & cell7 \\ &
+% 	cell8 & cell9 & cell10 \\
+% 	\multirow{3}{4em}{Multiple row} & cell2 & cell3 & cell4 \\ &
+% 	cell5 & cell6 & cell7 \\ &
+% 	cell8 & cell9 & cell10 \\
+% 	\bottomrule
+% \end{tabular}
+% \end{table}
+
+% I don't have much else to say, so I will just insert some blind text. 
+% \blindtext
+
+% \section{Margin Figures and Tables}
+
+% Marginfigures can be inserted with the environment 
+% \Environment{marginfigure}. In this case, the whole picture is confined 
+% to the margin and the caption is below it. \reffig{marginmonalisa} is 
+% obtained with something like this:
+
+% \begin{lstlisting}[caption={Another caption.}]
+% \begin{marginfigure}
+% 	\includegraphics{monalisa}
+% 	\caption[The Mona Lisa]{The Mona Lisa.}
+% 	\labfig{marginmonalisa}
+% \end{marginfigure}
+% \end{lstlisting}
+
+% There is also the \Environment{margintable} environment, of which 
+% \reftab{anotheruseless} is an example. Notice how you can place the 
+% caption above the table by just placing the \Command{caption} command 
+% before beginning the \Environment{tabular} environment. Usually, figure 
+% captions are below, while table captions are above. This rule is also 
+% respected for normal figures and tables: the captions are always on the 
+% side, but for figure they are aligned to the bottom, while for tables to 
+% the top.
+
+% \begin{margintable}
+% \caption[Another useless table]{Another useless table.}
+% \labtab{anotheruseless}
+% \raggedright
+% \begin{tabular}{ c c c c }
+% 	\hline
+% 	col1 & col2 & col3 \\
+% 	\hline
+% 	\multirow{3}{4em}{Multiple row} & cell2 & cell3 \\ & cell5 & cell6 
+% 	\\ & cell8 & cell9 \\ \hline
+% \end{tabular}
+% \end{margintable}
+
+% Marginfigures and tables can be positioned with an optional offset 
+% command, like so:
+
+% \begin{lstlisting}
+% \begin{marginfigure}[offset]
+% 	\includegraphics{seaside}
+% \end{marginfigure}
+% \end{lstlisting}
+
+% Offset ca be either a measure or a multiple of \Command{baselineskip}, 
+% much like with \Command{sidenote}, \Command{marginnote} and 
+% \Command{margintoc}.\todo{Improve this part.} If you are wondering how I 
+% inserted this orange bubble, have a look at the \Package{todo} package.
+
+% \section{Wide Figures and Tables}
+
+% \begin{figure*}[h!]
+% 	\includegraphics{seaside}
+% 	\caption[A wide seaside]{A wide seaside, and a wide caption.
+% 		Credits: By Bushra Feroz --- Own work, CC BY-SA 4.0, 
+% 		\url{https://commons.wikimedia.org/w/index.php?curid=68724647}}
+% \end{figure*}
+
+% With the environments \Environment{figure*} and \Environment{table*} you 
+% can insert figures which span the whole page width. The caption will be 
+% positioned below or above, according to taste.
+
+% You may have noticed the full width image at the very beginning of this 
+% chapter: that, however, is set up in an entirely different way, which 
+% you'll read about in \vrefch{layout}. Now it is time to tackle 
+% hyperreferences.
+
+
+% \setchapterstyle{kao}
+% %\setchapterpreamble[u]{\margintoc}
+% \chapter{References}
+% \labch{references}
+
+% \section{Citations}
+
+% \index{citations}
+% To cite someone \sidecite{Visscher2008,James2013} is very simple: just 
+% use the \Command{sidecite}\index{\Command{sidecite}} command. It does 
+% not have an offset argument yet, but it probably will in the future. 
+% This command supports multiple entries, as you can see, and by default 
+% it prints the reference on the margin as well as adding it to the 
+% bibliography at the end of the document. Note that the citations have 
+% nothing to do with the text,\sidecite{James2013} but they are completely 
+% random as they only serve the purpose to illustrate the feature.
+
+% For this setup I wrote a separate package, \Package{kaobiblio}, which 
+% you can find in the \Package{styles} directory and include in your main 
+% tex file. This package accepts all the options that you can pass to 
+% \Package{biblatex}, and actually it passes them to \Package{biblatex} 
+% under the hood. Moreover, it also defines some commands, like 
+% \Command{sidecite}, and environments that can be used within a 
+% \Class{kao} book.\sidenote{For this reason you should always use 
+% \Package{kaobiblio} instead of \Package{biblatex}, but the syntax and 
+% the options are exactly the same.}
+
+% As you have seen, the \Command{sidecite} command will print a citation 
+% in the margin. However, this command would be useless without a way to 
+% customise the format of the citation, so the \Class{kaobook} provides 
+% also the \Command{formatmargincitation} command. By \enquote{renewing} 
+% that command, you can choose which items will be printed in the margins. 
+% The best way to understand how it works is to see the actual definition 
+% of this command.
+
+% \begin{lstlisting}[style=kaolstplain,linewidth=1.5\textwidth]
+% \newcommand{\formatmargincitation}[1]{
+% 	\parencite{#1}: \citeauthor*{#1} (\citeyear{#1}), \citetitle{#1}\\
+% }
+% \end{lstlisting}
+
+% Thus, the \Command{formatmargincitation} accepts one parameter, which is 
+% the citation key, and prints the parencite followed by a colon, then the 
+% author, then the year (in brackets), and finally the 
+% title.\sidecite{Battle2014} Now, suppose that you wish the margin 
+% citation to display the year and the author, followed by the title, and 
+% finally a fixed arbitrary string; you would add to your document:
+
+% \begin{lstlisting}[style=kaolstplain,linewidth=1.5\textwidth]
+% \renewcommand{\formatmargincitation}[1]{
+% 	\citeyear{#1}, \citeauthor*{#1}: \citetitle{#1}; very interesting!\\
+% }
+% \end{lstlisting}
+
+% \renewcommand{\formatmargincitation}[1]{
+% 	\citeyear{#1}, \citeauthor*{#1}: \citetitle{#1}; very interesting!\\
+% }
+
+% The above code results in citations that look like the 
+% following.\sidecite{Zou2005} Of course, changing the format is most 
+% useful when you also change the default bibliography style. For 
+% instance, if you want to use the \enquote{philosophy-modern} style for 
+% your bibliography, you might have something like this in the preamble:
+
+% \begin{lstlisting}[style=kaolstplain,linewidth=1.5\textwidth]
+% \usepackage[style=philosophy-modern]{styles/kaobiblio}
+% \renewcommand{\formatmargincitation}[1]{
+% 	\sdcite{#1}\\
+% }
+% \addbibresource{main.bib}
+% \end{lstlisting}
+
+% \renewcommand{\formatmargincitation}[1]{
+% 	\parencite{#1}: \citeauthor*{#1} (\citeyear{#1}), \citetitle{#1}\\
+% }
+
+% The commands like \Command{citeyear}, \Command{parencite} and 
+% \Command{sdcite} are just examples. A full reference of the available 
+% commands can be found in this 
+% \href{http://tug.ctan.org/info/biblatex-cheatsheet/biblatex-cheatsheet.pdf}{cheatsheet}, 
+% under the \enquote{Citations} section.
+
+% Finally, to compile a document containing citations, you need to use an 
+% external tool, which for this class is biber. You need to run the 
+% following (assuming that your tex file is called main.tex):
+
+% \begin{lstlisting}[style=kaolstplain]
+% $ pdflatex main
+% $ biber main
+% $ pdflatex main
+% \end{lstlisting}
+
+% \section{Glossaries and Indices}
+
+% \index{glossary}
+% The \Class{kaobook} class loads the packages \Package{glossaries} and 
+% \Package{imakeidx}, with which you can add glossaries and indices to 
+% your book. For instance, I previously defined some glossary entries and 
+% now I am going to use them, like this: \gls{computer}. 
+% \Package{glossaries} also allows you to use acronyms, like the 
+% following: this is the full version, \acrfull{fpsLabel}, and this is the 
+% short one \acrshort{fpsLabel}. These entries will appear in the glossary 
+% in the backmatter.
+
+% Unless you use \href{https://www.overleaf.com}{Overleaf} or some other 
+% fancy IDE for \LaTeX, you need to run an external command from your 
+% terminal in order to compile a document with a glossary. In particular, 
+% the commands required are:\sidenote{These are the commands you 
+% would run in a UNIX system; I have no idea on how it works in Windows.}
+
+% \begin{lstlisting}[style=kaolstplain]
+% $ pdflatex main
+% $ makeglossaries main
+% $ pdflatex main
+% \end{lstlisting}
+
+% Note that you need not run \texttt{makeglossaries} every time you 
+% compile your document, but only when you change the glossary entries.
+
+% \index{index}
+% To create an index, you need to insert the command 
+% \lstinline|\index{subject}| whenever you are talking about 
+% \enquote{subject} in the text. For instance, at the start of this 
+% paragraph I would write \lstinline|index{index}|, and an entry would be 
+% added to the Index in the backmatter. Check it out!
+
+% \marginnote[2mm]{In theory, you would need to run an external command 
+% for the index as well, but luckily the package we suggested, 
+% 	\Package{imakeidx}, can compile the index automatically.}
+
+% \index{nomenclature}
+% A nomenclature is just a special kind of index; you can find one at the end of
+% this book. To insert a nomenclature, we use the package \Package{nomencl} and
+% add the terms with the command \Command{nomenclature}. We put then a
+% \Command{printnomenclature} where we want it to appear.
+
+% Also with this package we need to run an external command to compile the 
+% document, otherwise the nomenclature will not appear:
+
+% \begin{lstlisting}[style=kaolstplain]
+% $ pdflatex main
+% $ makeindex main.nlo -s nomencl.ist -o main.nls
+% $ pdflatex main
+% \end{lstlisting}
+
+% These packages are all loaded in 
+% \href{style/packages.sty}{packages.sty}, one of the files that come with 
+% this class. However, the configuration of the elements is best done in 
+% the main.tex file, since each book will have different entries and 
+% styles.
+
+% Note that the \Package{nomencl} package caused problems when the 
+% document was compiled, so, to make a long story short, I had to prevent 
+% \Package{scrhack} to load the hack-file for \Package{nomencl}. When 
+% compiling the document on Overleaf, however, this problem seem to 
+% vanish.
+
+% \marginnote[-19mm]{This brief section was by no means a complete 
+% reference on the subject, therefore you should consult the documentation 
+% of the above package to gain a full understanding of how they work.}
+
+% \section{Hyperreferences}
+% \labsec{hyprefs}
+
+% \index{hyperreferences}
+% In this class we provide a handy sub-package to help you referencing the 
+% same elements always in the same way, for consistency across the book. 
+% First, you can label each element with a specific command. For instance, 
+% should you want to label a chapter, you would put 
+% \lstinline|\labch{chapter-title}| right after the \Command{chapter} 
+% directive. This is just a convienence, because \Command{labch} is 
+% actually just an alias to \lstinline|\label{ch:chapter-title}|, so it 
+% spares you the writing of \enquote{ch}. We defined similar commands for 
+% many typically labeled elements, including:
+
+% \begin{multicols}{2}
+% \setlength{\columnseprule}{0pt}
+% \begin{itemize}
+% 	\item Page: \Command{labpage}
+% 	\item Part: \Command{labpart}
+% 	\item Chapter: \Command{labch}
+% 	\item Section: \Command{labsec}
+% 	\item Figure: \Command{labfig}
+% 	\item Table: \Command{labtab}
+% 	\item Definition: \Command{labdef}
+% 	\item Theorem: \Command{labthm}
+% 	\item Proposition: \Command{labprop}
+% 	\item Lemma: \Command{lablemma}
+% 	\item Remark: \Command{labremark}
+% 	\item Example: \Command{labexample}
+% 	\item Exercise: \Command{labexercise}
+% \end{itemize}
+% \end{multicols}
+
+% Of course, we have similar commands for referencing those elements. 
+% However, since the style of the reference should depend on the context, 
+% we provide different commands to reference the same thing. For instance, 
+% in some occasions you may want to reference the chapter by name, but 
+% other times you want to reference it only by number. In general, there 
+% are four reference style, which we call plain, vario, name, and full. 
+
+% The plain style references only by number. It is accessed, for chapters, 
+% with \lstinline|\refch{chapter-title}| (for other elements, the syntax 
+% is analogous). Such a reference results in: \refch{references}.
+
+% The vario and name styles rest upon the \Package{varioref} package. 
+% Their syntax is \lstinline|\vrefch{chapter-title}| and 
+% \lstinline|\nrefch{chapter-title}|, and they result in: 
+% \vrefch{references}, for the vario style, and: \nrefch{references}, for 
+% the name style. As you can see, the page is referenced in 
+% \Package{varioref} style.
+
+% The full style references everything. You can use it with 
+% \lstinline|\frefch{chapter-title}| and it looks like this: 
+% \frefch{references}.
+
+% Of course, all the other elements have similar commands (\eg for parts 
+% you would use \lstinline|\vrefpart{part-title}| or something like that). 
+% However, not all elements implement all the four styles. The commands 
+% provided should be enough, but if you want to see what is available or 
+% to add the missing ones, have a look at the 
+% \href{styles/kaorefs.sty}{attached package}.
+
+
+% \pagelayout{wide} % No margins
+% \addpart{Design and Additional Features}
+% \pagelayout{margin} % Restore margins
+
+% \setchapterimage[6cm]{seaside}
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Page Design}
+% \labch{layout}
+
+% \section{Headings}
+
+% So far, in this document I used two different styles for the chapter 
+% headings: one has the chapter name, a rule and, in the margin, the 
+% chapter number; the other has an image at the top of the page, and the 
+% chapter title is printed in a box (like for this chapter). There is one 
+% additional style, which I used only in the appendix 
+% (\vrefpage{appendix}); there, the chapter title is enclosed in two 
+% horizontal rules, and the chapter number (or letter, in the case of the 
+% appendix) is above it.\sidenote{To be honest, I do not think that mixing 
+% heading styles like this is a wise choice, but in this document I did it 
+% only to show you how they look.}
+
+% Every book is unique, so it makes sense to have different styles from 
+% which to choose. Actually, it would be awesome if whenever a 
+% \Class{kao}-user designs a new heading style, he or she added it to the 
+% three styles already present, so that it will be available for new users 
+% and new books.
+
+% The choice of the style is made simple by the \Command{setchapterstyle} 
+% command. It accepts one option, the name of the style, which can be: 
+% \enquote{plain}, \enquote{kao}, or \enquote{lines}.\sidenote{Plain is 
+% the default \LaTeX\xspace title style; the other ones are self 
+% explanatory.} If instead you want the image style, you have to use the 
+% command \Command{setchapterimage}, which accepts the path to the image 
+% as argument; you can also provide an optional parameter in square 
+% brackets to specify the height of the image.
+
+% Let us make some examples. In this book, I begin a normal chapter with 
+% the lines:
+
+% \begin{lstlisting}
+% \setchapterstyle{kao}
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Title of the Chapter}
+% \labch{title}
+% \end{lstlisting}
+
+% In Line 1 I choose the style for the title to be \enquote{kao}. Then, I 
+% specify that I want the margin toc. The rest is ordinary administration 
+% in \LaTeX, except that I use my own \Command{labch} to label the 
+% chapter. Actually, the \Command{setchapterpreamble} is a standard 
+% \KOMAScript\xspace one, so I invide you to read about it in the KOMA 
+% documentation. Once the chapter style is set, it holds until you change 
+% it.\sidenote{The \Command{margintoc} has to be specified at every 
+% chapter. Perhaps in the future this may change; it all depends on how 
+% this feature will be welcomed by the users, so keep in touch with me if 
+% you have preferences!} Whenever I want to start a chapter with an image, 
+% I simply write:
+
+% \begin{lstlisting}
+% \setchapterimage[7cm]{path/to/image.png} % Optionally specify the height
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Catchy Title} % No need to set a chapter style
+% \labch{catchy}
+% \end{lstlisting}
+
+% If you prefer, you can also specify the style at the beginning of the 
+% main document, and that style will hold until you change it again.
+
+% \section{Headers \& Footers}
+
+% Headers and footers in \KOMAScript\xspace are handled by the 
+% \Package{scrlayer-scrpage} package. There are two basic style: 
+% \enquote{scrheadings} and \enquote{plain.scrheadings}. The former is 
+% used for normal pages, whereas the latter is used in title pages (those 
+% where a new chapter starts, for instance) and, at least in this book, in 
+% the front matter. At any rate, the style can be changed with the 
+% \Command{pagestyle} command, \eg 
+% \lstinline|\pagestyle{plain.scrheadings}|.
+
+% In both stles, the footer is completely empty. In plain.scrheadings, 
+% also the header is absent (otherwise it wouldn't be so plain\ldots), but 
+% in the normal style the design is reminescent of the \enquote{kao} style 
+% for chapter titles.
+
+% \begin{kaobox}[frametitle=To Do]
+% The \Option{twoside} class option is still unstable and may lead to 
+% unexpected behaviours. As always, any help will be greatly appreciated.
+% \end{kaobox}
+
+% \section{Table of Contents}
+
+% Another important part of a book is the table of contents. By default, 
+% in \Class{kaobook} there is an entry for everything: list of figures, 
+% list of tables, bibliographies, and even the table of contents itself. 
+% Not everybody might like this, so we will provide a description of the 
+% changes you need to do in order to enable or disable each of these 
+% entries. In the following \reftab{tocentries}, each item corresponds to 
+% a possible entry in the \acrshort{tocLabel}, and its description is the 
+% command you need to provide to have such entry. These commands are 
+% specified in the attached \href{style/style.sty}{style 
+% package},\sidenote{In the same file, you can also choose the titles of 
+% these entries.} so if you don't want the entries, just comment the 
+% corresponding lines.
+
+% Of course, some packages, like those for glossaries and indices, will 
+% try to add their own entries.\marginnote{In a later section, we will see 
+% how you can define your own floating environment, and endow it with an 
+% entry in the \acrshort{tocLabel}.} In such cases, you have to follow the 
+% instructions specific to that package. Here, since we have talked about 
+% glossaries and notations in \refch{references}, we will biefly see how 
+% to configure them.
+
+% \begin{table}
+% \footnotesize
+% \caption{Commands to add a particular entry to the table of contents.}
+% \labtab{tocentries}
+% \begin{tabular}{ l l }
+% 	\toprule
+% 	Entry & Command to Activate \\
+% 	\midrule
+% 	Table of Contents & \lstinline|\setuptoc{toc}{totoc}| \\
+% 	List of Figs and Tabs & \lstinline|\PassOptionsToClass{toc=listof}{\@baseclass}| \\
+% 	Bibliography & \lstinline|\PassOptionsToClass{toc=bibliography}{\@baseclass}| \\
+% 	\bottomrule
+% \end{tabular}
+% \end{table}
+
+% For the \Package{glossaries} package, use the \enquote{toc} option when 
+% you load it: \lstinline|\usepackage[toc]{glossaries}|. For 
+% \Package{nomencl}, pass the \enquote{intoc} option at the moment of 
+% loading the package. Both \Package{glossaries} and \Package{nomencl} are 
+% loaded in the attached \href{style/packages.sty}{\enquote{packages} 
+% package}.
+
+% Additional configuration of the table of contents can be performed 
+% through the packages \Package{etoc}, which is loaded because it is 
+% needed for the margintocs, or the more traditional \Package{tocbase}. 
+% Read the respective documentations if you want to be able to change the 
+% default \acrshort{tocLabel} style.\sidenote[][*-1]{(And please, send me 
+% a copy of what you have done, I'm so curious!)}
+
+% \section{Page Layout}
+
+% Besides the page style, you can also change the width of the content of 
+% a page. This is particularly useful for pages dedicated to part titles, 
+% where having the 1.5-column layout might be a little awkward, or for 
+% pages where you only put figures, where it is important to exploit all 
+% the available space.
+
+% In practice, there are two layouts: \enquote{wide} and \enquote{margin}. 
+% The former suppresses the margins and allocates the full page for 
+% contents, while the latter is the layout used in most of the pages of 
+% this book, including this one. The wide layout is also used 
+% automatically in the front and back matters.
+
+% To change page layout, use the \Command{pagelayout} command. For 
+% example, when I start a new part, I write:
+
+% \begin{lstlisting}
+% \pagelayout{wide}
+% \addpart{Title of the New Part}
+% \pagelayout{margin}
+% \end{lstlisting}
+
+% \section{Numbers \& Counters}
+
+% In this short section we shall see how dispositions, sidenotes and 
+% figures are numbered in the \Class{kaobook} class.
+
+% By default, dispositions are numbered up to the section. This is 
+% achieved by setting: \lstinline|\setcounter{secnumdepth}{1}|.
+
+% The sidenotes counter is the same across all the document, but if you 
+% want it to reset at each chapter, just uncomment the line
+
+% \begin{lstlisting}[style=kaolstplain]
+% \counterwithin*{sidenote}{chapter}
+% \end{lstlisting}
+
+% in the \Package{styles/style.sty} package provided by this class.
+
+% Figure and Table numbering is also per-chapter; to change that, use 
+% something like:
+
+% \begin{lstlisting}[style=kaolstplain]
+% \renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+% \end{lstlisting}
+
+% \section{White Space}
+
+% One of the things that I find most hard in \LaTeX\xspace is to finely 
+% tune the white space around objects. There are not fixed rules, each 
+% object needs its own adjustment. Here we shall see how some spaces are 
+% defined at the moment in this class.\marginnote{Attention! This section 
+% may be incomplete.}
+
+% \textbf{Space around figures and tables}
+
+% \begin{lstlisting}[style=kaolstplain]
+% \renewcommand\FBaskip{.4\topskip}
+% \renewcommand\FBbskip{\FBaskip}
+% \end{lstlisting}
+
+% \textbf{Space around captions}
+
+% \begin{lstlisting}[style=kaolstplain]
+% \captionsetup{
+% 	aboveskip=6pt,
+% 	belowskip=6pt
+% }
+% \end{lstlisting}
+
+% \textbf{Space around displays (\eg equations)}
+
+% \begin{lstlisting}[style=kaolstplain]
+% \setlength\abovedisplayskip{6pt plus 2pt minus 4pt}
+% \setlength\belowdisplayskip{6pt plus 2pt minus 4pt}
+% \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+% \abovedisplayshortskip \z@ \@plus3\p@
+% \belowdisplayskip \abovedisplayskip
+% \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+% \end{lstlisting}
+
+
+% \setchapterstyle{kao}
+% \setchapterpreamble[u]{\margintoc}
+% \chapter{Mathematics and Boxes}
+% \labch{mathematics}
+
+% \section{Theorems}
+
+% Despite most people complain at the sight of a book full of equations, 
+% mathematics is an important part of many books. Here, we shall 
+% illustrate some of the possibilities. We believe that theorems, 
+% definitions, remarks and examples should be emphasised with a shaded 
+% background; however, the colour should not be to heavy on the eyes, so 
+% we have chosen a sort of light yellow.\sidenote{The boxes are all of the 
+% same colour here, because we did not want our document to look like 
+% \href{https://en.wikipedia.org/wiki/Harlequin}{Harlequin}.}
+
+% \begin{definition}
+% \labdef{openset}
+% Let $(X, d)$ be a metric space. A subset $U \subset X$ is an open set 
+% if, for any $x \in U$ there exists $r > 0$ such that $B(x, r) \subset 
+% U$. We call the topology associated to d the set $\tau\textsubscript{d}$ 
+% of all the open subsets of $(X, d).$
+% \end{definition}
+
+% \refdef{openset} is very important. I am not joking, but I have inserted 
+% this phrase only to show how to reference definitions. The following 
+% statement is repeated over and over in different environments.
+
+% \begin{theorem}
+% A finite intersection of open sets of (X, d) is an open set of (X, d), 
+% i.e $\tau\textsubscript{d}$ is closed under finite intersections. Any 
+% union of open sets of (X, d) is an open set of (X, d).
+% \end{theorem}
+
+% \begin{proposition}
+% A finite intersection of open sets of (X, d) is an open set of (X, d), 
+% i.e $\tau\textsubscript{d}$ is closed under finite intersections. Any 
+% union of open sets of (X, d) is an open set of (X, d).\marginnote{You can even insert footnotes inside the theorem 
+% 	environments; they will be displayed at the bottom of the box.}
+% \end{proposition}
+
+% \begin{lemma}
+% A finite intersection\footnote{I'm a footnote} of open sets of (X, d) is 
+% an open set of (X, d), i.e $\tau\textsubscript{d}$ is closed under 
+% finite intersections. Any union of open sets of (X, d) is an open set of 
+% (X, d).
+% \end{lemma}
+
+% You can safely ignore the content of the theorems\ldots I assume that if 
+% you are interested in having theorems in your book, you already know 
+% something about the classical way to add them. These example should just 
+% showcase all the things you can do within this class.
+
+% \begin{corollary}[Finite Intersection, Countable Union]
+% A finite intersection of open sets of (X, d) is an open set of (X, d), 
+% i.e $\tau\textsubscript{d}$ is closed under finite intersections. Any 
+% union of open sets of (X, d) is an open set of (X, d).
+% \end{corollary}
+
+% \begin{proof}
+% The proof is left to the reader as a trivial exercise. Hint: \blindtext
+% \end{proof}
+
+% \begin{definition}
+% Let $(X, d)$ be a metric space. A subset $U \subset X$ is an open set 
+% if, for any $x \in U$ there exists $r > 0$ such that $B(x, r) \subset 
+% U$. We call the topology associated to d the set $\tau\textsubscript{d}$ 
+% of all the open subsets of $(X, d).$\marginnote{
+% 	Here is a random equation, just because we can:
+% 	\begin{equation*}
+%   x = a_0 + \cfrac{1}{a_1
+%           + \cfrac{1}{a_2
+%           + \cfrac{1}{a_3 + \cfrac{1}{a_4} } } }
+% 	\end{equation*}
+% }
+% \end{definition}
+
+% \begin{example}
+% Let $(X, d)$ be a metric space. A subset $U \subset X$ is an open set 
+% if, for any $x \in U$ there exists $r > 0$ such that $B(x, r) \subset 
+% U$. We call the topology associated to d the set $\tau\textsubscript{d}$ 
+% of all the open subsets of $(X, d).$
+% \end{example}
+
+% \begin{remark}
+% Let $(X, d)$ be a metric space. A subset $U \subset X$ is an open set 
+% if, for any $x \in U$ there exists $r > 0$ such that $B(x, r) \subset 
+% U$. We call the topology associated to d the set $\tau\textsubscript{d}$ 
+% of all the open subsets of $(X, d).$
+% \end{remark}
+
+% As you may have noticed, definitions, example and remarks have 
+% independent counters; theorems, propositions, lemmas and corollaries 
+% share the same counter.
+
+% \begin{remark}
+% Here is how an integral looks like inline: $\int_{a}^{b} x^2 dx$, and 
+% here is the same integral displayed in its own paragraph:
+% \[\int_{a}^{b} x^2 dx\]
+% \end{remark}
+
+% We provide two files for the theorem styles: 
+% \href{style/plaintheorems.sty}{plaintheorems.sty}, which you should 
+% include if you do not want coloured boxes around theorems; and 
+% \href{style/mdftheorems.sty}{mdftheorems.sty}, which is the one used for 
+% this document.\sidenote{The plain one is not showed, but actually it is 
+% exactly the same as this one, only without the yellow boxes.} Of course, 
+% you will have to edit these files according to your taste and the 
+% general style of the book.
+
+% \section[Boxes \& Environments]{Boxes \& Custom Environments
+% \sidenote[][*1.8]{Notice that in the table of contents and in the 
+% 	header, the name of this section is \enquote{Boxes \& Environments}; 
+% 	we achieved this with the optional argument of the \texttt{section} 
+% 	command.}}
+
+% Say you want to insert a special section, an optional content or just 
+% something you want to emphasise. We think that nothing works better than 
+% a box in these cases. We used \Package{mdframed} to construct the ones 
+% shown below. You can create and modify such environments by editing the 
+% provided file \href{style/environments.sty}{environments.sty}.
+
+% \begin{kaobox}[frametitle=Title of the box]
+% \blindtext
+% \end{kaobox}
+
+% If you set up a counter, you can even create your own numbered 
+% environment.
+
+% \begin{kaocounter}
+% 	\blindtext
+% \end{kaocounter}
+
+% \section{Experiments}
+
+% It is possible to wrap marginnotes inside boxes, too. Audacious readers 
+% are encouraged to try their own experiments and let me know the 
+% outcomes.
+
+% \marginnote[-2.2cm]{
+% 	\begin{kaobox}[frametitle=title of margin note]
+% 		Margin note inside a kaobox.\\
+% 		(Actually, kaobox inside a marginnote!)
+% 	\end{kaobox}
+% }
+
+% I believe that many other special things are possible with the 
+% \Class{kaobook} class. During its development, I struggled to keep it as 
+% flexible as possible, so that new features could be added without too 
+% great an effort. Therefore, I hope that you can find the optimal way to 
+% express yourselves in writing a book, report or thesis with this class, 
+% and I am eager to see the outcomes of any experiment that you may try.
+
+% %\begin{margintable}
+% 	%\captionsetup{type=table,position=above}
+% 	%\begin{kaobox}
+% 		%\caption{caption}
+% 		%\begin{tabular}{ |c|c|c|c| }
+% 			%\hline
+% 			%col1 & col2 & col3 \\
+% 			%\hline
+% 			%\multirow{3}{4em}{Multiple row} & cell2 & cell3 \\ & cell5 
+% 			%%& cell6 \\ 
+% 			%& cell8 & cell9 \\
+% 			%\hline
+% 		%\end{tabular}
+% 	%\end{kaobox}
+% %\end{margintable}
+
+
+% \appendix % From here onwards, chapters are numbered with letters, as is the appendix convention
+
+% \pagelayout{wide} % No margins
+% \addpart{Appendix}
+% \pagelayout{margin} % Restore margins
+
+% \setchapterstyle{lines}
+% \labpage{appendix}
+% \blinddocument
+
+
+% %----------------------------------------------------------------------------------------
+
+% \backmatter % Denotes the end of the main document content
+% \setchapterstyle{plain} % Output plain chapters from this point onwards
+
+% %----------------------------------------------------------------------------------------
+% %	BIBLIOGRAPHY
+% %----------------------------------------------------------------------------------------
+
+% % The bibliography needs to be compiled with biber using your LaTeX editor, or on the command line with 'biber main' from the template directory
+
+% \defbibnote{bibnote}{Here are the references in citation order.\par\bigskip} % Prepend this text to the bibliography
+% \printbibliography[heading=bibintoc, title=Bibliography, prenote=bibnote] % Add the bibliography heading to the ToC, set the title of the bibliography and output the bibliography note
+
+% %----------------------------------------------------------------------------------------
+% %	NOMENCLATURE
+% %----------------------------------------------------------------------------------------
+
+% % The nomenclature needs to be compiled on the command line with 'makeindex main.nlo -s nomencl.ist -o main.nls' from the template directory
+
+% \nomenclature{$c$}{Speed of light in a vacuum inertial frame}
+% \nomenclature{$h$}{Planck constant}
+
+% \renewcommand{\nomname}{Notation} % Rename the default 'Nomenclature'
+% \renewcommand{\nompreamble}{The next list describes several symbols that will be later used within the body of the document.} % Prepend this text to the nomenclature
+
+% \printnomenclature % Output the nomenclature
+
+% %----------------------------------------------------------------------------------------
+% %	GREEK ALPHABET
+% % 	Originally from https://gitlab.com/jim.hefferon/linear-algebra
+% %----------------------------------------------------------------------------------------
+
+% \vspace{1cm}
+
+% {\usekomafont{chapter}Greek Letters with Pronounciation} \\[2ex]
+% \begin{center}
+% 	\newcommand{\pronounced}[1]{\hspace*{.2em}\small\textit{#1}}
+% 	\begin{tabular}{l l @{\hspace*{3em}} l l}
+% 		\toprule
+% 		Character & Name & Character & Name \\ 
+% 		\midrule
+% 		$\alpha$ & alpha \pronounced{AL-fuh} & $\nu$ & nu \pronounced{NEW} \\
+% 		$\beta$ & beta \pronounced{BAY-tuh} & $\xi$, $\Xi$ & xi \pronounced{KSIGH} \\ 
+% 		$\gamma$, $\Gamma$ & gamma \pronounced{GAM-muh} & o & omicron \pronounced{OM-uh-CRON} \\
+% 		$\delta$, $\Delta$ & delta \pronounced{DEL-tuh} & $\pi$, $\Pi$ & pi \pronounced{PIE} \\
+% 		$\epsilon$ & epsilon \pronounced{EP-suh-lon} & $\rho$ & rho \pronounced{ROW} \\
+% 		$\zeta$ & zeta \pronounced{ZAY-tuh} & $\sigma$, $\Sigma$ & sigma \pronounced{SIG-muh} \\
+% 		$\eta$ & eta \pronounced{AY-tuh} & $\tau$ & tau \pronounced{TOW (as in cow)} \\
+% 		$\theta$, $\Theta$ & theta \pronounced{THAY-tuh} & $\upsilon$, $\Upsilon$ & upsilon \pronounced{OOP-suh-LON} \\
+% 		$\iota$ & iota \pronounced{eye-OH-tuh} & $\phi$, $\Phi$ & phi \pronounced{FEE, or FI (as in hi)} \\
+% 		$\kappa$ & kappa \pronounced{KAP-uh} & $\chi$ & chi \pronounced{KI (as in hi)} \\
+% 		$\lambda$, $\Lambda$ & lambda \pronounced{LAM-duh} & $\psi$, $\Psi$ & psi \pronounced{SIGH, or PSIGH} \\
+% 		$\mu$ & mu \pronounced{MEW} & $\omega$, $\Omega$ & omega \pronounced{oh-MAY-guh} \\
+% 		\bottomrule
+% 	\end{tabular} \\[1.5ex]
+% 	Capitals shown are the ones that differ from Roman capitals.
+% \end{center}
+
+%----------------------------------------------------------------------------------------
+%	GLOSSARY
+%----------------------------------------------------------------------------------------
+
+% The glossary needs to be compiled on the command line with 'makeglossaries main' from the template directory
+
+% \newglossaryentry{computer}{
+% 	name=computer,
+% 	description={is a programmable machine that receives input, stores and manipulates data, and provides output in a useful format}
+% }
+
+% % Glossary entries (used in text with e.g. \acrfull{fpsLabel} or \acrshort{fpsLabel})
+% \newacronym[longplural={Frames per Second}]{fpsLabel}{FPS}{Frame per Second}
+% \newacronym[longplural={Tables of Contents}]{tocLabel}{TOC}{Table of Contents}
+
+% \setglossarystyle{listgroup} % Set the style of the glossary (see https://en.wikibooks.org/wiki/LaTeX/Glossary for a reference)
+% \printglossary[title=Special Terms, toctitle=List of Terms] % Output the glossary, 'title' is the chapter heading for the glossary, toctitle is the table of contents heading
+
+%----------------------------------------------------------------------------------------
+%	INDEX
+%----------------------------------------------------------------------------------------
+
+% The index needs to be compiled on the command line with 'makeindex main' from the template directory
+
+% \printindex % Output the index
+
+%----------------------------------------------------------------------------------------
+%	BACK COVER
+%----------------------------------------------------------------------------------------
+
+% If you have a PDF/image file that you want to use as a back cover, uncomment the following lines
+
+%\clearpage
+%\thispagestyle{empty}
+%\null%
+%\clearpage
+%\includepdf{cover-back.pdf}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
