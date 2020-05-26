@@ -71,6 +71,7 @@
 \DeclareMathOperator{\ber}{Bernoulli}
 \DeclareMathOperator{\bin}{Binomial}
 \DeclareMathOperator{\mul}{Multinomial}
+\DeclareMathOperator{\expo}{Exponential}
 
 \DeclareMathOperator{\sigmoid}{sigmoid}
 
@@ -90,8 +91,13 @@
 \newcommand{\mgeq}{\succcurlyeq}
 \newcommand{\mleq}{\preccurlyeq}
 \newcommand{\goes}{\rightarrow}
+\newcommand{\go}{\rightarrow}
 
 \newcommand{\norm}[1]{\|#1\|}
+
+\newcommand{\gopro}{\overset{\P}{\rightarrow}}
+\newcommand{\goas}{\overset{a.s.}{\rightarrow}}
+\newcommand{\gosto}{\leadsto}
 
 % \newcommand{\cB}{\Bernouilli}
 
@@ -598,7 +604,7 @@ This means that this estimator will not tend to over or under-estimate $\theta$.
 Going back to Bernoulli, we consider $\wh \theta_n = S_n / n = \sum_{i=1}^n X_i / n$, so that we have the following:
 \begin{enumerate}
 	\item We have $\E_\theta [\wh \theta_n] = \theta$ which means that $\wh \theta_n$ is unbiased;
-	\item The bias-variance decomposition gives $R(\wh \theta_n, \theta) = \var(\wh \theta_n) = \theta (1 - \theta) / n \leq 1 / (4n) \rightarrow 0$ which means that $\wh \theta_n$ converges in $L^2$ (and that it is consistent)
+	\item The bias-variance decomposition gives $R(\wh \theta_n, \theta) = \var(\wh \theta_n) = \theta (1 - \theta) / n \leq 1 / (4n) \rightarrow 0$ which means that $\wh \theta_n$ converges in $L^2$ (and that it is consistent) \todo{explain i.i.d variance etc.}
 	\item The law of large number tells us that $\wh \theta_n \goes \theta$ almost surely.
 	\item The central limit theorem tells us that $\sqrt n (\wh \theta_n - \theta) \leadsto \nor(0, \theta(1 - \theta))$.
 \end{enumerate}
@@ -611,7 +617,225 @@ This can be achieved using another inference problem, described in the next sect
 \section{Confidence intervals} % (fold)
 \label{sec:confidence_intervals}
 
-Here, we 
+Here, we don't only want to build an estimator $\wh \theta_n$ but also to quantify the uncertainty of this estimation.
+We saw in Equation~??? from Section~?? that 
+\begin{equation*}
+	\P_\theta[ |\wh \theta_n - \theta| > t] \leq \frac{1}{4 n t^2}
+\end{equation*}
+so that for $\alpha \in (0, 1)$ and the choice $t_\alpha = \frac{1}{2 \sqrt{n \alpha}}$ we have 
+\begin{equation*}
+	\P_\theta[ | \leq \theta \leq \wh \theta_n + \frac{1}{2 \sqrt{n \alpha}}| > t] \geq 1 - \alpha \text{ where } \wh \theta^L =  \wh \theta_n - \frac{1}{2 \sqrt{n \alpha}} \text{ and } \wh \theta^R =  \wh \theta_n + \frac{1}{2 \sqrt{n \alpha}} 
+\end{equation*}
+If we choose $\alpha = 0.05 = 5\%$, we know that $\theta \in [\wh \theta^L, \wh \theta^R]$ with a probability larger than $95\%$.
+We say in this case that the interval $[\wh \theta^L, \wh \theta^R]$ is a \emph{confidence interval} with coverage $95\%$.
+
+Note that if $\alpha = 0$ then we have no other choice than using $\R$ as a confidence interval, $\alpha$ allows to give some slack so that we can build a non-absurdly  large confidence interval. 
+We typically have that $|\wh \theta^R - \wh \theta^L|$ increases as $\alpha$ decreases, since a smaller $\alpha$ means more confidence, hence a larger interval.
+On the contrary, $|\wh \theta^R - \wh \theta^L|$ should decrease with the sample size $n$.
+\begin{definition}[Confidence interval]
+	Consider a statistical model with set of parameters $\Theta \subset \R$ and data $X$. Fix a \emph{confidence level} $\alpha \in (0, 1)$. 
+	We say that $[\wh \theta^L(X), \wh \theta^R(X)]$ is a \emph{confidence interval} at level $1 - \alpha$ when $\wh \theta^L(X)$ and $\wh \theta^R(X)$ are statistics satisfying
+	\begin{equation*}
+		\P_\theta\{ \theta \in [\wh \theta^L(X), \wh \theta^R(X)] \} \geq 1 - \alpha
+	\end{equation*}
+	for any $\theta \in \Theta$.
+\end{definition}
+More generally when $\Theta \subset \R^d$ we will say that $D(X)$ is a \emph{confidence set} if it is a statistic satisfying $\P_\theta\{ \theta \in D(X) \} \geq 1 - \alpha$ for any $\theta \in \Theta$.
+
+Remark. In some cases we can choose $\wh \theta^L = -\infty$ (or $0$ for the Bernoulli model) or $\wh \theta^R = +\infty$.
+In this case we talk about a unilateral confidence interval.
+This is interesting whenever we need to ensure that some toxicity level is smaller than some quantity.\sidenote{Using a unilateral IC allows to be slightly more precise on one side...}
+
+But, we can do better for the Bernoulli model (or any model where $X$ is bounded) thanks to the Hoeffding inequality.
+\begin{theorem}
+	\label{thm:hoeffding}
+	Let $X_1, \ldots, X_n$ be independent random variables such that $X_i \in [a_i, b_i]$ a.s. and let $S = \sum_{i=1}^n X_i$. Then, the following deviation inequality holds
+	\begin{equation*}
+		\P[ S \geq \E S + t] \leq \exp\Big( - \frac{2 t^2}{\sum_{i=1}^n (b_i - a_i)^2} \Big)
+	\end{equation*}
+	for any $t >0$.
+\end{theorem}
+Theorem~\ref{thm:hoeffding} is something called a deviation inequality: it provides a control on the probability of deviation of $S$ with respect to its mean.
+This theorem shows that bounded random variables are \emph{sub-Gaussian}, since it shows that the queue of $S - \E S$ is bounded by $\exp(-c t^2)$ for some constant $c$ (although it depends on $n$).
+\todo{Provide the proof of Hoeffding}
+
+Let's apply Theorem~\ref{thm:hoeffding} to the Bernoulli case, where $X_i \sim \ber(\theta)$ so that $a_i = 0$, $b_i = 1$ and therefore $\P[ S \geq \E S + t] \leq e^{-2 t^2 / n}$.
+By symmetry and the union bound\todo{side note Union bound} we have $\P[ | S - \E S | \geq t] \leq 2 e^{-2 t^2 / n}$ and for some $\alpha \in (0, 1)$ we obtain another confidence interval, since the following \emph{coverage property} holds:
+\begin{equation*}
+	\P \Big[ \theta - \sqrt{\frac{\log(2 / \alpha)}{2n}} \leq \theta \leq \wh \theta 
+	+ \sqrt{\frac{\log(2 / \alpha)}{2n}} \Big] \geq 1 - \alpha.
+\end{equation*}
+This proves that the interval $[\wh \theta \pm \sqrt{\log(2 / \alpha) / (2n)}]$ is a confidence interval at level $1 - \alpha$.
+
+Let's compare the two confidence intervals we obtained for the Bernoulli model.
+We have of course
+\begin{equation*}
+	\frac{1}{2 \sqrt{n \alpha}} > \sqrt{\frac{\log(2 / \alpha)}{2n}} 
+\end{equation*}
+for $\alpha$ small enough, note also that both sides are $O(1 / \sqrt n)$.
+Only the dependence on the level $\alpha$ is improved with the confidence interval obtained through the Hoeffding inequality, thanks to the sub-Gaussianity of the Bernoulli distribution, while we only used the second moment property for the first.
+We just made a better use of the concentration properties of the Bernoulli distribution.
+\sidenote{There is yet another way to build a (non-asymptotic) confidence interval, using a more computational approach, see for instance ????}
+
+For both previous confidence intervals, we adopted a non-asymtotic approach: the coverage properties hold for any value of $n \geq 1$.
+We were able to do this, since we able to use Hoeffding or since we know the exact distribution of $S_n$.
+
+Let us now describe an asymptotic approach, which is the one typically used, since in general we don't know the exact distribution of the statistics used in the confidence intervals.
+This approach is actually the one used in general, for more complicated models than Bernoulli, and is based on the central limit theorem.
+Indeed, We know from the central limit theorem that
+\begin{equation*}
+	\sqrt{ \frac{n}{\theta(1 - \theta)}} (\wh \theta - \theta) =  \sqrt{\frac{n}{\var(X_1)}} \Big( \frac 1n \sum_{i=1}^n X_i - \E X_1 \Big) \leadsto \nor(0, 1)
+\end{equation*}
+which entails, for any interval $I \subset \R$\todo{borelien je sais pas quoi} that
+\begin{equation*}
+	\P_\theta\Big[ \sqrt n \frac{\wh \theta - \theta}{\sqrt{\theta(1 - \theta)}} 
+	\Big] \rightarrow \P[Z \in I]
+\end{equation*}
+where $Z \sim \nor(0, 1)$.
+Using $I = [-q_\alpha, q_\alpha]$ with $q_\alpha = \Phi^{-1}(1 - \alpha / 2)$ we end up with the fact that
+\begin{equation*}
+	\P_\theta\Big\{ \theta \in \Big[ \wh \theta \pm \frac{q_\alpha \sqrt{\theta(1 - \theta)}}{\sqrt n} \Big] \rightarrow 1 - \alpha.
+\end{equation*}
+All that is interesting enough, but useless, since the interval we built in Equation~??? depends on $\theta$ ! It is \emph{not} a confidence interval, we can't use it since it depends on $\theta$.
+We need to work a little bit more in order to remove the dependence on $\theta$ from this interval. 
+We can proceed as follows: we can use that $\theta (1 - \theta) \leq 1 / 4$ for any $\theta \in [0, 1]$, so that
+\begin{equation*}
+	\liminf_n \P_\theta\{ \theta \in [\wh \theta \pm \frac{q_\alpha}{2 \sqrt n} ] \} = 1 - \alpha.
+\end{equation*}
+This is what we call a confidence interval of \emph{asymptotically of level} $1 - \alpha$, constructed \emph{by excess}.
+
+A problem with this approach is that we used the fact that the Binomial distribution (the distribution of $S_n$) correctly renormalized is approximated by a Gaussian distribution for large $n$.
+This requires $n$ to be large enough, but also $\theta$ to be not to close to $0$ and $1$.
+We quantify this better by looking at the closeness to the Gaussian distribution, using the following theorem.
+\begin{theorem}[Berry Essen, see ????]
+	Let $X_1, \ldots, X_n$ be i.i.d random variables such that $\E X_i = 0$ and $\var X_i = \sigma^2$ and introduce the distribution function
+	\begin{equation*}
+		F(x) = \P \Big[ \frac{\sum_{i=1}^n X_i}{\sqrt{n \sigma^2}} \leq x \Big]
+	\end{equation*}
+	for any $x \in \R$. Then, the following inequality holds:
+	\begin{equation*}
+		|F(x) - \Phi(x)| \leq \frac{3 \kappa}{\sigma^3 \sqrt n}
+	\end{equation*}
+	where $\kappa = \E |X_1|^3$ (implicitly assumed finite, otherwise the bound is trivial).
+\end{theorem}
+\todo{insert reference and proof ?}
+
+For Bernoulli with have $\E|X_1|^3 = \theta$ and $\sigma^3 = (\theta(1 - \theta))^{3/2}$so that 
+\begin{equation*}
+	|F(x) - \Phi(x)| \leq \frac{3}{\sqrt{n \theta (1 - \theta)^3}}
+\end{equation*}
+which shows that the approximation by the Gaussian distribution deteriorates whenever $\theta$ is close to $0$ or $1$.
+
+
+\todo{subsection ?}
+
+Another approach to get rid of the dependence on $\theta$ from ??? is to use another asymptotic approach, based on reparametrization.
+Indeed, given a statistical model $\{ P_\theta : \theta \in \Theta \}$ and a bijective function $g : \Theta \goes \Lambda$ we can use instead the "reparametrized" model $\{ Q_\lambda : \lambda \in \Lambda \}$ where $Q_\lambda = P_{g^{-1}(\lambda)}$.
+Let us also remark that if $[\wh \theta^L, \wh \theta^R]$ is a confidence interval for $\theta$ at level $1 - \alpha$ and if $g$ is an increasing function, then 
+$[g(\wh \theta^L), g(\wh \theta^R]$ is a confidence interval for $g(\theta)$ at level $1 - \alpha$.
+Now, a natural question is to understand if the convergences we used above (in particular, convergence in distribution) is stable under such a reparametrization.
+
+Example. If $X_1, \ldots, X_n$ is a i.i.d sample with distribution $\expo(\theta)$ with scale parameter $\theta > 0$, namely if $P_\theta(dx) = \theta e^{-\theta x} \ind{x \geq 0} dx$ we have $\E(X_1) = 1 / \theta$ and $\var(X_1) = 1 / \theta^2$, so that using the law of large numbers and the central limit theorem we have
+\begin{equation*}
+	\bar X_n \rightarrow \theta^{-1} \text{ a.s.  and } \sqrt (\bar X_n - \theta^{-1}) \leadsto \nor(0, \theta^{-2})
+\end{equation*}
+when $n \rightarrow +\infty$.
+Since $x \mapsto 1 / x$ is a continuous function on $(0, +\infty)$, we know that $(\bar X_n)^{-1} \goes \theta$ a.s. so that we want to use the estimator $\wh \theta = (\bar X_n)^{-1}$.
+But what can we say about the convergence in distribution of $\sqrt n (\wh \theta - \theta)$ ?
+This is answered by the following $\Delta$-method
+\begin{theorem}[$\Delta$-method]
+	\label{thm:delta-method}
+ 	Let $(Z_n)_{n \geq 1}$ be a sequence of random variables in $\R$ and a sequence $(a_n)_{n \geq 1}$ such that $a_n > 0$ and $a_n \goes +\infty$ such that $a_n(Z_n - z) \leadsto Z$ for some $z \in \R$ and random variable $Z$.
+ 	If $g$ is a function defined on a neighborhood of $z$ and differentiable at $z$, we have 
+ 	\begin{equation}
+ 		a_n (g(Z_n) - g(z)) \leadsto g'(z) Z
+ 	\end{equation}
+ 	as $n \goes +\infty$.
+\end{theorem}
+The proof easily follows by a first-order Taylor expansion of $g$ around $z$.
+\todo{insert proof}
+
+A particularly useful special case for statistics is when $Z$ is Gaussian, for instance if we have $\sqrt n (\wh \theta - \theta) \leadsto \nor(0, \sigma(\theta)^2)$, when we have because of the $\Delta$-method
+\begin{equation*}
+	\sqrt n (g(\wh \theta) - g(\theta)) \leadsto 
+	\nor(0, \sigma(\theta)^2 (g'(\theta))^2),
+\end{equation*}
+whenever $g$ satisfies the conditions of Theorem~\ref{thm:delta-method}.
+Going back to the $\expo$ example, we obtain with $g(x) = 1 / x$ and since $\wh \theta = g(\bar X_n)$ that $\sqrt n (\wh \theta - \theta) \leadsto \nor(0, \theta^2)$.
+
+Another result of the same nature is the so-called Slutsky theorem.
+\begin{theorem}[Slutsky]
+	Let $(X_n)_{n \geq 1}$ and $(Y_n)_{n \geq 1}$ be sequences of real random variables such that $X_n \leadsto X$ and $Y_n \leadsto y$ where $X$ is some real random variable and $y \in \R$ is a real number.
+	Then, we have that $Y_n \goes y$ in probability and $(X_n, Y_n) \leadsto (X, y)$ as $n \goes +\infty$. In particular, we have $f(X_n, Y_n) \leadsto f(X, y)$ for any continuous function $f$.
+\end{theorem}
+\todo{insert proof}
+
+Let's apply this to the Bernoulli case. 
+We have that $\wh \theta \gopro \theta$, so that $\sqrt{\wh \theta (1 - \wh \theta)} \gopro \sqrt{ \theta (1 -  \theta)}$ since $\sqrt{x(1-x)}$ is continuous on $[0, 1]$ and 
+therefore
+\begin{equation*}
+	\frac{\sqrt n (\wh \theta - \theta)}{\sqrt{\wh \theta (1 - \wh \theta)}} 
+	= \frac{\sqrt n (\wh \theta - \theta)}{\sqrt{ \theta (1 -  \theta)}} \frac{\sqrt{ \theta (1 -  \theta)}}{\sqrt{\wh \theta (1 - \wh \theta)}} = A \times B.
+\end{equation*}
+We know from above that $A \gosto \nor(0, 1)$ and that $B \gopro 1$.
+Therefore, using Slutsky's lemma\sidenote{With $f(x, y) = x y$} we have that
+\begin{equation*}
+	\frac{\sqrt n (\wh \theta - \theta)}{\sqrt{\wh \theta (1 - \wh \theta)}} \gosto \nor(0, 1).
+\end{equation*}
+This is somewhat pendantic for such an intuitive result, but this requires the Slutsky's theorem for a rigorous proof.
+
+The $\Delta$-method provides stability for the convergence in distrubition when a locally differentiable function is applied to the sequence, while Slutky's theorem provides "algebraic" statibility when combining two sequences converging in distribution and probability.
+\sidenote{Be careful with convergence in distribution. Please keep in mind that this convergence mode has nothing to do with random variables, but only with their distributions, hence its name. In particular, nothing can be said in general about $f(X_n, Y_n)$ when $X_n \gosto X$ and $Y_n \gosto Y$, a counter example being, among billions of others}
+\todo{insert counter example here}
+
+The last convergence leads to a last convergence interval asymptotically of level $1 - \alpha$, since we know now that
+\begin{equation*}
+	\P_\theta \bigg\{ \theta \in \Big[ \wh \theta \pm q_\alpha \sqrt{\frac{\wh \theta (1 - \wh \theta)}{n}} \Big] \bigg\} \goes 1 - \alpha
+\end{equation*}
+as $n \goes +\infty$.
+
+\todo{some exercices ?}
+
+\section{Tests} % (fold)
+\label{sec:tests}
+
+Let us consider in this section, once again a model $\{ P_\theta : \theta \in \Theta \}$ and a sample $X$.
+Here, we want to decide between to hypothesis $H_0$ and $H_1$, where
+\begin{equation*}
+	H_i \text{ corresponds to the fact that } \theta \in \Theta_i
+\end{equation*}
+for $i \in \{ 0, 1 \}$, where $\{ \Theta_0, \Theta_1 \}$ is a partition of $\Theta$.
+
+Let us give, to help understand this complex concept of statistical testing, a morbid example.
+Imagine that you need to decide if a patient has cancer or not.
+The patient has cancer if some parameter $\theta \in (0, 1)$ about him satisfies 
+$\theta \geq 0.42$.
+We \emph{choose} $\Theta_0 = [0.42, 1]$ and $\Theta_1 = [0, 0.42)$.
+We need to construct a testing function $\varphi : E \goes \{ 0, 1 \}$ that maps $X \mapsto \phi(X)$, our decision being the value of $\varphi(X)$.
+We are correct if $\vaprhi(X) = i$ whenever $\theta \in \Theta_i$ for $i \in \{ 0, 1 \}$and incorrect whenever  $\vaprhi(X) = 1 - i$ whenever $\theta \in \Theta_i$.
+We have two types of errors: the \emph{Type-I error} or \emph{first-order error}, given by 
+\begin{equation}
+	\label{eq:type-1-error}
+	\P_\theta[ \varphi(X) = 1] = \E_\theta \varphi(X) \text{ if } 
+	\theta \in \Theta_0
+\end{equation}
+and the \emph{Type-II error} or \emph{second-order error}, given by 
+\begin{equation}
+	\label{eq:type-2-error}
+	\P_\theta[ \varphi(X) = 0] = 1 - \E_\theta \varphi(X) \text{ if } 
+	\theta \in \Theta_1.
+\end{equation}
+In the above cancer detection example, if the Type I error corresponds to 
+\todo{redonner l'exemple du cancer precisement et clairement, dire que ce n'est pas symetrique et qu'il faut bien chosir les hypthese}
+
+The function $\beta : \Theta \goes [0, 1]$ that maps $\theta \mapsto \beta(\theta) = \E_\theta \varphi(X)$ is called the \emph{power function} of the test $\varphi$.
+\todo{definition}
+
+Ideally, we would like $\beta(\theta) \approx 0$ for $\theta \in \Theta_1$ and $\beta(\theta) \approx 1$ for $\theta \in ???$ \todo{correct} but this is impossible: if $\Theta$ is a connex set then $\Theta_0$ and $\Theta_1$ share a common frontier and $\beta$ must therefore be discontinuous on it.
+
+
+% section tests (end)
+
 % section confidence_intervals (end)
 
 
