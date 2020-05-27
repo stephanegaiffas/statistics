@@ -55,6 +55,7 @@
 
 \graphicspath{{images/}} % Paths in which to look for images
 
+\RequirePackage{times}
 
 \DeclareMathOperator{\cA}{\mathcal A}
 \DeclareMathOperator{\cB}{\mathcal B}
@@ -102,8 +103,6 @@
 
 \newcommand{\lest}{\underset{st}{\leq}}
 \newcommand{\gest}{\underset{st}{\qeq}}
-
-% \newcommand{\cB}{\Bernouilli}
 
 
 
@@ -1022,9 +1021,16 @@ Let us compute the $p$-value for the previous test for the $\ber$ model.
 	\end{align*}
 \end{example}
 
+
 \begin{recipe}
 	In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
 \end{recipe}
+
+
+\begin{warning}
+	In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
+\end{warning}
+
 
 \todo{Exemple mise sur le marche de medicaments, les p values, attention c'est aussi critique, etc...}
 

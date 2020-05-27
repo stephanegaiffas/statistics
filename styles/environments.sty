@@ -50,12 +50,12 @@
 	topline=false,
 	bottomline=false,
 	rightline=false,
-	leftline=false,
+	leftline=true,
 	%linewidth=1pt,
 	%roundcorner=0pt,
 	%font={},
 	%frametitlefont={},
-	frametitlerule=true,
+	frametitlerule=false,
 	linecolor=black,
 	%backgroundcolor=LightBlue,
 	fontcolor=black,
@@ -64,8 +64,8 @@
 
 \newmdenv[
 	style=kaoboxstyle,
-	backgroundcolor=RoyalBlue!25!White,
-	frametitlebackgroundcolor=RoyalBlue!25!White,
+	%backgroundcolor=RoyalBlue!25!White,
+	%frametitlebackgroundcolor=RoyalBlue!25!White,
 ]{kaobox}
 
 %----------------------------------------------------------------------------------------
@@ -79,11 +79,28 @@
 	\end{kaobox}
 }
 
-\newcounter{kaocounter}
-\numberwithin{kaocounter}{section}
-\newcommand*{\kaocounterformat}{% Format for the caption
-	Comment~\thekaocounter\csname autodot\endcsname}
-\newcommand*{\fnum@kaocounter}{\kaocounterformat}
+% \newcounter{kaocounter}
+% \numberwithin{kaocounter}{section}
+% \newcommand*{\kaocounterformat}{% Format for the caption
+% 	Comment~\thekaocounter\csname autodot\endcsname}
+% \newcommand*{\fnum@kaocounter}{\kaocounterformat}
+
+
+
+\newenvironment{recipe}{
+	%\refstepcounter{kaocounter}
+	\begin{kaobox}[frametitle=Recipe]
+}{
+	\end{kaobox}
+}
+
+
+\newenvironment{warning}{
+	%\refstepcounter{kaocounter}
+	\begin{kaobox}[frametitle=Warning]
+}{
+	\end{kaobox}
+}
 
 
 %----------------------------------------------------------------------------------------
