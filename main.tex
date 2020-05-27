@@ -326,50 +326,64 @@ We assume that the $X_i$ are \emph{independent} (since the outcome of the tosses
 Therefore, we assume that $X_1, \ldots, X_n$ are \emph{iid}.%
 \sidenote{From now on, iid will stand for \emph{independent and identically distributed}. More about this fundamental assumption will follow.}
 
-
-\section{Probability versus statistics} % (fold)
+\section{Probabilities and statistics} % (fold)
 \label{sec:probability_versus_statistics}
 
-Since we assume that the reader is familiar with the field of probabilities, we start this chapter with a comparison between what we do in probabilities and what we do in statistics.
+Since we assume that the reader is familiar with the field of probabilities, we start this chapter with a comparison between what we do in probabilities and what we do in statistics for the $\ber(p)$ model described above.
 
-\textbf{ICI ICI ICI ICI ICI ICI ICI}
 
 \paragraph{Probabilities.} % (fold)
 
 % paragraph probability (end)
-In the field of probabilities, we suppose that $p \in (0, 1)$ is known, and we study the properties of the sequence $(X_i)_{i \geq 1}$, for instance the distribution of $S_n = \sum_{i=1}^n X_i$ that is distributed as $\bin(n, p)$,  
-We know that $\P(S_n = k) = \binom{n}{k} p^k (1 - p)^{n-k}$ for $k \in \{0, \ldots, n\}$ (once again we denote $S_n \sim \bin(n, p)$.)
-It is easy to see that $\E(S_n) = np$ and $\var(S_n) = np (1 - p)$.
-\todo{Recall expectation and variance}
-We can study its asymptotic properties, such as 
+In the field of probabilities, we suppose that $p \in (0, 1)$ is known, and we study the properties of the sequence $(X_i)_{i \geq 1}$. 
+For instance, we know that the distribution of $S_n = \sum_{i=1}^n X_i$ is $\bin(n, p)$,  
+namely that $\P(S_n = k) = \binom{n}{k} p^k (1 - p)^{n-k}$ for $k \in \{0, \ldots, n\}$.%
+\sidenote{Where $\binom{n}{k}$ is the $(n, k)$ binomial coefficient given by $\frac{n!}{k! (n - k)!}$.}
+It is easy to see that $\E(S_n) = n p$ and that $\var(S_n) = np (1 - p)$, where $\E(\cdot)$ and $\var(\cdot)$ stand respectively for the expectation and the variance.%
+\sidenote{The linearity of the expectation gives $\E(S_n) = n \E(X_1) = np$ since the $X_i$ are identically $\ber(p)$ distributed, and, since the $X_i$ are iid, we know that $\var(S_n) = n \var(X_1) = n p (1 - p)$.}%
+We can study the asymptotic properties of $S_n$, such as
 \begin{equation}
 	\label{eq:lln-binomial}
-	\frac{S_n}{n} \rightarrow p	\quad \text{almost surely}
+	\frac{S_n}{n} \goas p
 \end{equation}
 and
 \begin{equation}
 	\label{eq:tcl-binomial}
 	\sqrt n \Big(\frac{S_n}{n} - p\Big) \leadsto \nor(0, p(1-p))
 \end{equation}
-as $n \rightarrow +\infty$\sidenote{$X_n \leadsto X$ means that $X_n$ converges to $X$ in distribution.}.
+as $n \rightarrow +\infty$, where $\nor(\mu, \sigma^2)$ stands for the Gaussian distribution with expectation $\mu$ and variance $\sigma^2$.%
+\sidenote{The notation $X_n \goas X$ stands for the \emph{almost sure} convergence of $X_n$ towards $X$ while $X_n \leadsto X$ stands for the convergence of $X_n$ towards $X$ in distribution.}.
 Note that statement~\eqref{eq:lln-binomial} comes from the law of large numbers, while~\eqref{eq:tcl-binomial} comes from the central limit theorem.
-In the field of probability, the object of interest is the \emph{random variable}.
+In the field of probabilities, the object of interest would be the \emph{random variable} $S_n$, that we study knowing the value of $p$.
+In particular, if we replace the $\ber(p)$ distribution by the \emph{Rademacher distribution} $\text{Rademacher}(p)$ where $\P(X_i = 1) = 1 - \P(X_i = -1) = p$, the random variable $S_n$ becomes a \emph{random walk} for which many things can be said, depending on the value of $p$.%
+\sidenote{But such things are way beyond the topic of this book, great references about the study of the random walk and its utmost importance in the field of probabilities are ???}
 
 \paragraph{Statistics.} % (fold)
-\label{par:statistics}
 
-% paragraph statistics (end)
-In statistics, the reasoning is somewhat inverse. We do not know $p$ but we observe \emph{realizations} (also called \emph{data}, \emph{samples} or \emph{observations})
+In statistics, for the $\ber(p)$ example, we don't really care about $S_n$, but we do care about $p$.
+We assume that $p$ is \emph{unknown}, and we want to find out things about it.
+This objective is called \emph{statistical inference} of the \emph{parameter} $p$.
+For instance, we would like to know if $p=1/2$ or not, in order to find out if the coin is well-balanced and not rigged.
+The random variables $X_1, \ldots, X_n$ (and $S_n$) live on some probability space $(\Omega, \cA, \P)$, but we don't really care about it either in statistics.
+We will always assume, in statistics, that each \emph{observed} outcome $x_i \in \{ 0, 1 \}$ of a coin toss is a \emph{realization} of the random variable $X_i$, namely that
 \begin{equation*}
-	x_i = X_i(\omega).
+	x_i = X_i(\omega)
 \end{equation*}
-We can do whatever we want with the $x_i$ in order to say things about $p$.
-We build measurable functions of $(X_1, \ldots, X_n)$ (that we call \emph{statistics}) in order to tell things about their common distribution (still working under the i.i.d assumption).
-The object of interest in the field of statistics is the \emph{distribution of the observations}, namely $\P_{X_1}$.
+for some \emph{event} $\omega \in \Omega$.
+The realizations $x_i$ are also called \emph{data} or \emph{samples} or \emph{observations}.
+But, actually, we will also refer to the random variables $X_i$ in the same way, as \emph{data}, \emph{samples} or \emph{observations}, since we won't manipulate the $x_i$ mathematically,%
+\sidenote{nothing can be done with them... it's just deterministic zeros and ones}%
+while we will work a lot with the random variables $X_1, \ldots, X_n$.
+In statistics, we can do whatever we want with $X_1, \ldots, X_n$ in order to say things about $p$, but we will \emph{never} assume $p$ to be known.%
+\sidenote{The parameter $p$ will quickly become a mathematical variable that we will use in equations, in order to perform calculus for instance. Therefore, we will use the specific notation $p_0$ for the ground truth parameter, namely $X_1 \sim \ber(p_0)$, while $p$ will be used as a generic parameter. A statistical parameter will usually be denoted as $\theta$, while the ground truth parameter will be denoted as $\theta_0$ when necessary.}
+We will construct measurable functions of $(X_1, \ldots, X_n)$ that do not depend on $p$, these are called \emph{statistics}, in order to tell things about the unknown parameter $p$.
+The object of interest in the field of statistics is, therefore, rather the \emph{distribution of the observations} than the observations themselves.
 
 
 \section{Statistical models and experiences} % (fold)
 \label{sec:statistical_models_and_experiences}
+
+\textbf{ICI ICI ICI ICI ICI}
 
 Let us consider another very classical problem: the election poll problem, where people can vote in a set $\{A, B\}$ of candidates in a population of size $N$.
 There are $N_A$ people voting for $A$ while $N - N_A$ vote for $B$, and we wish to know about $\theta_0 = N_A / N$.
