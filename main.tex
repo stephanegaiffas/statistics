@@ -316,19 +316,25 @@ The tentative agenda for the course is as follows:
 \chapter{Statistical models}
 \label{chap:statistical_models}
 
+Let us start with the most classical and simplest statistical experiment: the coin toss.
+We toss a coin $n$ times, and we model each toss by a random variable in $\{ 0, 1 \}$, where we decide that $1$ means that the toss ended up with heads (so that $0$ means tails).
+To each toss is associated a random variable, leading to random variables $X_1, \ldots, X_n$  valued in $\{ 0, 1 \}$, where $X_i$ encodes the outcome of the $i$-th toss.
+Each $X_i$ has distribution $\ber(p)$ for $p \in [0, 1]$, where $p$ corresponds to the probability that a coin toss gives heads, namely $\P(X_i = 1)$.%
+\sidenote{The notation $\ber(p)$ corresponds to the \emph{Bernoulli distribution}: we will write $X \sim \ber(p)$ whenever $X \in \{ 0, 1\}$ and $\P(X = 1) = p = 1 - \P(X = 0)$.
+Another way to obtain a $\ber$ distribution is by setting $X_i = \ind{Y_i \in A}$ where $Y_1, \ldots, Y_n$ are random variables valued in a probability space $(E, \cE)$, with $A \in \cE$, so that $X_i \sim \ber(p)$ with $p = \P(Y_i \in A)$.}
+We assume that the $X_i$ are \emph{independent} (since the outcome of the tosses are physically unrelated), and since we are tossing the same coin each time, we assume that these outcomes have the same distribution (meaning that $p$ is constant along the tosses).
+Therefore, we assume that $X_1, \ldots, X_n$ are \emph{iid}.%
+\sidenote{From now on, iid will stand for \emph{independent and identically distributed}. More about this fundamental assumption will follow.}
 
 
 \section{Probability versus statistics} % (fold)
 \label{sec:probability_versus_statistics}
 
+Since we assume that the reader is familiar with the field of probabilities, we start this chapter with a comparison between what we do in probabilities and what we do in statistics.
 
-Let us start with the most classical and simplest statistical experiment: the coin flip experience.
-We launch $n$ times a coin, that we model using $n$ random variables $X_1, \ldots, X_n$ that are i.i.d\sidenote{i.i.d stands for independent and identically distributed. More about this fundamental assumption will follow later}\todo{where?}with distribution $\ber(1/2)$\sidenote{The notation $\ber(p)$ for $p \in (0, 1)$ stands for the \emph{Bernoulli distribution}: we will denote $X \sim \ber(p)$ to say that $X \in \{ 0, 1\}$ and that $\P(X = 1) = p = 1 - \P(X = 0)$.}
-or even $X_i = \ind{Y_i \in A}$ where $Y_1, \ldots, Y_n$ are i.i.d random variables valued in $(E, \cE)$ and $A \in \cE$ so that $X_i \sim \ber(p)$ with $p = \P(Y_i \in A)$.
+\textbf{ICI ICI ICI ICI ICI ICI ICI}
 
-
-\paragraph{Probability.} % (fold)
-\label{par:probability}
+\paragraph{Probabilities.} % (fold)
 
 % paragraph probability (end)
 In the field of probabilities, we suppose that $p \in (0, 1)$ is known, and we study the properties of the sequence $(X_i)_{i \geq 1}$, for instance the distribution of $S_n = \sum_{i=1}^n X_i$ that is distributed as $\bin(n, p)$,  
