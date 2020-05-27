@@ -1002,6 +1002,9 @@ When $X$ and the testing regression are fix, we therefore expect that when $\alp
 There is, therefore, a value of $\alpha$ starting from which the test starts to reject the assumption.
 This value is called the $p$-value of the test.
 
+\paragraph{About $p$-values.} % (fold)
+
+% paragraph about_ (end)
 Let $R_\alpha$ be the rejection region of a test at level $\alpha$, namely we have $\sup_{\theta \in \Theta_0} \P_\theta(R_\alpha) \leq \alpha < \alpha'$ for any $\alpha' > \alpha$, so that $R_\alpha$ also is a rejection region at level $\alpha'$.
 Generally (but not always) we have $R_\alpha \subset R_\alpha'$ whenever $\alpha < \alpha'$.
 In such a case, we can define the $p$-value of the test as
@@ -1019,7 +1022,10 @@ Let us compute the $p$-value for the previous test for the $\ber$ model.
 	\end{align*}
 \end{example}
 
-Recipe. In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
+\begin{recipe}
+	In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
+\end{recipe}
+
 \todo{Exemple mise sur le marche de medicaments, les p values, attention c'est aussi critique, etc...}
 
 For instance, if $\alpha(X) \leq 10^3$ then we are strongly rejecting $H_0$, since it would require a level $\alpha < 10^3$ to accept $H_0$, which is very small. 

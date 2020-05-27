@@ -42,7 +42,7 @@
 	topline=false,
 	bottomline=false,
 	rightline=false,
-	leftline=false,
+	leftline=true,
 	%linewidth=1pt,
 	%roundcorner=0pt,
 	%font={},
@@ -60,7 +60,7 @@
 	%spacebelow=.5\thm@postskip,
 	%headfont=\normalfont\bfseries,%\scshape,
 	%notefont=\normalfont, notebraces={ (}{)},
-	bodyfont=\normalfont\itshape,
+	bodyfont=\normalfont,%\itshape,
 	%headformat={\NAME\space\NUMBER\space\NOTE},
 	headpunct={},
 	%postheadspace={.5em plus .1em minus .1em},
@@ -72,7 +72,7 @@
 	%spacebelow=.5\thm@postskip,
 	%headfont=\normalfont\bfseries,%\scshape,
 	%notefont=\normalfont, notebraces={ (}{)},
-	bodyfont=\normalfont\itshape,
+	bodyfont=\normalfont,%\itshape,
 	%headformat={\NAME\space\NUMBER\space\NOTE},
 	headpunct={},
 	postheadspace={.5em plus .1em minus .1em},
@@ -113,11 +113,11 @@
 	style=kaoplain,
 	refname={theorem,theorems},
 	Refname={Theorem,Theorems},
-	numberwithin=section,
+	numberwithin=chapter,%section,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{theorem}
 \declaretheorem[
@@ -127,8 +127,8 @@
 	sibling=theorem,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{proposition}
 \declaretheorem[
@@ -138,8 +138,8 @@
 	sibling=theorem,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{lemma}
 \declaretheorem[
@@ -149,8 +149,8 @@
 	sibling=theorem,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%rametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{corollary}
 
@@ -159,11 +159,11 @@
 	name=Definition,
 	refname={definition,definitions},
 	Refname={Definition,Definitions},
-	numberwithin=section,
+	numberwithin=chapter,%section,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{definition}
 
@@ -172,11 +172,11 @@
 	name=Remark,
 	refname={remark,remarks},
 	Refname={Remark,Remarks},
-	numberwithin=section,
+	numberwithin=chapter,%section,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{remark}
 
@@ -185,13 +185,39 @@
 	name=Example,
 	refname={example,examples},
 	Refname={Example,Examples},
-	numberwithin=section,
+	numberwithin=chapter,%section,
 	mdframed={
 		style=mdfkao,
-		backgroundcolor=Goldenrod!45!white,
-		frametitlebackgroundcolor=Goldenrod!45!white,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
 	},
 ]{example}
+
+\theoremstyle{kaoremark}
+\declaretheorem[
+	name=Recipe,
+	refname={recipe,recipes},
+	Refname={Recipe,Recipes},
+	numberwithin=chapter,%section,
+	mdframed={
+		style=mdfkao,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
+	},
+]{recipe}
+
+\theoremstyle{kaoremark}
+\declaretheorem[
+	name=Warning,
+	refname={warning,warnings},
+	Refname={Warning,Warnings},
+	numberwithin=chapter,%section,
+	mdframed={
+		style=mdfkao,
+		%backgroundcolor=Goldenrod!45!white,
+		%frametitlebackgroundcolor=Goldenrod!45!white,
+	},
+]{warning}
 
 %\renewcommand{\thetheorem}{\arabic{chapter}.\arabic{section}.\arabic{theorem}}
 %\renewcommand{\thetheorem}{\arabic{subsection}.\arabic{theorem}}
