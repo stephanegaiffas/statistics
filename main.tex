@@ -72,6 +72,7 @@
 \DeclareMathOperator{\bin}{Binomial}
 \DeclareMathOperator{\mul}{Multinomial}
 \DeclareMathOperator{\expo}{Exponential}
+\DeclareMathOperator{\uni}{Uniform}
 
 \DeclareMathOperator{\sigmoid}{sigmoid}
 
@@ -98,6 +99,9 @@
 \newcommand{\gopro}{\overset{\P}{\rightarrow}}
 \newcommand{\goas}{\overset{a.s.}{\rightarrow}}
 \newcommand{\gosto}{\leadsto}
+
+\newcommand{\lest}{\underset{st}{\leq}}
+\newcommand{\gest}{\underset{st}{\qeq}}
 
 % \newcommand{\cB}{\Bernouilli}
 
@@ -835,7 +839,192 @@ Ideally, we would like $\beta(\theta) \approx 0$ for $\theta \in \Theta_1$ and $
 Therefore, It is hard to make both Type I and Type II errors at the same time, namely to make $\beta$ small both on $\Theta_0$ and $\Theta_1$
 
 \paragraph{The Neyman and Pearson approach: dissymetrization of the problem} % (fold)
-\label{par:paragraph_name}
+
+The now commonly adopted awy to perform statistical tests is through the Neyman Pearson approach, by using a ``dissymetrization'' of the problem.
+The convention is to choose the hypothesis $H_0$ as the one that we must not miss: we choose $H_0$ in a way that the the Type I error (we have $\varphi(X)=1$ while $\theta \in \Theta_0$) is more serious than the Type II error (we have $\varphi(X)=0$ while $\theta \in \Theta_1$).
+Type I error is always the rejection of $H_0$ while it's true, Type II error is always acceptation of $H_0$ while it is false, the only thing we need to decide is what are $H_0$ and $H_1$.
+
+Going back to our morbid example, it is natural to define $H_0$ as ``the patient has cancer'' and $H_1$ as ``the patient does not have cancer''.
+Type I error means in this case ``we decide that the patient does not have cancer while he actually has it'' and Type II error means ``we decide that the patient has cancer while he does not have it''.
+In this example, common sense tells us that with this choice, we have indeed that the Type I error is more serious than the Type II. 
+This can be debated (it always can), since telling a patient he has cancer while he has not can lead to a depression that could have be avoided, and entail heavy useless treatments. 
+Of course this discussion describes nothing realistic, and is only intended to help the reader understand two things about hypothesis testing: the choice of the hypothesis is a modelization choice that must be guided by common sense, and the two errors are highly non-symmetric.
+
+
+We call $H_0$ the \emph{null hypothesis} and $H_1$ the \emph{alternative hypothesis}.
+When $\varphi(X) = 0$ we say that we \emph{accept $H_0$} or simply that the test \emph{accepts} while $\varphi(X) = 1$ means that the test rejects $H_0$.
+Let us wrap up all of this in the following definition.
+\begin{definition}
+	Given a statistical testing problem with hypothesis
+	\begin{equation*}
+		H_0 : \theta \Theta_0 \text{ and } H_1 : \theta \Theta_1
+	\end{equation*}
+	and a testing function $\varphi : E \goes \{ 0, 1 \}$, we define the following things:
+	\begin{enumerate}
+		\item We call the set $R = \{ x \in E : \varphi(x) = 1 \}$ the \emph{rejection set} or \emph{reject region} of the test $\varphi$, and we call $R^\complement$ the \emph{acceptation region}
+		\item The function $\beta : \Theta \goes [0, 1]$ given by $\beta(\theta) = \E_\theta [\varphi(X)]$ is call the \emph{power function} of the test
+		\item The restrictions of this function $\beta : \Theta_0 \goes [0, 1]$ is call the \emph{Type I error} or \emph{first order error} while the restriction $\beta : \Theta_1 \goes [0, 1]$ is called the power of the test. The function $1 - \beta : \Theta_1 \goes [0, 1]$ is called \emph{Type II error} or \emph{second order error}.
+		\item Whenever $\sup_{\theta \in \Theta_0} \beta(\theta) \leq \alpha$ for some fixed $\alpha \in (0, 1)$, we say that the test \emph{has level} $\alpha$.
+	\end{enumerate}
+\end{definition}
+
+
+The idea of dissymetrization of the hypothesis is as follows: given level $\alpha \in (0, 1)$ (something like $1\%$, $5\%$ or $10\%$) we look for a test at level $\alpha$ whose whose power is as large as possible for $\theta \in \Theta_1$.
+This means that, the test is built so that the Type I error is controlled, while we don't control the Type II error, but only study it.
+We can simply compare Type II error and choose the statistical test which maximizes it, under the fixed shared constraint on the Type I error....
+
+Example. Back to Bernoulli, where $X_1, \ldots, X_n$ i.i.d distributed as $\ber(\theta)$ and $S = \sum_{i=1}^n X_i \sim \bin(n, \theta)$.
+We consider the following hypothesis:
+\begin{equation*}
+	H_0 : \theta \leq \theta_0 \quad \text{ against } \quad H_1 : \theta > \theta_0
+\end{equation*}
+so that $\Theta = (0, 1)$ and $\Theta_0 = (0, \theta_0]$ and $\Theta_1 = (\theta_0, 1)$.
+We studied before the estimator $\wh \theta = \bar X_n$, and know that it is a good estimator (we'll see later that we can't really improve it...)
+A natural idea is therefore to reject $H_0$ if $\wh \theta$ is too large.
+
+Recipe. We build a test by defining its rejection set $R$. The shape of the rejection set can be easily guessed by common sense: we simply look at the alternative hypothesis $H_1$. 
+Since we want to reject when $\theta > \theta_0$, we want to consider a rejection set $R = \{ \wh \theta > c \}$, for some constant $c$ chosen so that the Type I error is controlled by $\alpha$.
+Note that choosing $c = \theta_0$ is a bad idea: using the central limit theorem, we see that $\P_{\theta_0}(\wh \theta - \theta_0) \goes 1/2$, so we need to give some more slack (by increasing the constant $c$ by some amount) so that the Type I error can be indeed smaller than $\alpha$.
+We understand at this point that $c$ will depend on $\alpha, \theta_0$ and the sample size $n$.
+So, let's look for $c$ such that $\sup_{\theta \leq \theta_0} \P_\theta[S > n c] \leq \alpha$ (one again $c = c(n, \alpha, \theta_0$)
+\begin{equation*}
+	\P_\theta[\wh \theta > c] = \P_\theta[S > n c] = \P [\bin(n, \theta) > nc] = \beta(\theta)
+\end{equation*}
+So we need to understand the variations of $\theta \mapsto \beta(\theta)$.
+Intuitively, $\beta(\theta)$ should be increasing with $\theta$, since when $\theta$ increases, we get more ones, so $S$ is larger.
+This can be nicely formalized using the \emph{stochastic ordering}.
+\begin{definition}
+	Let $P$ and $Q$ be two probability measures on the same probability space. We say that \emph{$Q$ stochastically dominates $P$}, that we denote $P \lest Q$, whenever one of the following equivalent points is granted:
+	\begin{enumerate}
+		\item There are two real random variables $X, Y$ (on the same probability space) such that $X \sim P$ and $Y \sim Q$ such that $\P(X \leq Y) = 1$
+		\item We have $F_P(x) \geq F_Q(x)$ for any $x$ (where $F_P$ is the distribution function of $P$, namely $F_P(x) = \P((-\infty, x])$) which means that $P[()] \leq Q[(x, +\infty)]$
+		\item We have $F_P^-(p) \leq F_Q^-(p)$ for any $p \in [0, 1]$ where $F_P^-(p) = \inf \{ x \in \R : F_P(x) \geq p \}$ is the generalized inverse of $F_P$(recall that it is a cad-lag function)
+		\item For any non-decreasing and bounded function $f$ we have $\int f dP \leq \int f dQ$.
+	\end{enumerate}
+\end{definition}
+
+\begin{proof}
+	The proofs of $(2) \Leftrightarrow (3) \equiv (4)$ are quite standard and not really interesting. $(1) \Rightarrow (2)$ is obvious. The proof of $(2) \Rightarrow (1)$ is nice and interesting by itself, since it uses something called a "coupling" argument, which is a very powerful technique used in probability theory REFREF.
+	More precisely, we use below something called a ``quantile coupling''.
+	Let us consider $U \sim \uni([0, 1])$ \todo{define uniform} on some probability space and define $X = F_P^-(U)$ and $Y = F_P^-(U)$.
+	We have by construction that $X \sim F_P$ and $Y \sim F_Q$. \todo{recall some properties of generalized inverse}. But then
+	\begin{equation*}
+		\P(X \leq Y) = \P(F_P^-(U) \leq F_P^-(U)) = 1
+	\end{equation*}
+	since 3. tells us that $F_P^-(p) \leq F_P^-(p)$ for any $p in [0, 1]$.
+\end{proof}
+This proof is remarkably simple, but very tricky and beautiful, and the basis of the powerful coupling argument in probability theory.
+
+A first example is the fact that $\expo(\lambda_2) \lest \expo(\lambda_1)$ whenever $\lambda_1 \leq \lambda_2$.
+Another example will prove more useless for our statistical test for the $\ber$ model.
+\begin{example}
+	We have that $\ber(n, \theta_1) \lest \ber(n, \theta_2)$ whenever $\theta_1 \leq \theta_2$. How can we prove this ? By using again a coupling argument.
+	Let us consider $U_1, \ldots, U_n$ i.i.d $\uni([0, 1])$ and define $S_i = \# \{ k : U_k \leq \theta_i \}$ for $i \in \{ 1, 2 \}$. By construction we have that $S_i \sim \bin(n, \theta_i)$, and that $S_1 \leq S_2$ a.s. This proves that $\ber(n, \theta_1) \lest \ber(n, \theta_2)$.
+\end{example}
+A consequence of Example~? together with definition~? is that $F_{\bin(n, \theta_2)} \leq F_{\bin(n, \theta_1)}$ whenever $\theta_1 \leq \theta_2$.
+So, going back to the Type I error control, we can now derive the following control:
+\begin{equation*}
+	\sup_{\theta \leq \theta_0} \P_\theta[ \wh \theta > c] = \sup_{\theta \leq \theta_0} (1 - F_{\bin(n, \theta)}(n c)) \leq (1 - F_{\bin(n, \theta_0)}(n c)).
+\end{equation*}
+We can therefore find out $c$ as small as possible so that $1 - F_{\bin(n, \theta_0)}(n c) \leq \alpha$.
+This can be done easily numerically, since we don't have a general explicit solution for such a $c$ in general.
+Otherwise, we can use (but it is less precise, hence leading to a slighlty less powerfull test)
+\begin{equation*}
+	\P_{\theta_0} [\wh \theta > c] = \P_{\theta_0}[S - n \theta_0 > c'] \leq e^{-2 t^2 / n} = \alpha
+\end{equation*}
+choosing $t = \sqrt{n \log(1 / alpha) / 2}$. 
+We can therefore consider the test with rejection set $R = \{ \wh \theta \geq \theta_0 + \sqrt{ \frac{\log(1 / \alpha)}{2n}}\}$, to obtain a test at level $\alpha$.
+
+We could also use an asymptotic approach using a rejection set $R = \{ \wh \theta > \theta_0  + \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}} \Phi^{-1}(1 - \alpha) \} = \theta_0 + \delta_n$ which is asymptotically of level $\alpha$, using similar arguments as what we did before, and using the central limit theorem.
+
+What about the power of the test ?
+We know that $\wh \theta \goas \theta$ and that $\delta_n \go 0$.
+So, \textbf{under $H_1$, namely whenever $\theta > 0$} we have
+\begin{equation*}
+	\beta(\theta) = \P_\theta[ \wh \theta > \theta_0 + \delta_n] \go 1
+\end{equation*}
+once again WHEN $\theta > \theta_0$.
+This means that the power of the test indeed goes to $1$.
+In this case, we say that the test is \emph{consistent} or \emph{convergent}.
+
+\begin{remark}
+ 	Note that the convergence of $\beta(\theta)$ is not uniform in $\theta$ since the limit is discontinuous while $\beta(\theta)$ is continuous.
+\end{remark}
+
+An interesting vocabulary os as folos.
+We say that $(\wh \theta - \theta) / \sqrt{n \theta_0(1 - \theta_0)}$ is an asymptotically \emph{ancillary} statistic, since its asymptoyic distributiond oes not depend on the parameter.
+The read understands now that the construction of confidence intervals or statistical test relies on the construction and study or ancillary (resp. asymptotically ancillary)statistics, when building confidence intervals or test (resp confidence intervals with asymptotic coverage or tests asymptotically of controlled level).
+This allows to tune the IC or tests, BLABLA
+
+Whenever $X \sim P_\theta$ and the distribution of $f_\theta(X)$ does not depend on $\theta$, then we say that $f_\theta(X)$ is an \emph{ancillary} statistic.
+
+
+There is of course a strong connection between confidence intervals and tests, as explained in the following proposition.
+\begin{proposition}
+	If $D(X)$ is a confidence region of level $1 - \alpha$, namely $\P_\theta[ \theta \in D(X)] \geq 1 - \alpha$ then the test $\varphi(X) = 1$ iff $D(X) \cap \Theta_0  = \emptyset$ is of level $\alpha$.
+\end{proposition}
+\begin{proof}
+	We have
+	\begin{equation*}
+		\P_\theta [\varphi(X) = 1] = \P_\theta[ D(X) \cap \Theta_0 = \emptyset] \leq \P_\theta[ \theta \notin D(X) ] \leq \alpha.
+	\end{equation*}
+	for any $\theta \in \Theta_0$.
+\end{proof}
+
+For $\Theta \subset \R$ we will often end up in one of the following situations.
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|}
+	$\Theta_0 = \{ \theta_0 \}$ & $\Theta_0 = [\theta_0, +\infty)$ & $\Theta_0 = (-\infty, \Theta_0]$ & $\Theta_0 = [\theta_0 - \delta, \theta_0 + \infty]$ \\
+	Simple hypothesis & \multicolumn{3}{c}{Multiple hypothesis} \\
+	& \multicolumn{2}{c}{One-sided hypothesis} & Two-sided hypothesis
+\end{tabular}
+	\caption{Standard null hypothesis.}
+	\label{tab:standard-null-hypothesis}
+\end{table}
+
+
+Recipe. A one-sided test can be obtained using a one-sided confidence interval in the oppositive direction of $\Theta_0$. A test with two-sided null hypothesis can be obtained using a (two-sided confidence interval).
+Example are for $H_0 : \theta = \theta_0$ versus $H_1 : \theta > \theta_0$ we use $R = \{ \wh \theta > \theta_0 + c \}$ while for $H_0 : \theta = \theta_0$ versus $H_1 : \theta \neq \theta_0$ we use $R = \{ | \wh \theta - \theta_0 | > c \}$ .
+
+\todo{optimality of test, rule to build optimal tests...}
+
+
+p-value. For any test, if $\alpha$ is very small, the test has no choice but to accept $H_0$, since it has almost no slack to eventually be wrong about $H_0$.
+The only way to build a test with $\alpha = 0$ if to set $\varphi = 0$, namely it never rejects, namely for the cancer case from above, we tell all patient that they have cancer. It's a strategy where we never miss cancers (Type I error is zero)
+but arguably it's not a perfect one.
+But in such a case, the power of the test is constantly equal to $0$, leading to the worst possible Type II error (equal to $1$).
+
+We need to give some slack to the test by taking $\alpha > 0$ so that we have a chance to obtain a test with some power, this gives to the test a small and controlled margin.
+
+When $X$ and the testing regression are fix, we therefore expect that when $\alpha$ is small (close to $0$) then the test will accept (since it has no margin to reject), while when $\alpha$ increases up to a certain point, the test rejects.
+\todo{mettre dessin}
+There is, therefore, a value of $\alpha$ starting from which the test starts to reject the assumption.
+This value is called the $p$-value of the test.
+
+Let $R_\alpha$ be the rejection region of a test at level $\alpha$, namely we have $\sup_{\theta \in \Theta_0} \P_\theta(R_\alpha) \leq \alpha < \alpha'$ for any $\alpha' > \alpha$, so that $R_\alpha$ also is a rejection region at level $\alpha'$.
+Generally (but not always) we have $R_\alpha \subset R_\alpha'$ whenever $\alpha < \alpha'$.
+In such a case, we can define the $p$-value of the test as
+\begin{equation*}
+	\alpha(X) = \inf \{ \alpha \in [0, 1] : X \in R_\alpha \}.
+\end{equation*}
+Let us compute the $p$-value for the previous test for the $\ber$ model.
+\begin{example}
+	For the test $H_0 : \theta \leq \theta_0$ versus $H_1 : \theta > \theta_0$ we use the rejection set $R_\alpha = \{ \wh \theta > \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}} \}$.
+	In this case we have
+	\begin{align*}
+		\alpha(X) &= \inf \{ \alpha \in [0, 1] : \wh \theta > \theta_0 + \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}}  \} \\
+		&= \inf \{ \alpha \in [0, 1] : \alpha > 1 - \Phi\Big(  \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta - \theta_0) \Big)  \} \\
+		&= 1 - \Phi\Big(  \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta - \theta_0) \Big)
+	\end{align*}
+\end{example}
+
+Recipe. In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
+\todo{Exemple mise sur le marche de medicaments, les p values, attention c'est aussi critique, etc...}
+
+For instance, if $\alpha(X) \leq 10^3$ then we are strongly rejecting $H_0$, since it would require a level $\alpha < 10^3$ to accept $H_0$, which is very small. 
+If $\alpha(X) = 3\%$, the result of the test is rather ambiguous while $\alpha(X) = 30\%$ is a strong acceptation of $H_0$.
+What researchers  do when making a scientific decision based on statistical tests it to publish the $p$-value of the tests they perform, in physics you need ???? \todo{doner exemples}
 
 % paragraph paragraph_name (end)
 
