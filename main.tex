@@ -68,6 +68,13 @@
 \DeclareMathOperator{\cN}{\mathcal N}
 \DeclareMathOperator{\cP}{\mathcal P}
 
+\DeclareMathOperator{\bA}{\boldsymbol A}
+\DeclareMathOperator{\bB}{\boldsymbol B}
+\DeclareMathOperator{\bI}{\boldsymbol I}
+
+\DeclareMathOperator{\bSigma}{\boldsymbol \Sigma}
+
+
 \DeclareMathOperator{\nor}{Normal}
 \DeclareMathOperator{\ber}{Bernoulli}
 \DeclareMathOperator{\bin}{Binomial}
@@ -76,6 +83,8 @@
 \DeclareMathOperator{\uni}{Uniform}
 
 \DeclareMathOperator{\sigmoid}{sigmoid}
+
+\DeclareMathOperator{\leb}{Lebesgue}
 
 \newcommand{\eps}{\varepsilon}
 
@@ -515,7 +524,7 @@ We really need at this point to tell the reader what a \emph{statistic} is.
 For the $\ber(\theta)$ experiment, we will look for statistics of $X$ allowing to infer the unknown parameter $\theta$.
 We already now that we can restrict ourselves to statistics of $S$ instead of $X$, since $S$ is  sufficient.
 
-\section{Identifiable and dominated models} % (fold)
+\section{Identifiable models} % (fold)
 
 The only source of information about $\theta$ available to us about is $X$, through its distribution $P_{\theta}$.
 So, in order to infer $\theta$, we need, at least, to be able to recover $\theta$ given $P_\theta$.
@@ -535,43 +544,56 @@ If $\theta \mapsto P_\theta$ is not injective, then there is no way to find back
 In Example~\ref{ex:identifiabiliy}, we used the sigmoid function given by $\sigmoid(x) = 1 / (1 + e^{-x})$ for any $x \in \R$.%
 \sidenote{The sigmoid function is heavily used in statistics and machine learning, we will come back to it later in the book.}
 Identifiability is generally a property that we ensure by choosing and parametrizing correctly the considered statistical model.
-A more interesting example of non-identifiable model is given by \emph{mixture models}, such as the Gaussian mixture model, where we consider a distribution on $\R^d$ with density
-\textbf{ICI ICI ICI ICI ICI}
-\begin{equation*}
-	f_\theta(x) = \sum_{k=1}^K \pi_k \phi_{\mu_k, \Sigma_k}(x)
-\end{equation*}
-for any $x \in \R^d$, where $\theta = (\pi_k, \mu_k, \Sigma_k)_{k=1, \ldots, K}$ and $K \geq 1$ is an integer corresponding to the number of ``clusters'' in this mixture density.%
-\sidenote{In the paramatrization of the Gaussian mixture we have $\mu_k \in \R^d$, $\Sigma_k \in \R^{d \times d}$ and $\Sigma_k \succ 0$ (meaning that $\Sigma_k$ is a symmetric positive matrix and $\pi_k \geq 0$ with $\sum_{k=1}^K \pi_k = 1$).}
+An interesting example of \emph{non-identifiable} model is given by \emph{mixture models}, such as the Gaussian mixture model, where we consider a distribution on $\R^d$ with density
+\sidenote{In the paramatrization of the Gaussian mixture we have expectations $\mu_k \in \R^d$ that correspond to the centroids of the clusters, we have covariances $\bSigma_k \in \R^{d \times d}$ such that $\bSigma_k \succ 0$, which means that $\bSigma_k$ is a symmetric and positive matrix, that parametrizes the shape cluster $k$ around its centroid and finally we have $\pi_k \geq 0$ that are such that $\sum_{k=1}^K \pi_k = 1$ and parametrize the relative population of each cluster.}%
+\begin{align*}
+	f_\theta(x) &= \sum_{k=1}^K \pi_k \phi_{\mu_k, \bSigma_k}(x) \\ 
+	&=: \sum_{k=1}^K \frac{\pi_k }{\sqrt{(2 \pi)^d \det (\bSigma_k)}} 
+	\exp\Big( -\frac 12 (x - \mu_k)^\top \bSigma_k^{-1} (x - \mu_k) \Big)
+\end{align*}
+\begin{marginfigure}
+	\includegraphics{images/gmm.pdf}
+	\caption{$500$ realizations of a Gaussian mixture with $d=2$, $K=3$ and the following parameters $\pi = [\pi_1, \pi_2, \pi_3] = [0.1, 0.6, 0.3]$, $\mu_1 = [-1, 1]$, $\mu_2 = [0, 1]$, $\mu_3 = [-0.5, 0.5]$ and $\bSigma_1 = \bSigma_2 = \bSigma_3 = 0.01 \times \bI_2$.}
+\end{marginfigure}
+for any $x \in \R^d$, where $\theta = (\pi_k, \mu_k, \bSigma_k)_{k=1, \ldots, K}$ and $K \geq 1$ is an integer corresponding to the number of ``clusters''.
+Such a mixture density is non-identifiable, since we have $f_{\theta} = f_{\sigma(\theta)}$
+for any permutation $\sigma(\theta) = (\pi_{\sigma(k)}, \mu_{\sigma(k)}, \bSigma_{\sigma(k)})_{k=1, \ldots, K}$ of $\theta$ where $\sigma$ is a permutation of $\{1, \ldots, K \}$.
+This simply means that the density distribution $f_\theta$ is invariant by a relabeling of the clusters numbers.
+Despite the fact that such a mixture model is not identifiable, it is often used for \emph{model-based clustering}, which is an instance of \emph{unsupervised learning}.
+Another family of non-identifiable models is deep neural networks, in which an infinitely large number of parametrizations lead to the same prediction function.
 
-A mixture density is not identifiable, since $f_{\theta} = f_{\sigma(\theta)}$
-for any permutation $\sigma$ of $\{1, \ldots, K \}$, where we put $\sigma(\theta) = (\pi_{\sigma(k)}, \mu_{\sigma(k)}, \Sigma_{\sigma(k)})_{k=1, \ldots, K}$, namely we just relabel the numbering of the clusters.
-Such mixture models are not identifiable, but are used often for clustering for instance (and instance of unsupervised learning, more on that later).
-The situation is even worse for neural networks, in which an infinitely large number of parametrizations leads to the same cost function.
+\section{Dominated models} 
 
-\section{Some types of models} % (fold)
-\label{sec:some_types_of_models}
-
-Whenever $\cP = \{ P_\theta : \theta \in \Theta \}$ with $\Theta \subset \R^d$ we say that $\cP$ is a \emph{parametric} model, since it is parametrized by a finite-dimensional parameter, trivial instances being $\{ \ber(\theta) : \theta \in (0, 1) \}$ for which $d=1$ and $\{ \nor(\mu, v) : (\mu, v) \in \R \times (0, +\infty) \}$ for which $d=2$.
-We say that both models are \emph{dominated}, the first being dominated by the counting measure $\nu = \delta_0 + \delta_1$ on $\{ 0, 1\}$ and the second by the Lebesgue measure on $\R$.\sidenote{We recall that if $P$ and $Q$ are two measures on the same probability space, $P \ll Q$ means that the measure $P$ is \emph{absolutely continuous} with respect to $Q$, namely that $Q(A) = 0 \Rightarrow P(A)= 0$ for any measurable set $A$.}
+Whenever $\cP = \{ P_\theta : \theta \in \Theta \}$ with $\Theta \subset \R^d$, we say that $\cP$ is a \emph{parametric} model, since it is parametrized by a finite-dimensional parameter, trivial instances being $\{ \ber(\theta) : \theta \in (0, 1) \}$ for which $d=1$ and $\{ \nor(\mu, v) : (\mu, v) \in \R \times (0, +\infty) \}$ for which $d=2$.
+We say that both models are \emph{dominated}, the first being dominated by the counting measure $\nu = \delta_0 + \delta_1$ on $\{ 0, 1\}$,%
+\sidenote{The notation $\delta_x$ will stand for the Dirac mass at $x$ which is the probability measure satisfying $\int f(u) \delta_x(du) = f(x)$ for any measurable function $f$.}%
+and the second by the Lebesgue measure on $\R$.\sidenote{We recall that if $P$ and $Q$ are two measures on the same probability space, $P \ll Q$ means that the measure $P$ is \emph{absolutely continuous} with respect to $Q$, namely that $Q(A) = 0 \Rightarrow P(A)= 0$ for any measurable set $A$.}
 \begin{definition}
 	\label{def:dominated-model}
 	We say that a model $\cP = \{ P_\theta : \theta \in \Theta \}$ is dominated if there is a $\sigma$-finite measure $\mu$ such that $P_\theta \ll \mu$ for all $\theta \in \Theta$.
 \end{definition}
-In Definition~\ref{def:dominated-model}, we require that the dominating measure is $\sigma$-finite, so that we can apply the Radon-Nikodym theorem: since $P_\theta \ll \mu$ for all $\theta \in \Theta$, then there is a density 
+In Definition~\ref{def:dominated-model}, we require that the dominating measure is $\sigma$-finite, so that we can apply the Radon-Nikodym theorem: since $P_\theta \ll \mu$ for all $\theta \in \Theta$, there is a density 
 \begin{equation*}
 	f_\theta = \frac{dP_\theta}{d\mu}
 \end{equation*}
 for all $\theta \in \Theta$.
-The domination property allows to work with densities instead of distribution: a model can be therefore defined by a family of densities $\{ f_\theta : \theta \in \Theta \}$ together with a dominating measure (which is in most cases the Lebesgue measure, a counting measure, or a combination of them.)
-
-Non-dominated models are usually pathological and uninteresting examples in statistics, such as the model
+This domination property allows to work with densities instead of distributions: a model can be therefore defined as a family of densities $\{ f_\theta : \theta \in \Theta \}$ together with a dominating measure (which is in most cases the Lebesgue measure, a counting measure, or a combination of them.)
+\begin{example}
+	Let us consider the \emph{zero-inflated Laplace distribution}, which is a distribution on $\R$ given by
+	\begin{equation*}
+		P_\theta(dx) = \pi_0 \delta_0(dx) + (1 - \pi_0) \frac{\lambda}{2} e^{-\lambda |x|} dx
+	\end{equation*}
+	for $\theta = (\pi_0, \lambda) \in \Theta = (0, 1) \times (0, +\infty)$, which is dominated by the measure $\mu = \delta_0 + \leb$, where $\leb$ stands from now on for the Lebesgue measure on $\R$.
+\end{example}
+Non-dominated models are usually pathological and uninteresting examples, such as the model
 \begin{equation*}
 	P_\lambda = \frac 1e \sum_{n \geq 0} \frac{1}{n!} \delta_{\lambda n}
 \end{equation*}
 for $\lambda \in (0, +\infty)$, which cannot be dominated by a $\sigma$-finite measure.
 
-Let us finish this chapter with an example of non-parametric model: we observe $X_1, \ldots, X_n$ with a density $f \in F$ with respect to the Lebesgue measure, where $F$ is the set of probability densities on $[0, 1]^d$ that are $C^2$ and such that $\grad^2 f(x) \mleq L \mathbf I_d$.\todo{define identity and the fact that bold letters are for matrices only} This is the set of gradient-Lipschitz probability densities.
-In this setting, we work with an infinite dimensional set of parameters $F$, and need to build a \emph{non-parametric} estimator of the unknown density $f$.
+Let us finish this chapter with an example of non-parametric model: we observe $X_1, \ldots, X_n$ with a density $f \in F$ with respect to the Lebesgue measure, where $F$ is the set of probability densities on $[0, 1]^d$ that are $C^2$ and such that $\grad^2 f(x) \mleq L \bI_d$.%
+\sidenote{The notation $\nabla^2 f(x)$ stands for the Hessian matrix of $f$, while $\bI_d$ is the identity matrix on $\R^d$. Finally, for two symmetric matrices $\bA$ and $\bB$, the notation $\bA \mleq \bB$ means $\bB - \bA \mgeq 0$, namely that $\bB - \bA$ is a symmetric and positive semi-definite matrix.}%
+In such a setting, we work with an infinite dimensional set of parameters $F$, and need to build a \emph{non-parametric} estimator of the unknown density $f$.
 
 
 \setchapterpreamble[u]{\margintoc}

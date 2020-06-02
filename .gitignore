@@ -17,3 +17,8 @@
 *.toc
 *.xdy
 .DS_Store
+.gitignore.swp
+assets/.idea/
+assets/venv/
+*.fdb_latexmk
+*.fls
