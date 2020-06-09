@@ -108,6 +108,7 @@
 
 \newcommand{\gopro}{\overset{\P}{\rightarrow}}
 \newcommand{\goas}{\overset{\text{as\ }}{\rightarrow}}
+\newcommand{\goqr}{\overset{\text{$L^2$\ }}{\rightarrow}}
 \newcommand{\gosto}{\leadsto}
 
 \newcommand{\lest}{\underset{\text{st}}{\leq}}
@@ -462,6 +463,7 @@ For $x=6$ for instance, we have $\P(Z > x) \leq 10^{-9}$: we will actually never
 		\item A \emph{family of distributions} $\cP = \{ P_\theta : \theta \in \Theta\}$ on $(E, \cE)$.
 	\end{itemize}
 	We suppose that $\P_X = \P \circ X^{-1} \in \cP$. We say that $\cP$ is a \emph{statistical model} for $X$ and we will denote the statistical experiment as $(X, \cP)$.
+	We call $\Theta$ the \emph{set of parameters} of the model.
 \end{definition}
 \marginnote{We call $X$ a \emph{random object} in Definition~\ref{def:statistical_experiment} to stress that it can be a real random variable, a random vector, a random matrix, among other things.}
 The random variable $X : (\Omega, \cA, \P) \rightarrow (E, \cE)$ has distribution $\P_X = \P \circ X^{-1}$ which is the probability image of $\P$ by $X$ on $(\Omega, \cA)$.
@@ -497,6 +499,7 @@ We have observations $X = (X_1, \ldots, X_n)$ with $X_i$ iid and $\cP = \{ P_\th
 \end{definition}
 
 \section{Statistics}
+\label{sec:statistics}
 
 Now, let us go back to the $\ber(\theta)$ experiment.
 Let us first recall that for this experiment we have iid samples $X = (X_1, \ldots, X_n)$, that
@@ -600,57 +603,63 @@ In such a setting, we work with an infinite dimensional set of parameters $F$, a
 \chapter{Statistical inference}
 \label{chap:statistical_inference}
 
-In this Chapter, we will consider all along the most simple Bernoulli model, where we have i.i.d samples $X_1, \ldots, X_n$ distributed as $\ber(\theta)$ with $\theta \in (0, 1)$, hence the model $\cP = \{ \ber(\theta) : \theta \in (0, 1) \}$.
-Let us start with the first inference problem: \emph{estimation}.
-\todo{citer birge et son approche?}
+In this Chapter, we will consider all along the simple Bernoulli model, where we have iid samples $X_1, \ldots, X_n$ distributed as $\ber(\theta)$ with $\theta \in (0, 1)$.
+Let us start with the first \emph{inference} problem: the \emph{estimation} problem.
 
 \section{Estimation} % (fold)
 \label{sec:estimation}
 
-We want to infer $\theta$, or estimate it by finding a (measurable) function of $(X_1, \ldots, X_n)$\sidenote{Since we are doing statistics, the only thing we are allowed to use is the data...} or a function of $S_n = \sum_{i=1}^n X_i$ thereof, since $S_n$ is sufficient (see ??), so that there is no information loss if we look for a function of $S_n$ only, that we will denote
+We want to \emph{infer} $\theta$, or \emph{estimate} it by finding a statistic which is a measurable function of $(X_1, \ldots, X_n)$%
+\sidenote{Once again, since we are doing statistics, the only thing we are allowed to use is the data.}%
+or a measurable function of $S_n = \sum_{i=1}^n X_i$ thereof, since $S_n$ is sufficient, see Section~\ref{sec:statistics}.
+We will denote such a statistic as
 \begin{equation*}
  	\wh \theta_n = \wh \theta(X_1, \ldots, X_n).
 \end{equation*}
-Of course, this function \emph{cannot depend} on $\theta$, since once again, we are doing statistics.
-Ideally, we want $\wh \theta_n$ to be "close" to $\theta$, since we want a good estimator, so we need to quantify closeness.
-For instance, we could want $|\wh \theta_n - \theta|$ to be close to $0$ with a large probability, let us not forget that $\wh \theta_n$ is random, since it depends on the samples $(X_1, \ldots, X_n)$, so that quantifying the closeness of $\wh \theta_n$ to $\theta$ means controlling a stochastic quantity such as $|\wh \theta_n - \theta|$.
-The most classical way to achieve this is by introducing the \emph{quadratic risk}.
+This function \emph{does not depend} on $\theta$, but its distribution does.
+Ideally, we want $\wh \theta_n$ to be ``close'' to $\theta$, since we want a good estimator, so that the first thing we need to do is to quantify ``closeness''.
+For instance, we could want $|\wh \theta_n - \theta|$ to be close to $0$ with a large probability, since we do not forget that $\wh \theta_n$ is a random variable, as a function of the data $(X_1, \ldots, X_n)$.
+The most natural distance is arguably the Euclidean one, in this context the $L^2$ distance, 
+which leads to the \emph{quadratic risk}.%
+\sidenote{Although the quadratic risk corresponds to a \emph{squared} $L^2$ norm.}
 \begin{definition}[Quadratic risk]
-	Consider a statistical model with data $X$ and model with $\Theta \subset \R$ and an estimator $\wh \theta(X)$. The quadratic risk of $\wh \theta$ is given by
+	\label{def:quadratic_risk}
+	Consider a statistical model with data $X$ and set of parameters $\Theta \subset \R$ and an estimator $\wh \theta(X)$. 
+	The quadratic risk of $\wh \theta$ is given by
 	\begin{equation*}
 		R(\wh \theta, \theta) = \E_\theta[ (\wh \theta - \theta)^2 ] = \int_E (\wh \theta(x) - \theta)^2 P_\theta(dx).
 	\end{equation*}
-	We consider the quadratic risk as a function of the parameter, namely $\Theta \mapsto \R^+$ given by $\theta \mapsto R(\wh \theta, \theta)$.
+	We consider the quadratic risk as a function $\Theta \goes \R^+$ of the parameter given by $\theta \mapsto R(\wh \theta, \theta)$.
 \end{definition}
 At this point, it's useful to recall some classical inequalities on the queues of random variables.
-The Markov inequality tells us that if $Y$ is real random variable such that $\E |Y|^p < +\infty$ for some $p > 0$ then
+The Markov inequality tells us that if $Y$ is a real random variable such that $\E |Y|^p < +\infty$ for some $p > 0$ then
 \begin{equation*}
 	\P(|Y| > t) \leq \frac{\E |Y|^p}{t^p}
 \end{equation*}
 for any $t > 0$.
-This tells us that the more $Y$ has moments (an order $p$ moment means that $\E |Y|^p < +\infty$), with a large $p$, the more the queue of $Y$ is tight (it goes faster to $0$).
-Markov's inequality entails easily the Bienaym\'e Tchebychev inequality
-\begin{equation*}
-	\P(|Y - \E Y| > t) \leq \frac{\var(Y)}{t^2}
-\end{equation*}
-whenever $\E Y^2 < +\infty$.
-The Markov inequality entails, for $p=2$, that
+This tells us that the more $Y$ has moments%
+\sidenote{We say that $Y$ as moments up to order $p$ if $\E |Y|^p < +\infty$. 
+Note that this entails $\E |Y|^q < +\infty$ for any $q < p$ since $\E |Y|^p = \E (|Y|^q)^{p/q} \geq (\E |Y|^q)^{p/q}$ using Jensen's inequality.}%
+the more the queue of $Y$ is tight (it goes faster to $0$ with $t \goes +\infty$).
+Markov's inequality with $p=2$ entails 
 \begin{equation}
 	\label{eq:l2_entrails_proba}
-	\P(|\wh \theta_n - \theta| > t) \leq \frac{R(\wh \theta, \theta)}{t^2}
+	\P(|\wh \theta - \theta| > t) \leq \frac{R(\wh \theta, \theta)}{t^2}
 \end{equation}
-which entails that whenever the quadratic risk is small, then $\wh \theta$ is close to $\theta$ with a large probability.
+which tells us that whenever the quadratic risk is small, then $\wh \theta$ is close to $\theta$ with a large probability.
 
-Whenever $R(\wh \theta_n, \theta) \rightarrow 0$ with $n \rightarrow +\infty$, we say that $\wh \theta_n \rightarrow \theta$ in $L^2$\sidenote{More precisely, in $L^2(\P_\theta$}, which entails because of~\eqref{eq:l2_entrails_proba} that $\wh \theta_n \rightarrow \theta$ in probability.\sidenote{More precisely, in $\P_\theta$-probability. Let us recall at this point that $\wh \theta_n \rightarrow \theta$ in $\P_\theta$ probability whenever $\P_\theta[|\wh \theta_n - \theta| > \eps] \rightarrow 0$ as $n \rightarrow +\infty$ for any $\eps > 0$.}
-When $\wh \theta_n \rightarrow \theta$ in probability, we say that $\wh \theta_n$ is a \emph{consistent} or \emph{convergent} estimator.
+Whenever $R(\wh \theta_n, \theta) \rightarrow 0$ with $n \rightarrow +\infty$, we will write $\wh \theta_n \goqr \theta$, which stands for convergence in $L^2$ norm, which entails, because of Inequality~\eqref{eq:l2_entrails_proba}, that $\wh \theta_n \gopro \theta$, which stands for convergence in probability.\sidenote{More precisely, in $\P_\theta$-probability, namely $\P_\theta[|\wh \theta_n - \theta| > \eps] \rightarrow 0$ as $n \rightarrow +\infty$ for any $\eps > 0$, but we will write $\wh \theta_n \gopro \theta$ in order to keep the notations as simple as possible.}%
 \begin{definition}
+	\label{def:consistent}
 	We say that $\wh \theta_n$ is \emph{consistent} whenever $\P_\theta[|\wh \theta_n - \theta| > \eps] \rightarrow 0$ as $n \rightarrow +\infty$ for any $\eps > 0$ and any $\theta \in \Theta$.
-	We say that it is strongly consistent whenever $\P_\theta[\wh \theta_n \rightarrow \theta] = 1$ and any $\theta \in \Theta$.
+	We say that it is strongly consistent whenever $\P_\theta[\wh \theta_n \rightarrow \theta] = 1$ for any $\theta \in \Theta$.
 \end{definition}
-In all these definitions, if $\Theta \subset \R^d$, it suffices to replace $|\cdot|$ by $\norm{\cdot}_2$ (or any other norm on $\R^d$)\sidenote{The norm $\norm{x}_2 = \sqrt{x^\top x} = (\sum_{j=1}^d x_j^2)^{1/2}$}
+In Definitions~\ref{def:quadratic_risk} and~\ref{def:consistent} above, if $\Theta \subset \R^d$, it suffices to replace $|\cdot|$ by the Euclidean norm $\norm{\cdot}_2$.%
+\sidenote{We can use any norm on $\R^d$ in Definition~\ref{def:consistent}, and let us recall that $\norm{x}_2 = \sqrt{x^\top x} = (\sum_{j=1}^d x_j^2)^{1/2}$.}%
 
+\paragraph{Bias variance decomposition.} % (fold)
 
-The bias-variance decomposition is the following decomposition of the quadratic risk between two terms: a bias term denoted $b(\wh \theta_n, \theta)$ (squared in the formula) and a variance term:
+The \emph{bias-variance decomposition} is the following decomposition of the quadratic risk between two terms: a bias term denoted $b(\wh \theta_n, \theta)$ (squared in the formula) and a variance term:
 \begin{equation}
 	\label{eq:bias-variance-decomposition}
 	\begin{split}
@@ -661,18 +670,33 @@ The bias-variance decomposition is the following decomposition of the quadratic 
 When $b(\wh \theta_n, \theta) = 0$ for all $\theta \in \Theta$ we say that the estimator $\wh \theta_n$ is \emph{unbiased}.
 This means that this estimator will not tend to over or under-estimate $\theta$. 
 
-Going back to Bernoulli, we consider $\wh \theta_n = S_n / n = \sum_{i=1}^n X_i / n$, so that we have the following:
+\paragraph{Back to Bernoulli.} % (fold)
+
+% paragraph back_to_bernoulli (end)Back to Bernoulli
+Going back to the $\ber(\theta)$ model, we consider the estimator $\wh \theta_n = S / n = \sum_{i=1}^n X_i / n$.
+We already know many things about this estimator:
 \begin{enumerate}
 	\item We have $\E_\theta [\wh \theta_n] = \theta$ which means that $\wh \theta_n$ is unbiased;
-	\item The bias-variance decomposition gives $R(\wh \theta_n, \theta) = \var(\wh \theta_n) = \theta (1 - \theta) / n \leq 1 / (4n) \rightarrow 0$ which means that $\wh \theta_n$ converges in $L^2$ (and that it is consistent) \todo{explain i.i.d variance etc.}
-	\item The law of large number tells us that $\wh \theta_n \goes \theta$ almost surely.
-	\item The central limit theorem tells us that $\sqrt n (\wh \theta_n - \theta) \leadsto \nor(0, \theta(1 - \theta))$.
+	\item The bias-variance decomposition gives
+	\begin{equation*}
+	 	R(\wh \theta_n, \theta) = \var(\wh \theta_n) = \frac{\theta (1 - \theta)}{n} \leq 
+	 	\frac{1}{4 n} \rightarrow 0
+	 \end{equation*}
+	 which means that $\wh \theta_n \goqr \theta$ and which entails that $\wh \theta_n$ it is consistent;
+	\item The law of large number tells us that $\wh \theta_n \goas \theta$, hence $\wh \theta_n$ is strongly consistent;
+	\item The central limit theorem tells us that
+	\begin{equation*}
+	\sqrt n (\wh \theta_n - \theta) \leadsto \nor(0, \theta(1 - \theta)).
+	\end{equation*}
 \end{enumerate}
-The points 2--4 from above show that when $n$ is large enough, then $\wh \theta_n$ is close to $\theta$.
+The points 2--4 from above are all different ways of saying that when $n$ is large enough, then $\wh \theta_n$ is close to $\theta$.
 In practice, an estimator leads to a value: for the Bernoulli model with $n=100$ and $42$ ones you end up with a single estimated value $0.42$.
-What if we want to include uncertainty in this estimation ?
+But what if we want to include uncertainty in this estimation ?
 Namely how confident are we about this $0.42$ value ?
-This can be achieved using another inference problem, described in the next section.
+Moreover, what do we mean by ``when $n$ large enough'', can we quantify this better ?
+All these questions can be answered by considering another inference problem: confidence intervals.
+
+ICI ICI ICI
 
 \section{Confidence intervals} % (fold)
 \label{sec:confidence_intervals}
