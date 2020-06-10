@@ -678,16 +678,18 @@ We already know many things about this estimator:
 \begin{enumerate}
 	\item We have $\E_\theta [\wh \theta_n] = \theta$ which means that $\wh \theta_n$ is unbiased;
 	\item The bias-variance decomposition gives
-	\begin{equation*}
+	\begin{equation}
+		\label{eq:bernoulli-quadratic-risk}
 	 	R(\wh \theta_n, \theta) = \var(\wh \theta_n) = \frac{\theta (1 - \theta)}{n} \leq 
 	 	\frac{1}{4 n} \rightarrow 0
-	 \end{equation*}
+	 \end{equation}
 	 which means that $\wh \theta_n \goqr \theta$ and which entails that $\wh \theta_n$ it is consistent;
 	\item The law of large number tells us that $\wh \theta_n \goas \theta$, hence $\wh \theta_n$ is strongly consistent;
 	\item The central limit theorem tells us that
-	\begin{equation*}
+	\begin{equation}
+	\label{eq:tcl-bernoulli}
 	\sqrt n (\wh \theta_n - \theta) \leadsto \nor(0, \theta(1 - \theta)).
-	\end{equation*}
+	\end{equation}
 \end{enumerate}
 The points 2--4 from above are all different ways of saying that when $n$ is large enough, then $\wh \theta_n$ is close to $\theta$.
 In practice, an estimator leads to a value: for the Bernoulli model with $n=100$ and $42$ ones you end up with a single estimated value $0.42$.
@@ -696,97 +698,107 @@ Namely how confident are we about this $0.42$ value ?
 Moreover, what do we mean by ``when $n$ large enough'', can we quantify this better ?
 All these questions can be answered by considering another inference problem: confidence intervals.
 
-ICI ICI ICI
-
 \section{Confidence intervals} % (fold)
 \label{sec:confidence_intervals}
 
 Here, we don't only want to build an estimator $\wh \theta_n$ but also to quantify the uncertainty of this estimation.
-We saw in Equation~??? from Section~?? that 
+Combining Inequalities~\eqref{eq:l2_entrails_proba} and~\eqref{eq:bernoulli-quadratic-risk} leads to
 \begin{equation*}
 	\P_\theta[ |\wh \theta_n - \theta| > t] \leq \frac{1}{4 n t^2}
 \end{equation*}
-so that for $\alpha \in (0, 1)$ and the choice $t_\alpha = \frac{1}{2 \sqrt{n \alpha}}$ we have 
+so that for $\alpha \in (0, 1)$ and the choice $t_\alpha = 1 / (2 \sqrt{n \alpha})$ we have 
 \begin{equation*}
-	\P_\theta[ | \leq \theta \leq \wh \theta_n + \frac{1}{2 \sqrt{n \alpha}}| > t] \geq 1 - \alpha \text{ where } \wh \theta^L =  \wh \theta_n - \frac{1}{2 \sqrt{n \alpha}} \text{ and } \wh \theta^R =  \wh \theta_n + \frac{1}{2 \sqrt{n \alpha}} 
+	\P_\theta \{ \theta \in [ \wh \theta^L, \wh \theta^R ] \} \geq 1 - \alpha,
 \end{equation*}
-If we choose $\alpha = 0.05 = 5\%$, we know that $\theta \in [\wh \theta^L, \wh \theta^R]$ with a probability larger than $95\%$.
-We say in this case that the interval $[\wh \theta^L, \wh \theta^R]$ is a \emph{confidence interval} with coverage $95\%$.
+where
+\begin{equation*}
+	\wh \theta^L =  \wh \theta_n - \frac{1}{2 \sqrt{n \alpha}} \quad \text{ and } \quad \wh \theta^R =  \wh \theta_n + \frac{1}{2 \sqrt{n \alpha}}.
+\end{equation*}
+Therefore, if we choose $\alpha = 0.05 = 5\%$, we know that $\theta \in [\wh \theta^L, \wh \theta^R]$ with a probability larger than $95\%$.
+We say in this case that the interval $[\wh \theta^L, \wh \theta^R]$ is a \emph{confidence interval} with coverage $95\%$.%
+\sidenote{If we toss the coin $1000$ times and get $420$ heads, the realization of this confidence interval at $95\%$ is $[0.35, 0.49]$.}
 
-Note that if $\alpha = 0$ then we have no other choice than using $\R$ as a confidence interval, $\alpha$ allows to give some slack so that we can build a non-absurdly  large confidence interval. 
+Note that if $\alpha = 0$ then we have no other choice than using the whole $\R$ as a confidence interval: $\alpha$ allows to give some slack, so that we can build a non-absurdly  large confidence interval. 
 We typically have that $|\wh \theta^R - \wh \theta^L|$ increases as $\alpha$ decreases, since a smaller $\alpha$ means more confidence, hence a larger interval.
 On the contrary, $|\wh \theta^R - \wh \theta^L|$ should decrease with the sample size $n$.
 \begin{definition}[Confidence interval]
-	Consider a statistical model with set of parameters $\Theta \subset \R$ and data $X$. Fix a \emph{confidence level} $\alpha \in (0, 1)$. 
-	We say that $[\wh \theta^L(X), \wh \theta^R(X)]$ is a \emph{confidence interval} at level $1 - \alpha$ when $\wh \theta^L(X)$ and $\wh \theta^R(X)$ are statistics satisfying
-	\begin{equation*}
+	Consider a statistical model with data $X$ and set of parameters $\Theta \subset \R$. 
+	Fix a \emph{confidence level} $\alpha \in (0, 1)$ and consider two statistics $\wh \theta^L(X)$ and $\wh \theta^R(X)$. Whenever 
+	\begin{equation}
+		\label{eq:coverage-property}
 		\P_\theta\{ \theta \in [\wh \theta^L(X), \wh \theta^R(X)] \} \geq 1 - \alpha
-	\end{equation*}
-	for any $\theta \in \Theta$.
+	\end{equation}
+	for any $\theta \in \Theta$, we say that $[\wh \theta^L(X), \wh \theta^R(X)]$ is a \emph{confidence interval} at level $1 - \alpha$.
 \end{definition}
-More generally when $\Theta \subset \R^d$ we will say that $D(X)$ is a \emph{confidence set} if it is a statistic satisfying $\P_\theta\{ \theta \in D(X) \} \geq 1 - \alpha$ for any $\theta \in \Theta$.
-
-Remark. In some cases we can choose $\wh \theta^L = -\infty$ (or $0$ for the Bernoulli model) or $\wh \theta^R = +\infty$.
-In this case we talk about a unilateral confidence interval.
-This is interesting whenever we need to ensure that some toxicity level is smaller than some quantity.\sidenote{Using a unilateral IC allows to be slightly more precise on one side...}
-
-But, we can do better for the Bernoulli model (or any model where $X$ is bounded) thanks to the Hoeffding inequality.
+Inequality~\eqref{eq:coverage-property} is called the \emph{coverage} property of the confidence interval.
+More generally, when $\Theta \subset \R^d$, we will say that $S(X)$ is a \emph{confidence set} if it is a statistic satisfying the coverage property $\P_\theta\{ \theta \in S(X) \} \geq 1 - \alpha$ for any $\theta \in \Theta$.
+\begin{remark}
+	Whenever we need only an upper or lower bound on $\theta$ (for instance, when we need to check statistically that some toxicity level is below some threshold), we build a \emph{unilateral} or \emph{one-sided} confidence interval, where we choose either $\wh \theta^L = -\infty$ ($0$ for the Bernoulli model) or $\wh \theta^R = +\infty$ ($1$ for the Bernoulli model).
+	Indeed, at a fixed level $1 - \alpha$, the bound of a one-sided confidence interval is tighter than the same sided bound corresponding to a two-sided interval. 
+\end{remark}
+But, we can do better for the Bernoulli model (or any model where $X$ is bounded) thanks to the following Hoeffding inequality.
 \begin{theorem}
 	\label{thm:hoeffding}
-	Let $X_1, \ldots, X_n$ be independent random variables such that $X_i \in [a_i, b_i]$ a.s. and let $S = \sum_{i=1}^n X_i$. Then, the following deviation inequality holds
+	Let $X_1, \ldots, X_n$ be independent random variables such that $X_i \in [a_i, b_i]$ almost surely and let $S = \sum_{i=1}^n X_i$. Then,
 	\begin{equation*}
 		\P[ S \geq \E S + t] \leq \exp\Big( - \frac{2 t^2}{\sum_{i=1}^n (b_i - a_i)^2} \Big)
 	\end{equation*}
-	for any $t >0$.
+	holds for any $t >0$.
 \end{theorem}
 Theorem~\ref{thm:hoeffding} is something called a deviation inequality: it provides a control on the probability of deviation of $S$ with respect to its mean.
-This theorem shows that bounded random variables are \emph{sub-Gaussian}, since it shows that the queue of $S - \E S$ is bounded by $\exp(-c t^2)$ for some constant $c$ (although it depends on $n$).
+It shows that bounded random variables are \emph{sub-Gaussian}, since it shows that the queue of $S - \E S$ is bounded by $\exp(-c t^2)$ for some constant $c$ (that depends on $n$).
+The proof of this inequality is provided in Chapter~??\todo{insert reference} below.
 \todo{Provide the proof of Hoeffding}
 
-Let's apply Theorem~\ref{thm:hoeffding} to the Bernoulli case, where $X_i \sim \ber(\theta)$ so that $a_i = 0$, $b_i = 1$ and therefore $\P[ S \geq \E S + t] \leq e^{-2 t^2 / n}$.
-By symmetry and the union bound\todo{side note Union bound} we have $\P[ | S - \E S | \geq t] \leq 2 e^{-2 t^2 / n}$ and for some $\alpha \in (0, 1)$ we obtain another confidence interval, since the following \emph{coverage property} holds:
-\begin{equation*}
-	\P \Big[ \theta - \sqrt{\frac{\log(2 / \alpha)}{2n}} \leq \theta \leq \wh \theta 
-	+ \sqrt{\frac{\log(2 / \alpha)}{2n}} \Big] \geq 1 - \alpha.
-\end{equation*}
-This proves that the interval $[\wh \theta \pm \sqrt{\log(2 / \alpha) / (2n)}]$ is a confidence interval at level $1 - \alpha$.
+\paragraph{Back to Bernoulli.} % (fold)
 
-Let's compare the two confidence intervals we obtained for the Bernoulli model.
+% paragraph back_to_bernoulli (end)
+Let's apply Theorem~\ref{thm:hoeffding} to the Bernoulli model $X_i \sim \ber(\theta)$ so that $a_i = 0$, $b_i = 1$ and therefore $\P[ S \geq \E S + t] \leq e^{-2 t^2 / n}$.
+Using again Theorem~\ref{thm:hoeffding} with $X_i$ replaced by $-X_i$ together with an union bound%
+\sidenote{}%
+leads to $\P[ | S - \E S | \geq t] \leq 2 e^{-2 t^2 / n}$.
+So, for some $\alpha \in (0, 1)$, we obtain another confidence interval, since the following coverage property holds:
+\begin{equation*}
+	\P \bigg[ \wh \theta_n - \sqrt{\frac{\log(2 / \alpha)}{2n}} \leq \theta \leq \wh \theta_n 
+	+ \sqrt{\frac{\log(2 / \alpha)}{2n}} \bigg] \geq 1 - \alpha.
+\end{equation*}
+This proves that $[\wh \theta \pm \sqrt{\log(2 / \alpha) / (2n)}]$ is a confidence interval at level $1 - \alpha$.%
+\sidenote{For $1000$ tosses and $420$ heads, the realization of this interval at level $95\%$ is $[0.37, 0.46]$. It's a bit more precise than the previous one, which was based on Markov's inequality.}
+Let's compare the two confidence intervals we obtained so far for the Bernoulli model.
 We have of course
 \begin{equation*}
 	\frac{1}{2 \sqrt{n \alpha}} > \sqrt{\frac{\log(2 / \alpha)}{2n}} 
 \end{equation*}
-for $\alpha$ small enough, note also that both sides are $O(1 / \sqrt n)$.
-Only the dependence on the level $\alpha$ is improved with the confidence interval obtained through the Hoeffding inequality, thanks to the sub-Gaussianity of the Bernoulli distribution, while we only used the second moment property for the first.
-We just made a better use of the concentration properties of the Bernoulli distribution.
+for $\alpha$ small enough\todo{etre plus precis ici}, although both sides are $O(1 / \sqrt n)$.
+Only the dependence on the level $\alpha$ is improved with the confidence interval obtained through Hoeffding's inequality, since it exploits the sub-Gaussianity of the Bernoulli distribution, while the first confidence interval only used the upper bound~\eqref{eq:l2_entrails_proba} on the variance.%
 \sidenote{There is yet another way to build a (non-asymptotic) confidence interval, using a more computational approach, see for instance ????}
 
-For both previous confidence intervals, we adopted a non-asymtotic approach: the coverage properties hold for any value of $n \geq 1$.
-We were able to do this, since we able to use Hoeffding or since we know the exact distribution of $S_n$.
-
-Let us now describe an asymptotic approach, which is the one typically used, since in general we don't know the exact distribution of the statistics used in the confidence intervals.
-This approach is actually the one used in general, for more complicated models than Bernoulli, and is based on the central limit theorem.
-Indeed, We know from the central limit theorem that
+For both the previous confidence intervals, we adopted a \emph{non-asymtotic} approach: the coverage properties hold for any value of $n \geq 1$.
+This is possible since we know things about the distribution of $S$, which is a simple $\bin(n, \theta)$ distribution.
+However, in general, the \emph{exact} distribution of an estimator $\wh \theta_n$ cannot always be made explicit, and in such cases, we often use Gaussian approximations, thanks to the central limit theorem. 
+Let's do this for the Bernoulli model.
+Indeed, we know from~\eqref{eq:tcl-bernoulli} that
 \begin{equation*}
-	\sqrt{ \frac{n}{\theta(1 - \theta)}} (\wh \theta - \theta) =  \sqrt{\frac{n}{\var(X_1)}} \Big( \frac 1n \sum_{i=1}^n X_i - \E X_1 \Big) \leadsto \nor(0, 1)
+	\P_\theta \bigg[ \sqrt{\frac{n}{\theta (1 - \theta)}} (\wh \theta_n - \theta) \in I
+	\bigg] \rightarrow \P[Z \in I]
 \end{equation*}
-which entails, for any interval $I \subset \R$\todo{borelien je sais pas quoi} that
-\begin{equation*}
-	\P_\theta\Big[ \sqrt n \frac{\wh \theta - \theta}{\sqrt{\theta(1 - \theta)}} 
-	\Big] \rightarrow \P[Z \in I]
-\end{equation*}
-where $Z \sim \nor(0, 1)$.
-Using $I = [-q_\alpha, q_\alpha]$ with $q_\alpha = \Phi^{-1}(1 - \alpha / 2)$ we end up with the fact that
-\begin{equation*}
-	\P_\theta\Big\{ \theta \in \Big[ \wh \theta \pm \frac{q_\alpha \sqrt{\theta(1 - \theta)}}{\sqrt n} \Big] \rightarrow 1 - \alpha.
-\end{equation*}
-All that is interesting enough, but useless, since the interval we built in Equation~??? depends on $\theta$ ! It is \emph{not} a confidence interval, we can't use it since it depends on $\theta$.
+where $Z \sim \nor(0, 1)$ for any closed interval $I \subset \R$.%
+\sidenote{This uses the porte-manteau theorem, which says that $X_n \gosto X$ if and only if $\P(X_n \in A) \goes \P(X \in A)$ for any Borelian set $A$ such that $\P(X \in \partial A) = 0$, where $\partial A$ stands for the boundary of $A$.}%
+Using $I = [-q_\alpha, q_\alpha]$ with $q_\alpha = \Phi^{-1}(1 - \alpha / 2)$ we end up%
+\sidenote{We recall that $\Phi^{-1}$ is the inverse of the distribution function $\Phi(x) = \P( Z \leq x)$ of the $\nor(0, 1)$ distribution, that we call the \emph{quantile} function of $\nor(0, 1)$.}%
+with the fact that
+\begin{equation}
+	\label{eq:not-and-ic}
+	\P_\theta\bigg\{ \theta \in \Big[ \wh \theta_n \pm q_\alpha \sqrt{\frac{\theta(1 - \theta)}{n}} \Big] \bigg\} \rightarrow 1 - \alpha.
+\end{equation}
+This is interesting, but not enough to build a confidence interval, since the interval in Equation~\eqref{eq:not-and-ic} depends on $\theta$ through the variance term $\theta(1 - \theta)$.
+Indeed, a confidence interval must be something that does \emph{not} depend on $\theta$.
 We need to work a little bit more in order to remove the dependence on $\theta$ from this interval. 
-We can proceed as follows: we can use that $\theta (1 - \theta) \leq 1 / 4$ for any $\theta \in [0, 1]$, so that
+We do the same as before: we use the fact that $\theta (1 - \theta) \leq 1 / 4$ for any $\theta \in [0, 1]$, so that
 \begin{equation*}
-	\liminf_n \P_\theta\{ \theta \in [\wh \theta \pm \frac{q_\alpha}{2 \sqrt n} ] \} = 1 - \alpha.
+	\liminf_n \P_\theta \bigg\{ \theta \in \Big [\wh \theta_n \pm \frac{q_\alpha}{2 \sqrt n} \Big] \bigg\} \geq 1 - \alpha.
 \end{equation*}
-This is what we call a confidence interval of \emph{asymptotically of level} $1 - \alpha$, constructed \emph{by excess}.
+This is what we call a confidence interval \emph{asymptotically of level} $1 - \alpha$ constructed \emph{by excess}.
 
 A problem with this approach is that we used the fact that the Binomial distribution (the distribution of $S_n$) correctly renormalized is approximated by a Gaussian distribution for large $n$.
 This requires $n$ to be large enough, but also $\theta$ to be not to close to $0$ and $1$.
