@@ -609,42 +609,52 @@ as $n \goes +\infty$.%
 \section{Tests} % (fold)
 \label{sec:tests}
 
-Let us consider in this section, once again a model $\{ P_\theta : \theta \in \Theta \}$ and a sample $X$.
+Let us consider, again, in this section, a statistical experiment with data $X$ and model $\{ P_\theta : \theta \in \Theta \}$.
 Here, we want to decide between to hypothesis $H_0$ and $H_1$, where
 \begin{equation*}
-	H_i \text{ corresponds to the fact that } \theta \in \Theta_i
+	H_i \quad \text{means that} \quad \theta \in \Theta_i
 \end{equation*}
-for $i \in \{ 0, 1 \}$, where $\{ \Theta_0, \Theta_1 \}$ is a partition of $\Theta$.
-
-Let us give, to help understand this complex concept of statistical testing, a morbid example.
-Imagine that you need to decide if a patient has cancer or not.
-The patient has cancer if some parameter $\theta \in (0, 1)$ about him satisfies 
+for $i \in \{ 0, 1 \}$, where $\{ \Theta_0, \Theta_1 \}$ is a partition of the set of parameters~$\Theta$.
+In order to understand the concept of statistical testing, let us consider the following unsettling example: imagine that you need to decide if a patient has cancer or not.
+The patient has cancer if some parameter $\theta \in (0, 1)$ about him satisfies
 $\theta \geq 0.42$.
-We \emph{choose} $\Theta_0 = [0.42, 1]$ and $\Theta_1 = [0, 0.42)$.
-We need to construct a testing function $\varphi : E \goes \{ 0, 1 \}$ that maps $X \mapsto \phi(X)$, our decision being the value of $\varphi(X)$.
-We are correct if $\varphi(X) = i$ whenever $\theta \in \Theta_i$ for $i \in \{ 0, 1 \}$ and incorrect whenever  $\varphi(X) = 1 - i$ whenever $\theta \in \Theta_i$.
-We have two types of errors: the \emph{Type-I error} or \emph{first-order error}, given by 
+We \emph{choose} $\Theta_0 = [0.42, 1]$ and $\Theta_1 = [0, 0.42)$, namely we decide that $H_0$ means that the patient has cancer, while $H_1$ means that the patient has not.
+We need to construct a testing function $\varphi : E \goes \{ 0, 1 \}$ that maps $X \mapsto \varphi(X)$, our decision being given by the value of $\varphi(X)$. 
+We decide that $H_0$ is true whenever $\varphi(X) = 0$, in this case we say that we \emph{accept} $H_0$ and we \emph{reject} $H_0$ whenever $\varphi(X) = 1$.
+This is a convention, the $1$ in $\varphi(X) = 1$ and $H_1$ will always mean that we \emph{reject} the \emph{null hypothesis} $H_0$.
+
+\paragraph{Type I and Type II errors.}
+
+When $\theta \in \Theta_i$, we are correct if $\varphi(X) = i$ and incorrect if $\varphi(X) = 1 - i$.
+We have two types of errors: the \emph{Type-I error}, also called the \emph{first-order error}, given by 
 \begin{equation}
 	\label{eq:type-1-error}
-	\P_\theta[ \varphi(X) = 1] = \E_\theta \varphi(X) \text{ if } 
+	\P_\theta[ \varphi(X) = 1] = \E_\theta [\varphi(X)] \quad \text{for} \quad
 	\theta \in \Theta_0
 \end{equation}
-and the \emph{Type-II error} or \emph{second-order error}, given by 
+and the \emph{Type-II error}, also called \emph{second-order error}, given by 
 \begin{equation}
 	\label{eq:type-2-error}
-	\P_\theta[ \varphi(X) = 0] = 1 - \E_\theta \varphi(X) \text{ if } 
+	\P_\theta[ \varphi(X) = 0] = 1 - \E_\theta [\varphi(X)] \quad \text{for} \quad 
 	\theta \in \Theta_1.
 \end{equation}
-In the above cancer detection example, if the Type I error corresponds to 
-\todo{redonner l'exemple du cancer precisement et clairement, dire que ce n'est pas symetrique et qu'il faut bien chosir les hypthese}
+For the cancer detection problem, the Type~I error corresponds to the \emph{probability of saying to the patient that he has not cancer while he has.}
+The Type~II error corresponds to the \emph{probability of saying to the patient that he has cancer while he has not}.
+Note that these two types of errors are not symmetrical: we consider that the first one is more serious than the second (although this can be debated, the patient could do a depression, or start an invasive treatment for nothing).%
+\sidenote{Of course this morbid example is highly unrealistic, and is used only to stress the asymmetry of errors in a statistical testing problem.}
+The important point here is that $H_0$ and $H_1$ must be \emph{chosen} depending on the practical application considered. 
+They are not \emph{given} and they correspond to an important modeling choice.
+We will see below that $H_0$ and $H_1$ must be chosen, in practice, so that the corresponding Type I error is \emph{more serious}, for the considered application, than the Type II error.
+\begin{definition}
+	The function $\beta : \Theta \goes [0, 1]$ that maps $\theta \mapsto \beta(\theta) = \E_\theta [\varphi(X)]$ is called the \emph{power function} of the test $\varphi$.
+\end{definition}
+Ideally, we would like both the Type~I and Type~II errors to be small, namely $\beta(\theta) \approx 0$ for $\theta \in \Theta_0$ and $\beta(\theta) \approx 1$ for $\theta \in \Theta_1$.
+But this is impossible: if $\Theta$ is a connected set then $\Theta_0$ and $\Theta_1$ share a common frontier, so that $\beta$ must be discontinuous on it, while $\beta$ is in general a continuous function.\todo{donner sa valeur dans le cas bernoulli}
+Therefore, it is hard to make both the Type~I and Type~II errors small at the same time.
 
-The function $\beta : \Theta \goes [0, 1]$ that maps $\theta \mapsto \beta(\theta) = \E_\theta \varphi(X)$ is called the \emph{power function} of the test $\varphi$.
-\todo{definition}
+\todo{en fait faudrait donner l'exemple du cancer ici... ?}
 
-Ideally, we would like $\beta(\theta) \approx 0$ for $\theta \in \Theta_1$ and $\beta(\theta) \approx 1$ for $\theta \in ???$ \todo{correct} but this is impossible: if $\Theta$ is a connex set then $\Theta_0$ and $\Theta_1$ share a common frontier and $\beta$ must therefore be discontinuous on it, while $\beta$ is in general a continuous function.
-Therefore, It is hard to make both Type I and Type II errors at the same time, namely to make $\beta$ small both on $\Theta_0$ and $\Theta_1$
-
-\paragraph{The Neyman and Pearson approach: dissymetrization of the problem} % (fold)
+\paragraph{Desymmetrization of statistical tests.} % (fold)
 
 The now commonly adopted awy to perform statistical tests is through the Neyman Pearson approach, by using a ``dissymetrization'' of the problem.
 The convention is to choose the hypothesis $H_0$ as the one that we must not miss: we choose $H_0$ in a way that the the Type I error (we have $\varphi(X)=1$ while $\theta \in \Theta_0$) is more serious than the Type II error (we have $\varphi(X)=0$ while $\theta \in \Theta_1$).
@@ -788,7 +798,6 @@ For $\Theta \subset \R$ we will often end up in one of the following situations.
 	\caption{Standard null hypothesis.}
 	\label{tab:standard-null-hypothesis}
 \end{table}
-
 
 Recipe. A one-sided test can be obtained using a one-sided confidence interval in the oppositive direction of $\Theta_0$. A test with two-sided null hypothesis can be obtained using a (two-sided confidence interval).
 Example are for $H_0 : \theta = \theta_0$ versus $H_1 : \theta > \theta_0$ we use $R = \{ \wh \theta > \theta_0 + c \}$ while for $H_0 : \theta = \theta_0$ versus $H_1 : \theta \neq \theta_0$ we use $R = \{ | \wh \theta - \theta_0 | > c \}$ .
