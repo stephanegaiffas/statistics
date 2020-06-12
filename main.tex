@@ -701,7 +701,7 @@ A natural idea is therefore to reject $H_0$ if $\wh \theta_n$ is too large.
 Since we want to reject when $\theta > \theta_0$, we want to consider a rejection set $R = \{ \wh \theta_n > c \}$ for some constant $c$ chosen so that the Type~I error is controlled by $\alpha$.
 Note that choosing $c = \theta_0$ is a bad idea: using the central limit theorem, we see that $\P_{\theta_0}[\wh \theta_n > \theta_0] \goes 1/2$.
 We need to increase $c$ by some amount, so that the Type~I error can be indeed smaller than $\alpha$.%
-\sidenote{It is very easy to build a statistical test with $\alpha = 0$, namely zero Type~I error. For the cancer example from above, we just need to tell to all the patient that they have cancer. By doing so, we will never miss any cancer diagnostic. But arguably, this is not a good idea, so we need to give some slack in the construction of the test, by considering a small Type~I error $\alpha$, which allows to improve a lot the Type~II error.}
+\sidenote{It is very easy to build a statistical test with $\alpha = 0$, namely zero Type~I error. For the cancer example from above, we just need to tell to all the patient that they have cancer. By doing so, we never miss any cancer diagnostic, but on the other hand this test has zero power. Arguably, this is not a good idea, so we need to give some slack in the construction of the test by considering a small but non-zero $\alpha$, giving an opportunity to get a better power.}
 
 We understand at this point that $c$ will depend on $\alpha, \theta_0$ and the sample size $n$, among other things, and that in view of Definition~\ref{def:test-definitions} it needs to be such that $\sup_{\theta \leq \theta_0} \P_\theta[S > n c] \leq \alpha$.
 But, we know that $n \wh \theta_n = S \sim \bin(n, \theta)$ under $\P_\theta$%
@@ -783,6 +783,7 @@ Indeed, we know by combining Example~\ref{ex:coupling-binomial} together with~\e
 \begin{equation*}
 	\P_\theta[ \wh \theta_n > \theta_0  + \delta_n ] \leq \P_{\theta_0}[ \wh \theta_n > \theta_0  + \delta_n ] \goes \alpha
 \end{equation*}
+\todo{detailler dans la marge ?}
 as $n \goes +\infty$, so that $\limsup_n \sup_{\theta \leq \theta_0} \P_\theta[ \wh \theta_n > \theta_0  + \delta_n ] \leq \alpha$, which provides an asymptotic control of the Type~I error of this test: we say that it is \emph{asymptotically of level $\alpha$}.
 But what can be said about the \emph{power} of the test ?
 We know that $\wh \theta_n \goas \theta$ under $\P_\theta$ and that $\delta_n \go 0$, so, \emph{under $H_1$}, namely whenever $\theta > \theta_0$, we have
@@ -804,88 +805,81 @@ This is called an asymptotically \emph{ancillary} statistic.
 \begin{definition}
 	Whenever $X \sim P_\theta$ and the distribution of $f_\theta(X)$ does not depend on $\theta$, we say that $f_\theta(X)$ is an \emph{ancillary} statistic.
 \end{definition}
-The construction of confidence intervals or tests requires the construction and such an ancillary or asymptotically ancillary statistic, since we need to remove the dependence on $\theta$ from its distribution in order to compute quantiles that leads to the coverage property of the confidence interval, or to the level of the test.
+The construction of confidence intervals and tests requires such an ancillary or asymptotically ancillary statistic.
+Indeed, we need to remove the dependence on $\theta$ from the distribution to be able to compute quantiles allowing to tune the coverage property of a confidence interval, or the level of a test.
 
-ICI ICI ICI
+\paragraph{Confidence intervals and tests.}
 
 There is of course a strong connection between confidence intervals and tests, as explained in the following proposition.
 \begin{proposition}
-	If $D(X)$ is a confidence region of level $1 - \alpha$, namely $\P_\theta[ \theta \in D(X)] \geq 1 - \alpha$ then the test $\varphi(X) = 1$ iff $D(X) \cap \Theta_0  = \emptyset$ is of level $\alpha$.
+	If $S(X)$ is a confidence set of level $1 - \alpha$, namely $\P_\theta[ \theta \in S(X)] \geq 1 - \alpha$ for any $\theta \in \Theta$, then the test with rejection set $\{ x : D(x) \cap \Theta_0  = \emptyset\}$ is of level $\alpha$.
 \end{proposition}
-\begin{proof}
-	We have
-	\begin{equation*}
-		\P_\theta [\varphi(X) = 1] = \P_\theta[ D(X) \cap \Theta_0 = \emptyset] \leq \P_\theta[ \theta \notin D(X) ] \leq \alpha.
-	\end{equation*}
-	for any $\theta \in \Theta_0$.
-\end{proof}
+This proposition easily follows from the fact that $\P_\theta[ S(X) \cap \Theta_0 = \emptyset] \leq \P_\theta[ \theta \notin S(X) ] \leq \alpha$ for any $\theta \in \Theta_0$.
+Confidence intervals and tests are therefore deeply intertwined notions in the sense that when you have built one of the two, you can build easily the other.
 
-For $\Theta \subset \R$ we will often end up in one of the following situations.
+\paragraph{Types of hypothesis.} % (fold)
 
-\begin{table}
-\begin{tabular}{|c|c|c|c|}
-	$\Theta_0 = \{ \theta_0 \}$ & $\Theta_0 = [\theta_0, +\infty)$ & $\Theta_0 = (-\infty, \Theta_0]$ & $\Theta_0 = [\theta_0 - \delta, \theta_0 + \infty]$ \\
-	Simple hypothesis & \multicolumn{3}{c}{Multiple hypothesis} \\
-	& \multicolumn{2}{c}{One-sided hypothesis} & Two-sided hypothesis
-\end{tabular}
-	\caption{Standard null hypothesis.}
+For $\Theta \subset \R$, we often consider one of the null hypothesis listed in Table~\ref{tab:standard-null-hypothesis}, where we provide some vocabulary.
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{|l|l|l|}\hline
+		$\Theta_0 = \{ \theta_0 \}$ & Simple hypothesis & \\ \hline
+		$\Theta_0 = [\theta_0, +\infty)$ & \multirow{3}{*}{Multiple hypothesis} & \multirow{2}{*}{One-sided hypothesis} \\
+		$\Theta_0 = (-\infty, \Theta_0]$ & & \\  \cline{3-3}
+		$\Theta_0 = [\theta_0 - \delta, \theta_0 + \delta]$ & & Two-sided hypothesis \\ \hline
+	\end{tabular}
+	\caption{Some examples of standard null hypothesis.}
 	\label{tab:standard-null-hypothesis}
 \end{table}
 
-Recipe. A one-sided test can be obtained using a one-sided confidence interval in the oppositive direction of $\Theta_0$. A test with two-sided null hypothesis can be obtained using a (two-sided confidence interval).
-Example are for $H_0 : \theta = \theta_0$ versus $H_1 : \theta > \theta_0$ we use $R = \{ \wh \theta > \theta_0 + c \}$ while for $H_0 : \theta = \theta_0$ versus $H_1 : \theta \neq \theta_0$ we use $R = \{ | \wh \theta - \theta_0 | > c \}$ .
 
-\todo{optimality of test, rule to build optimal tests...}
+A test with a one-sided null hypothesis can be obtained using a one-sided confidence interval in the opposite direction of $\Theta_0$. A test with a two-sided null hypothesis can be obtained using a (two-sided) confidence interval.
+For hypothesis $H_0 : \theta = \theta_0$ versus $H_1 : \theta > \theta_0$ we use $R = \{ \wh \theta_n > \theta_0 + c \}$ while for $H_0 : \theta = \theta_0$ versus $H_1 : \theta \neq \theta_0$ we use $R = \{ | \wh \theta_n - \theta_0 | > c \}$, where $\wh \theta_n$ is some estimator of $\theta$ and where $c$ is a constant to be tuned so that the test has level $\alpha$.
+Note that this is a generic recipe, that holds for any statistical model.
 
+In Chapter~? below, we provide systematic rules to build \emph{optimal} tests in a fairly general setting, but this will require some extra concepts that we will be developed later.
 
-p-value. For any test, if $\alpha$ is very small, the test has no choice but to accept $H_0$, since it has almost no slack to eventually be wrong about $H_0$.
-The only way to build a test with $\alpha = 0$ if to set $\varphi = 0$, namely it never rejects, namely for the cancer case from above, we tell all patient that they have cancer. It's a strategy where we never miss cancers (Type I error is zero)
-but arguably it's not a perfect one.
-But in such a case, the power of the test is constantly equal to $0$, leading to the worst possible Type II error (equal to $1$).
+\paragraph{About $p$-values.}
 
-We need to give some slack to the test by taking $\alpha > 0$ so that we have a chance to obtain a test with some power, this gives to the test a small and controlled margin.
+Consider a statistical model and a test at level $\alpha$, and keep everything 
+fixed but $\alpha$.
+If $\alpha$ is very small, the test has no choice but to accept $H_0$, since it has almost no slack to eventually be wrong about it.
+Once again, the only way to build a test with $\alpha = 0$ is to never reject (tell all the patients that they have cancer).
+With everything fixed but $\alpha$, we can expect that for some value $\alpha(X)$ (that depends on the data $X$), we have that whenever $\alpha < \alpha(X)$ then the test \emph{accepts} $H_0$ while when $\alpha > \alpha(X)$ the test \emph{rejects} $H_0$.
+Such a value $\alpha(X)$ is called the $p$-value of the test.
 
-When $X$ and the testing regression are fix, we therefore expect that when $\alpha$ is small (close to $0$) then the test will accept (since it has no margin to reject), while when $\alpha$ increases up to a certain point, the test rejects.
-\todo{mettre dessin}
-There is, therefore, a value of $\alpha$ starting from which the test starts to reject the assumption.
-This value is called the $p$-value of the test.
-
-\paragraph{About $p$-values.} % (fold)
-
-% paragraph about_ (end)
-Let $R_\alpha$ be the rejection region of a test at level $\alpha$, namely we have $\sup_{\theta \in \Theta_0} \P_\theta(R_\alpha) \leq \alpha < \alpha'$ for any $\alpha' > \alpha$, so that $R_\alpha$ also is a rejection region at level $\alpha'$.
-Generally (but not always) we have $R_\alpha \subset R_\alpha'$ whenever $\alpha < \alpha'$.
-In such a case, we can define the $p$-value of the test as
+Let $R_\alpha$ be the rejection set of some test at level $\alpha$, so that it satisfies $\sup_{\theta \in \Theta_0} \P_\theta(R_\alpha) \leq \alpha < \alpha'$ for any $\alpha' > \alpha$, which means that $R_\alpha$ also is a rejection set at level $\alpha'$.
+Generally (but not always), the family $\{ R_\alpha \}_{\alpha \in [0, 1]}$ of rejection sets of a test is \emph{increasing} with respect to $\alpha$, namely $R_\alpha \subset R_\alpha'$ for any $\alpha < \alpha'$.
+In this case, we can define the $p$-value as follows.
+\begin{definition}
+	Consider a statistical experiment with data $X$ and a statistical test with an increasing family $\{ R_\alpha \}_{\alpha \in [0, 1]}$ of rejection sets.
+	The $p$-value of such a test the $X$-measurable random variable given by
+	\begin{equation*}
+		\alpha(X) = \inf \{ \alpha \in [0, 1] : X \in R_\alpha \}.	
+	\end{equation*}
+\end{definition}
+Let us compute the $p$-value of one of the tests we built previously for the $\ber(\theta)$ model and the hypothesis~\eqref{eq:chap03-tests-hypothesis}.
+The rejection set is given by
 \begin{equation*}
-	\alpha(X) = \inf \{ \alpha \in [0, 1] : X \in R_\alpha \}.
+	R_\alpha = \bigg\{ \wh \theta_n > \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 
+	(1 - \theta_0)}{n}} \bigg \}
 \end{equation*}
-Let us compute the $p$-value for the previous test for the $\ber$ model.
-\begin{example}
-	For the test $H_0 : \theta \leq \theta_0$ versus $H_1 : \theta > \theta_0$ we use the rejection set $R_\alpha = \{ \wh \theta > \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}} \}$.
-	In this case we have
-	\begin{align*}
-		\alpha(X) &= \inf \{ \alpha \in [0, 1] : \wh \theta > \theta_0 + \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}}  \} \\
-		&= \inf \{ \alpha \in [0, 1] : \alpha > 1 - \Phi\Big(  \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta - \theta_0) \Big)  \} \\
-		&= 1 - \Phi\Big(  \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta - \theta_0) \Big)
-	\end{align*}
-\end{example}
-
-
-\begin{recipe}
-	In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
-\end{recipe}
-
-
-\begin{warning}
-	In practice, we never choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data. The value of the $p$-value gives somehow, how much we are willing to believe in $H_0$.
-\end{warning}
-
-
+so that the $p$-value can be computed as follows:
+\begin{align*}
+	\alpha(X) &= \inf \bigg\{ \alpha \in [0, 1] : \wh \theta_n > \theta_0 + \theta_0 + \Phi^{-1}(1 - \alpha) \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}}  \bigg\} \\
+	&= \inf \bigg \{ \alpha \in [0, 1] : \alpha > 1 - \Phi\Big( \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta_n - \theta_0) \Big) \bigg \} \\
+	&= 1 - \Phi\Big(  \sqrt{\frac{n}{\theta_0 (1 - \theta_0)}} (\wh \theta_n - \theta_0) \Big)
+\end{align*}
+In practice, when using a statistical testing procedure, we \emph{do not} choose the level $\alpha$, but we compute the $p$-value using the definition of the test and the data.
+A statistical software will never ask you $\alpha$ but will rather give you the value of the $p$-value.
+This value quantifies, somehow, \emph{how much we are willing to believe in $H_0$.}
 \todo{Exemple mise sur le marche de medicaments, les p values, attention c'est aussi critique, etc...}
-
-For instance, if $\alpha(X) \leq 10^3$ then we are strongly rejecting $H_0$, since it would require a level $\alpha < 10^3$ to accept $H_0$, which is very small. 
+For instance, if $\alpha(X) \leq 10^{-3}$ then we are strongly rejecting $H_0$, since it would require a level $\alpha < 10^{-3}$ to accept $H_0$, which is very small. 
 If $\alpha(X) = 3\%$, the result of the test is rather ambiguous while $\alpha(X) = 30\%$ is a strong acceptation of $H_0$.
-What researchers  do when making a scientific decision based on statistical tests it to publish the $p$-value of the tests they perform, in physics you need ???? \todo{doner exemples}
+
+In many sciences, in order to publish conclusions based on experimental observations, researchers must exhibit the $p$-values of the considered statistical tests in order to justify that some effect is indeed observed.
+\todo{Donner exemples en sante et en physique nucleaire ?}
 
 
 \pagelayout{wide}
