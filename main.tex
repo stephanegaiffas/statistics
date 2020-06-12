@@ -111,8 +111,11 @@
 \newcommand{\goqr}{\overset{\text{$L^2$\ }}{\rightarrow}}
 \newcommand{\gosto}{\leadsto}
 
-\newcommand{\lest}{\underset{\text{st}}{\leq}}
-\newcommand{\gest}{\underset{\text{st}}{\qeq}}
+
+% \newcommand{\lest}{ \underset{\text{st}}{\leq}}
+\newcommand{\lest}{\preceq}
+% \newcommand{\gest}{\underset{\text{st}}{\qeq}}
+\newcommand{\gest}{\succeq}
 
 
 
@@ -568,7 +571,7 @@ The proof easily follows from a first-order Taylor expansion of $g$ around~$z$, 
 A particularly useful case for statistics is when $Z$ is Gaussian.
 For instance, if $\sqrt n (\wh \theta_n - \theta) \leadsto \nor(0, \sigma(\theta)^2)$, we have
 \begin{equation*}
-	\sqrt n (g(\wh \theta) - g(\theta)) \leadsto 
+	\sqrt n (g(\wh \theta_n) - g(\theta)) \leadsto 
 	\nor(0, \sigma(\theta)^2 (g'(\theta))^2)
 \end{equation*}
 whenever $g$ satisfies the conditions of Theorem~\ref{thm:delta-method}.
@@ -646,6 +649,7 @@ The important point here is that $H_0$ and $H_1$ must be \emph{chosen} depending
 They are not \emph{given} and they correspond to an important modeling choice.
 We will see below that $H_0$ and $H_1$ must be chosen, in practice, so that the corresponding Type I error is \emph{more serious}, for the considered application, than the Type II error.
 \begin{definition}
+	\label{def:power-function}
 	The function $\beta : \Theta \goes [0, 1]$ that maps $\theta \mapsto \beta(\theta) = \E_\theta [\varphi(X)]$ is called the \emph{power function} of the test $\varphi$.
 \end{definition}
 Ideally, we would like both the Type~I and Type~II errors to be small, namely $\beta(\theta) \approx 0$ for $\theta \in \Theta_0$ and $\beta(\theta) \approx 1$ for $\theta \in \Theta_1$.
@@ -656,124 +660,153 @@ Therefore, it is hard to make both the Type~I and Type~II errors small at the sa
 
 \paragraph{Desymmetrization of statistical tests.} % (fold)
 
-The now commonly adopted awy to perform statistical tests is through the Neyman Pearson approach, by using a ``dissymetrization'' of the problem.
-The convention is to choose the hypothesis $H_0$ as the one that we must not miss: we choose $H_0$ in a way that the the Type I error (we have $\varphi(X)=1$ while $\theta \in \Theta_0$) is more serious than the Type II error (we have $\varphi(X)=0$ while $\theta \in \Theta_1$).
-Type I error is always the rejection of $H_0$ while it's true, Type II error is always acceptation of $H_0$ while it is false, the only thing we need to decide is what are $H_0$ and $H_1$.
-
-Going back to our morbid example, it is natural to define $H_0$ as ``the patient has cancer'' and $H_1$ as ``the patient does not have cancer''.
-Type I error means in this case ``we decide that the patient does not have cancer while he actually has it'' and Type II error means ``we decide that the patient has cancer while he does not have it''.
-In this example, common sense tells us that with this choice, we have indeed that the Type I error is more serious than the Type II. 
-This can be debated (it always can), since telling a patient he has cancer while he has not can lead to a depression that could have be avoided, and entail heavy useless treatments. 
-Of course this discussion describes nothing realistic, and is only intended to help the reader understand two things about hypothesis testing: the choice of the hypothesis is a modelization choice that must be guided by common sense, and the two errors are highly non-symmetric.
-
-
-We call $H_0$ the \emph{null hypothesis} and $H_1$ the \emph{alternative hypothesis}.
-When $\varphi(X) = 0$ we say that we \emph{accept $H_0$} or simply that the test \emph{accepts} while $\varphi(X) = 1$ means that the test rejects $H_0$.
-Let us wrap up all of this in the following definition.
+The way a statistical test is performed is through the \emph{Neyman-Pearson approach}, where we  \emph{desymmetrize} the problem: choose the hypothesis $H_0$ using common sense, so that the hypothesis leading to a Type~I error that is more serious than the Type~II error.
+The Type~I error is always the rejection of $H_0$ when it is true, while the Type~II error is always the acceptation of $H_0$ when it is false.
+The only thing that we choose is what are $H_0$ and $H_1$.
+Let us wrap up all what we said before, and introduce some extra things.
 \begin{definition}
-	Given a statistical testing problem with hypothesis
+	\label{def:test-definitions}
+	Consider a statistical testing problem with hypothesis
 	\begin{equation*}
-		H_0 : \theta \Theta_0 \text{ and } H_1 : \theta \Theta_1
+		H_0 : \theta \in \Theta_0 \quad \text{versus} \quad H_1 : \theta \in \Theta_1
 	\end{equation*}
-	and a testing function $\varphi : E \goes \{ 0, 1 \}$, we define the following things:
+	and a testing function $\varphi : E \goes \{ 0, 1 \}$.
+	We call $H_0$ the \emph{null} hypothesis and $H_1$ the \emph{alternative} hypothesis.
+	When $\varphi(X) = 0$ we say that the test \emph{accepts} $H_0$ or simply that it \emph{accepts}. When $\varphi(X) = 1$ the test \emph{rejects}.
 	\begin{enumerate}
-		\item We call the set $R = \{ x \in E : \varphi(x) = 1 \}$ the \emph{rejection set} or \emph{reject region} of the test $\varphi$, and we call $R^\complement$ the \emph{acceptation region}
-		\item The function $\beta : \Theta \goes [0, 1]$ given by $\beta(\theta) = \E_\theta [\varphi(X)]$ is call the \emph{power function} of the test
-		\item The restrictions of this function $\beta : \Theta_0 \goes [0, 1]$ is call the \emph{Type I error} or \emph{first order error} while the restriction $\beta : \Theta_1 \goes [0, 1]$ is called the power of the test. The function $1 - \beta : \Theta_1 \goes [0, 1]$ is called \emph{Type II error} or \emph{second order error}.
+		\item The set $R = \{ x \in E : \varphi(x) = 1 \}$ is called the \emph{rejection set} or the \emph{rejection region} of the test $\varphi$, and we call $R^\complement$ the \emph{acceptation region};
+		% \item The function $\beta : \Theta \goes [0, 1]$ given by $\beta(\theta) = \E_\theta [\varphi(X)]$ is called the \emph{power function} of the test;
+		\item The restriction of the power function $\beta$ from Definition~\ref{def:power-function} $\beta : \Theta_0 \goes [0, 1]$ is called the \emph{Type~I error}, while the restriction $\beta : \Theta_1 \goes [0, 1]$ is called the \emph{power} of the test. The function $1 - \beta : \Theta_1 \goes [0, 1]$ is called the \emph{Type~II error} or \emph{second order error}.
 		\item Whenever $\sup_{\theta \in \Theta_0} \beta(\theta) \leq \alpha$ for some fixed $\alpha \in (0, 1)$, we say that the test \emph{has level} $\alpha$.
 	\end{enumerate}
 \end{definition}
+The idea of desymmetrization is as follows: given a level $\alpha \in (0, 1)$ (something like $1\%$, $5\%$ or $10\%$) we build a test so that it has, \emph{by construction}, level $\alpha$.
+Namelu, a test is \emph{built so that the Type~I error is controlled}, while nothing is done directly about the Type~II error.
+Given two statistical tests with level $\alpha$ (namely Type~I error $\leq \alpha$), we can simply compare their Type~II error and choose the one that maximizes it.
 
+\paragraph{Back to Bernoulli.} % (fold)
 
-The idea of dissymetrization of the hypothesis is as follows: given level $\alpha \in (0, 1)$ (something like $1\%$, $5\%$ or $10\%$) we look for a test at level $\alpha$ whose whose power is as large as possible for $\theta \in \Theta_1$.
-This means that, the test is built so that the Type I error is controlled, while we don't control the Type II error, but only study it.
-We can simply compare Type II error and choose the statistical test which maximizes it, under the fixed shared constraint on the Type I error....
-
-Example. Back to Bernoulli, where $X_1, \ldots, X_n$ i.i.d distributed as $\ber(\theta)$ and $S = \sum_{i=1}^n X_i \sim \bin(n, \theta)$.
-We consider the following hypothesis:
-\begin{equation*}
+Let us go back to the Bernoulli model where $X_1, \ldots, X_n$ are iid and distributed as $\ber(\theta)$.
+We consider the problem of statistical testing with hypothesis:
+\begin{equation}
+	\label{eq:chap03-tests-hypothesis}
 	H_0 : \theta \leq \theta_0 \quad \text{ against } \quad H_1 : \theta > \theta_0
-\end{equation*}
+\end{equation}
 so that $\Theta = (0, 1)$ and $\Theta_0 = (0, \theta_0]$ and $\Theta_1 = (\theta_0, 1)$.
-We studied before the estimator $\wh \theta = \bar X_n$, and know that it is a good estimator (we'll see later that we can't really improve it...)
-A natural idea is therefore to reject $H_0$ if $\wh \theta$ is too large.
+We studied in Sections~\ref{sec:estimation} and~\ref{sec:confidence_intervals} the estimator $\wh \theta_n = \bar X_n$, and know that it is a good estimator.
+A natural idea is therefore to reject $H_0$ if $\wh \theta_n$ is too large.
+\begin{recipe}
+	We build a test by defining its rejection set $R$. The shape of the rejection set can be easily guessed by looking at the alternative hypothesis $H_1$.
+\end{recipe}
+Since we want to reject when $\theta > \theta_0$, we want to consider a rejection set $R = \{ \wh \theta_n > c \}$ for some constant $c$ chosen so that the Type~I error is controlled by $\alpha$.
+Note that choosing $c = \theta_0$ is a bad idea: using the central limit theorem, we see that $\P_{\theta_0}[\wh \theta_n > \theta_0] \goes 1/2$.
+We need to increase $c$ by some amount, so that the Type~I error can be indeed smaller than $\alpha$.%
+\sidenote{It is very easy to build a statistical test with $\alpha = 0$, namely zero Type~I error. For the cancer example from above, we just need to tell to all the patient that they have cancer. By doing so, we will never miss any cancer diagnostic. But arguably, this is not a good idea, so we need to give some slack in the construction of the test, by considering a small Type~I error $\alpha$, which allows to improve a lot the Type~II error.}
 
-Recipe. We build a test by defining its rejection set $R$. The shape of the rejection set can be easily guessed by common sense: we simply look at the alternative hypothesis $H_1$. 
-Since we want to reject when $\theta > \theta_0$, we want to consider a rejection set $R = \{ \wh \theta > c \}$, for some constant $c$ chosen so that the Type I error is controlled by $\alpha$.
-Note that choosing $c = \theta_0$ is a bad idea: using the central limit theorem, we see that $\P_{\theta_0}(\wh \theta - \theta_0) \goes 1/2$, so we need to give some more slack (by increasing the constant $c$ by some amount) so that the Type I error can be indeed smaller than $\alpha$.
-We understand at this point that $c$ will depend on $\alpha, \theta_0$ and the sample size $n$.
-So, let's look for $c$ such that $\sup_{\theta \leq \theta_0} \P_\theta[S > n c] \leq \alpha$ (one again $c = c(n, \alpha, \theta_0$)
-\begin{equation*}
-	\P_\theta[\wh \theta > c] = \P_\theta[S > n c] = \P [\bin(n, \theta) > nc] = \beta(\theta)
-\end{equation*}
-So we need to understand the variations of $\theta \mapsto \beta(\theta)$.
-Intuitively, $\beta(\theta)$ should be increasing with $\theta$, since when $\theta$ increases, we get more ones, so $S$ is larger.
-This can be nicely formalized using the \emph{stochastic ordering}.
-\begin{definition}
+We understand at this point that $c$ will depend on $\alpha, \theta_0$ and the sample size $n$, among other things, and that in view of Definition~\ref{def:test-definitions} it needs to be such that $\sup_{\theta \leq \theta_0} \P_\theta[S > n c] \leq \alpha$.
+But, we know that $n \wh \theta_n = S \sim \bin(n, \theta)$ under $\P_\theta$%
+\sidenote{We write ``under $\P_\theta$'' here since Type~I error control must be performed under the null assumption $\theta \leq \theta_0$, so that we must specify under which distribution (which parameter $\theta$) we are working at this point.}%
+, so that
+\begin{equation}
+	\label{eq:power-control-binomial1}
+	\beta(\theta) = \P_\theta[\wh \theta_n > c] = \P_\theta[S > n c] = \P [\bin(n, \theta) > nc]
+\end{equation}
+for any $\theta \in (0, 1)$.%
+\todo{est ce que ca vaut le coup d'expliciter $\beta$ pour montrer que ce n'est pas si simple ?}
+%%%
+\sidenote{The notation $\P [\bin(n, \theta) > nc]$ is just a convenient way of writing $\P [ B > nc]$ where $B$ is a random variable distributed as $\bin(n, \theta)$. Note also that we replaced $\P_\theta$ simply by $\P$ herein, the notation $\P_\theta$ is required when we need to stress that the computation is performed under $\P_\theta$, while in the last equality we consider a generic probability space with probability $\P$ on which $B$ lives, the dependency on $\theta$ is now only through the distribution of it. These semantics are important and very convenient for statistical computations.}%
+%%%
+What we need to do now is to study the variations of $\theta \mapsto \beta(\theta)$.
+Intuitively, $\beta(\theta)$ should be increasing with $\theta$, since when $\theta$ increases, we get more ones, so that $S$ increases.
+This can be nicely formalized using \emph{stochastic ordering}.
+\begin{proposition}
+	\label{prop:stochastic-ordering}
 	Let $P$ and $Q$ be two probability measures on the same probability space. We say that \emph{$Q$ stochastically dominates $P$}, that we denote $P \lest Q$, whenever one of the following equivalent points is granted:
 	\begin{enumerate}
-		\item There are two real random variables $X, Y$ (on the same probability space) such that $X \sim P$ and $Y \sim Q$ such that $\P(X \leq Y) = 1$
-		\item We have $F_P(x) \geq F_Q(x)$ for any $x$ (where $F_P$ is the distribution function of $P$, namely $F_P(x) = \P((-\infty, x])$) which means that $P[()] \leq Q[(x, +\infty)]$
-		\item We have $F_P^-(p) \leq F_Q^-(p)$ for any $p \in [0, 1]$ where $F_P^-(p) = \inf \{ x \in \R : F_P(x) \geq p \}$ is the generalized inverse of $F_P$(recall that it is a cad-lag function)
+		\item There are two real random variables $X \sim P$ and $Y \sim Q$ (on the same probability space) such that $\P[X \leq Y] = 1$;
+		\item We have $F_P(x) \geq F_Q(x)$ for any $x \in \R$, where $F_P$ and $F_Q$ are the distribution functions of $P$ and $Q$, or equivalently, $P[(x, +\infty)] \leq Q[(x, +\infty)]$ for any $x \in \R$;%
+		\marginnote{We recall that the distribution function of $P$ is 
+		$F_P(x) = P[ (-\infty, x]]$.}%
+		\item We have $F_P^-(p) \leq F_Q^-(p)$ for any $p \in [0, 1]$ where $F_P^-(p) = \inf \{ x \in \R : F_P(x) \geq p \}$ is the \emph{generalized inverse} of $F_P$ or \emph{quantile function} of $P$;%
+		\marginnote{Since a distribution function is non-decreasing and c\`adl\`ag, its generalized inverse is well-defined and unique. See the proof of Proposition~\ref{prop:stochastic-ordering} for more details about it.}%
 		\item For any non-decreasing and bounded function $f$ we have $\int f dP \leq \int f dQ$.
 	\end{enumerate}
-\end{definition}
+\end{proposition}
+The proof of Proposition~\ref{prop:stochastic-ordering} is given in Section~\ref{sec:chap03-proofs} below and follows rather standard arguments.
+The proof of $(2) \Rightarrow (1)$ however deserves to be discussed here, since it uses a beautiful yet simple \emph{coupling} argument, which is a very powerful technique often used in probability theory.\todo{INSERT REFERENCE}
+More precisely, we use something called a ``quantile coupling'': consider a random variable $U \sim \uni([0, 1])$%
+\sidenote{We say that $X \sim \uni([a, b])$ for $a < b$ if it has density $x \mapsto (b - a)^{-1} \ind{[a, b]}(x)$ with respect to the Lebesgue measure, namely $\P_X(dx) = (b - a)^{-1} \ind{[a, b]}(x) dx$.}%
+on some probability space and define $X = F_P^-(U)$ and $Y = F_P^-(U)$.
+We have by construction%
+\sidenote{This comes from the fact that $\P(F_P^-(U) \leq x) = \P(U \leq F_P(x)) = F_P(x)$ since $U \sim \uni([0, 1])$ and since, by construction of the generalized inverse, we have that $F_P^-(u) \leq x$ is equivalent to $u \leq F_P(x)$ for any $u \in [0, 1]$ and $x \in \R$.}% 
+that $X \sim P$ and $Y \sim Q$, and that
+\begin{equation*}
+	\P(X \leq Y) = \P(F_P^-(U) \leq F_P^-(U)) = 1
+\end{equation*}
+since Point~2 $\Rightarrow$ Point~3 and since Point~3 tells us that $F_P^-(p) \leq F_P^-(p)$ for any $p \in [0, 1]$. This proves Point~2 $\Rightarrow$ Point~1.
 
-\begin{proof}
-	The proofs of $(2) \Leftrightarrow (3) \equiv (4)$ are quite standard and not really interesting. $(1) \Rightarrow (2)$ is obvious. The proof of $(2) \Rightarrow (1)$ is nice and interesting by itself, since it uses something called a "coupling" argument, which is a very powerful technique used in probability theory REFREF.
-	More precisely, we use below something called a ``quantile coupling''.
-	Let us consider $U \sim \uni([0, 1])$ \todo{define uniform} on some probability space and define $X = F_P^-(U)$ and $Y = F_P^-(U)$.
-	We have by construction that $X \sim F_P$ and $Y \sim F_Q$. \todo{recall some properties of generalized inverse}. But then
-	\begin{equation*}
-		\P(X \leq Y) = \P(F_P^-(U) \leq F_P^-(U)) = 1
-	\end{equation*}
-	since 3. tells us that $F_P^-(p) \leq F_P^-(p)$ for any $p in [0, 1]$.
-\end{proof}
-This proof is remarkably simple, but very tricky and beautiful, and the basis of the powerful coupling argument in probability theory.
-
-A first example is the fact that $\expo(\lambda_2) \lest \expo(\lambda_1)$ whenever $\lambda_1 \leq \lambda_2$.
-Another example will prove more useless for our statistical test for the $\ber$ model.
+The really nice feature of Proposition~\ref{prop:stochastic-ordering} is that it allows to reformulate $P \lest Q$, which is a property regarding the \emph{distributions} $P$ and $Q$, to a property about \emph{random variables} $X$ and $Y$ with distributions $X$ and $Y$.
+Let us provide two examples.
 \begin{example}
-	We have that $\ber(n, \theta_1) \lest \ber(n, \theta_2)$ whenever $\theta_1 \leq \theta_2$. How can we prove this ? By using again a coupling argument.
-	Let us consider $U_1, \ldots, U_n$ i.i.d $\uni([0, 1])$ and define $S_i = \# \{ k : U_k \leq \theta_i \}$ for $i \in \{ 1, 2 \}$. By construction we have that $S_i \sim \bin(n, \theta_i)$, and that $S_1 \leq S_2$ a.s. This proves that $\ber(n, \theta_1) \lest \ber(n, \theta_2)$.
+	Whenever $\lambda_1 \leq \lambda_2$, we have $\expo(\lambda_2) \lest \expo(\lambda_1)$. This follows very easily from Point~2 of Proposition~\ref{prop:stochastic-ordering}.
 \end{example}
-A consequence of Example~? together with definition~? is that $F_{\bin(n, \theta_2)} \leq F_{\bin(n, \theta_1)}$ whenever $\theta_1 \leq \theta_2$.
-So, going back to the Type I error control, we can now derive the following control:
+\begin{example}
+	\label{ex:coupling-binomial}
+	Whenever $\theta_1 \leq \theta_2$, we have $\ber(n, \theta_1) \lest \ber(n, \theta_2)$. This is obtained through Point~1 (namely a coupling argument).
+	Consider $U_1, \ldots, U_n$ iid $\uni([0, 1])$ and define $S_i = \# \{ k : U_k \leq \theta_i \}$ for $i \in \{ 1, 2 \}$. By construction we have $S_i \sim \bin(n, \theta_i)$, and obviously $\P(S_1 \leq S_2) = 1$ since $\theta_1 \leq \theta_2$.
+\end{example}
+Thanks to Example~\ref{ex:coupling-binomial} together with Proposition~\ref{prop:stochastic-ordering}, we know now that $F_{\bin(n, \theta_2)} \leq F_{\bin(n, \theta_1)}$ whenever $\theta_1 \leq \theta_2$, so that combined with Inequality~\eqref{eq:power-control-binomial1} this provides the following control of the Type~I error:
+\begin{align*}
+	\sup_{\theta \leq \theta_0} \P_\theta[ \wh \theta > c] &= \sup_{\theta \leq \theta_0} (1 - F_{\bin(n, \theta)}(n c))\\
+	& \leq (1 - F_{\bin(n, \theta_0)}(n c)).
+\end{align*}
+We can find out, given $\theta_0$, $\alpha$ and $n$, a constant $c$ as small as possible that satisfies $F_{\bin(n, \theta_0)}(n c) \geq 1 - \alpha$.
+This can be done numerically, since we don't have in general an explicit solution for such a constant~$c$.
+Otherwise, we can use (but it leads to a slightly less powerful test) Bernstein's deviation inequality to obtain
 \begin{equation*}
-	\sup_{\theta \leq \theta_0} \P_\theta[ \wh \theta > c] = \sup_{\theta \leq \theta_0} (1 - F_{\bin(n, \theta)}(n c)) \leq (1 - F_{\bin(n, \theta_0)}(n c)).
+	\P_{\theta_0} [\wh \theta_n > c] = \P_{\theta_0}[S - n \theta_0 > c'] \leq e^{-2 c'^2 / n} = \alpha,
 \end{equation*}
-We can therefore find out $c$ as small as possible so that $1 - F_{\bin(n, \theta_0)}(n c) \leq \alpha$.
-This can be done easily numerically, since we don't have a general explicit solution for such a $c$ in general.
-Otherwise, we can use (but it is less precise, hence leading to a slighlty less powerfull test)
+so that choosing $c' = \sqrt{n \log(1 / \alpha) / 2}$ gives $\sup_{\theta \leq \theta_0} \beta(\theta) \leq \alpha$, and proves that the test with rejection set 
 \begin{equation*}
-	\P_{\theta_0} [\wh \theta > c] = \P_{\theta_0}[S - n \theta_0 > c'] \leq e^{-2 t^2 / n} = \alpha
+	R = \bigg\{ \wh \theta_n \geq \theta_0 + \sqrt{ \frac{\log(1 / \alpha)}{2n}} \bigg\}
 \end{equation*}
-choosing $t = \sqrt{n \log(1 / alpha) / 2}$. 
-We can therefore consider the test with rejection set $R = \{ \wh \theta \geq \theta_0 + \sqrt{ \frac{\log(1 / \alpha)}{2n}}\}$, to obtain a test at level $\alpha$.
+is a test of level $\alpha$ for the hypothesis~\eqref{eq:chap03-tests-hypothesis}.
+Note that we managed to quantify exactly by how much we need to increase $\theta_0$ in order to tune the test so that its Type~I error is smaller than $\alpha$.
 
-We could also use an asymptotic approach using a rejection set $R = \{ \wh \theta > \theta_0  + \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}} \Phi^{-1}(1 - \alpha) \} = \theta_0 + \delta_n$ which is asymptotically of level $\alpha$, using similar arguments as what we did before, and using the central limit theorem.
+\paragraph{Asymptotic approach.}
 
-What about the power of the test ?
-We know that $\wh \theta \goas \theta$ and that $\delta_n \go 0$.
-So, \textbf{under $H_1$, namely whenever $\theta > 0$} we have
+We can use also an asymptotic approach by considering the test with rejection set
 \begin{equation*}
-	\beta(\theta) = \P_\theta[ \wh \theta > \theta_0 + \delta_n] \go 1
+	R = \big\{ \wh \theta_n > \theta_0  + \delta_n \big\} \quad \text{where} \quad \delta_n	:= \sqrt{\frac{\theta_0 (1 - \theta_0)}{n}} \Phi^{-1}(1 - \alpha).
 \end{equation*}
-once again WHEN $\theta > \theta_0$.
-This means that the power of the test indeed goes to $1$.
+Indeed, we know by combining Example~\ref{ex:coupling-binomial} together with~\eqref{eq:portemanteau-bernoulli} that for any $\theta \leq \theta_0$ we have
+\begin{equation*}
+	\P_\theta[ \wh \theta_n > \theta_0  + \delta_n ] \leq \P_{\theta_0}[ \wh \theta_n > \theta_0  + \delta_n ] \goes \alpha
+\end{equation*}
+as $n \goes +\infty$, so that $\limsup_n \sup_{\theta \leq \theta_0} \P_\theta[ \wh \theta_n > \theta_0  + \delta_n ] \leq \alpha$, which provides an asymptotic control of the Type~I error of this test: we say that it is \emph{asymptotically of level $\alpha$}.
+But what can be said about the \emph{power} of the test ?
+We know that $\wh \theta_n \goas \theta$ under $\P_\theta$ and that $\delta_n \go 0$, so, \emph{under $H_1$}, namely whenever $\theta > \theta_0$, we have
+\begin{equation*}
+	\beta(\theta) = \P_\theta[ \wh \theta_n > \theta_0 + \delta_n] \go 1
+\end{equation*}
+as $n \go +\infty$, which claims that the power of the test goes to $1$.
 In this case, we say that the test is \emph{consistent} or \emph{convergent}.
-
 \begin{remark}
- 	Note that the convergence of $\beta(\theta)$ is not uniform in $\theta$ since the limit is discontinuous while $\beta(\theta)$ is continuous.
+ 	The convergence of $\beta(\theta)$ is not uniform in $\theta$ since its limit is discontinuous while $\beta(\theta)$ is continuous.
 \end{remark}
 
-An interesting vocabulary os as folos.
-We say that $(\wh \theta - \theta) / \sqrt{n \theta_0(1 - \theta_0)}$ is an asymptotically \emph{ancillary} statistic, since its asymptoyic distributiond oes not depend on the parameter.
-The read understands now that the construction of confidence intervals or statistical test relies on the construction and study or ancillary (resp. asymptotically ancillary)statistics, when building confidence intervals or test (resp confidence intervals with asymptotic coverage or tests asymptotically of controlled level).
-This allows to tune the IC or tests, BLABLA
+\paragraph{Ancillary statistics.}
 
-Whenever $X \sim P_\theta$ and the distribution of $f_\theta(X)$ does not depend on $\theta$, then we say that $f_\theta(X)$ is an \emph{ancillary} statistic.
+Note that an interesting pattern emerges from what we did for confidence intervals and tests.
+In both cases, for the Bernoulli case, we constructed a statistic 
+$\sqrt n (\wh \theta_n - \theta) / \sqrt{\theta (1 - \theta)}$ whose asymptotic distribution is $\nor(0, 1)$, namely a distribution that \emph{does not} depend on the parameter $\theta$.
+This is called an asymptotically \emph{ancillary} statistic.
+\begin{definition}
+	Whenever $X \sim P_\theta$ and the distribution of $f_\theta(X)$ does not depend on $\theta$, we say that $f_\theta(X)$ is an \emph{ancillary} statistic.
+\end{definition}
+The construction of confidence intervals or tests requires the construction and such an ancillary or asymptotically ancillary statistic, since we need to remove the dependence on $\theta$ from its distribution in order to compute quantiles that leads to the coverage property of the confidence interval, or to the level of the test.
 
+ICI ICI ICI
 
 There is of course a strong connection between confidence intervals and tests, as explained in the following proposition.
 \begin{proposition}
@@ -858,7 +891,7 @@ What researchers  do when making a scientific decision based on statistical test
 \pagelayout{wide}
 
 \section{Proofs} % (fold)
-\label{sec:proofs}
+\label{sec:chap03-proofs}
 
 This Section gathers the proofs of some results provided in this chapter.
 This Section gathers the proofs of some results provided in this chapter.
