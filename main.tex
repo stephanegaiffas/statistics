@@ -71,6 +71,7 @@
 \DeclareMathOperator{\bA}{\boldsymbol A}
 \DeclareMathOperator{\bB}{\boldsymbol B}
 \DeclareMathOperator{\bI}{\boldsymbol I}
+\DeclareMathOperator{\bX}{\boldsymbol X}
 
 \DeclareMathOperator{\bSigma}{\boldsymbol \Sigma}
 
@@ -307,6 +308,67 @@
 \input{chap02_statistical_models}
 
 \input{chap03_statistical_inference}
+
+
+\setchapterpreamble[u]{\margintoc}
+\chapter{Linear regression}
+\label{chap:linear_regression}
+
+We observe iid pairs $(X_1, Y_1), \ldots, (X_n, Y_n)$ where $X_i \in \R^d$ and $Y_i \in \R$.
+We want to \emph{predict} $Y_i$ from $X_i$.
+Actually, we want to study the conditional distribution $Y_1 | X_1$, namely we want to \emph{regress} $Y_i$ on $X_i$.
+We know that the closest $X_1$-measurable function from $Y_1$ is the conditional expectation $\E (Y | X) = f(X)$  in $L^2$, but we do not know the joint distrivbution of $(X_1, Y_1)$
+So we want to use the observations $(X_i, Y_i)$ in order to build some approximation of $f$.
+
+On the other hand, wat kind of functions could we consider ?
+As a start, we should consider the simplest non-constant function $\R^d \go \R$ we can think of, which is naturally a \emph{linear} function $f(x) = x^\top \theta + c$.
+
+\begin{kaobox}[frametitle=Features engineering]
+	Considering only linear function is of course very limiting. But let us stress that, in practice, we can do whatever we want with the data $(X_i, Y_i)$. A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings such as a polynomial mapping, pairwise products leading to $d(d-1)/2$ extra coordinates, etc. The construction of such a \emph{features mapping} is called \emph{feature engineering} in statistical and machine learning, and is more an art than a science. Note that many industrial large scale problems (such as web-display advertisment) are handled using such linear methods, but on highly tested and engineered features. We won't discuss this in this chapter, and will assume that $X_i$ are well crafted features vectors on which we want to train a linear method.	
+	This makes the model linear we respect to $\phi(X_i)$ but certainly not with respect to $X_i$.
+	We forget about it and work on $X_i$ assuming that...
+\end{kaobox}
+
+Also, to simplify notations we will forget about the \emph{intercept}, also called \emph{population bias} $b \in \R$ since we can, without loss of generality simply replace $\theta$ by $[1 \; \theta^\top]^\top$ and $X_i$ by $[1 \; X_i^\top]^\top$ (by $d$ by $d=1$).
+
+We assume that $\E(Y_i | X_i)$ can reasonably well approximated by $\theta^\top X_i$ for some $\theta \in \R^d$ to be trained and 
+
+We therefore assume that we can write $Y_i = \theta^\top X_i + \eps_i$ where $\eps_i = Y_i - \E(Y_i | X_i)$ and $\E(\eps_i | X_i) = 0$.
+
+\todo{dire que c'est une definition ce modele lineaire et qu'est ce que l'hypothse}
+
+
+\section{Least squares estimator} % (fold)
+\label{sec:least_squares_estimator}
+
+We say that iid real random variables $\eps_1, \ldots, \eps_n$ is the \emph{noise} of the linear model $Y_i = X_i^\top \theta + \eps_i$.
+How can we \emph{estimate} or \emph{train} $\theta \in \R^d$ ?
+A natural idea is to find $\wh \theta_n \in \R^d$ such that $X_i^\top \wh \theta_n$ is close to $Y_i$ for each $i=1, \ldots, n$. The simplest way to measure this closeness is to use the Euclidean distance on $\R^n$.
+Let us first introduce the following notations:
+\begin{equation*}
+	Y = \begin{bmatrix}
+		Y_1 \\
+		\vdots \\
+		Y_n
+	\end{bmatrix}
+	\quad \text{and} \quad
+	\bX = 
+	\begin{bmatrix}
+		X_{1, 1} & \cdots & X_{1, d} \\
+		\vdots & \ddots & \vdots \\
+		X_{n, 1} & \cdots & X_{n, d}
+	\end{bmatrix}	
+	=
+	\begin{bmatrix}
+		X_1^\top \\
+		\vdots \\
+		X_n^\top 
+	\end{bmatrix}
+	\in \R^{n \times d}
+\end{equation*}
+and we will denote also $\eps = [\eps_1 \cdots \eps_n]^\top$.
+
+% section least_squares_estimator (end)
 
 % section proofs (end)
 
