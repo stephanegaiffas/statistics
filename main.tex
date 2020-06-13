@@ -87,6 +87,10 @@
 
 \DeclareMathOperator{\leb}{Lebesgue}
 
+\DeclareMathOperator*{\argmin}{argmin}
+\renewcommand{\span}{\mathrm{span}}
+\DeclareMathOperator{\proj}{proj}
+
 \newcommand{\eps}{\varepsilon}
 
 \renewcommand{\P}{\mathbb P}
@@ -106,6 +110,7 @@
 \newcommand{\go}{\rightarrow}
 
 \newcommand{\norm}[1]{\|#1\|}
+\newcommand{\inr}[1]{\langle #1 \rangle}
 
 \newcommand{\gopro}{\overset{\P}{\rightarrow}}
 \newcommand{\goas}{\overset{\text{as\ }}{\rightarrow}}
@@ -303,11 +308,11 @@
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-\input{chap01_introduction}
+% \input{chap01_introduction}
 
-\input{chap02_statistical_models}
+% \input{chap02_statistical_models}
 
-\input{chap03_statistical_inference}
+% \input{chap03_statistical_inference}
 
 
 \setchapterpreamble[u]{\margintoc}
@@ -364,9 +369,45 @@ Let us first introduce the following notations:
 		\vdots \\
 		X_n^\top 
 	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+		X^1 & \cdots & X^d
+	\end{bmatrix}	
 	\in \R^{n \times d}
 \end{equation*}
-and we will denote also $\eps = [\eps_1 \cdots \eps_n]^\top$.
+and we will denote also $\eps = [\eps_1 \cdots \eps_n]^\top \in \R^n$ the noise vector 
+
+There notation $X^j$ for the $j$-th columns of $\bX$ and $X_i$ is the $i$-th row of $\bX$.
+
+\sidenote{All vectors are written as column matrices BLABLA The norm $\norm{\cdot}$ stands for the Euclidean norm}
+
+A \emph{least squares} estimator or \emph{ordinary least squares} is defined as
+\begin{equation}
+	\label{eq:least-squares-estimator}
+	\wh \theta_n \in \argmin_{\theta \in \R^d} \norm{Y - \bX \theta}^2 = \argmin_{\theta \in \R^d} \sum_{i=1}^n (Y_i - X_i^\top \theta)^2
+\end{equation}
+How can we compute $\wh \theta_n$ ?
+The definition of $\wh \theta_n$ given by Equation~\eqref{eq:least-squares-estimator} entails that
+\begin{equation*}
+	\bX \wh \theta_n = \proj_V (Y)
+\end{equation*}
+where $\proj_V$ is the orthogonal projection operator onto $V = \{ \bX u : u \in \R^d \} = \span(\bX) = \span(X^1, \ldots, X^d)$, the linear space in $\R^n$ spanned by the columns of $\bX$.
+\todo{insert picture}
+We need to have that $Y - \bX \wh \theta_n \perp V$, namely $\inr{\bX u, Y - \bX \wh \theta_n} = 0$ for any $u \in \R^d$, namely $u^\top \bX^\top (Y - \bX \wh \theta_n) = 0$ for any $u$ which leads to the so-called \emph{normal equation}
+\begin{equation}
+	\label{eq:least-squares-normal-equation}
+	\bX^\top \bX \wh \theta_n = \bX^\top Y.
+\end{equation}
+This means that $\wh \theta_n$ is a solution to this normal equation, which in turn is simply a linear system.
+Another approach that leads to the same result is to put $F(\theta) = \norm{Y - \bX \theta}^2$, which is a \emph{convex} and differentiable function on $\R^d$, so that $\wh \theta_n$ is an $\argmin$ if and only if it is a critical point, namely $\grad F(\wh \theta_n) = 0$, but $\grad F(\theta) = 2 \bX^\top (\bX \theta - \theta)$ so that we end up with the same normal Equation~\eqref{eq:least-squares-normal-equation}.
+
+A least squares estimator is therefore solution tothe linear system???
+
+From now on, let us assume that $\E \norm{X_1}^2 < +\infty$ and $\E(Y_1^2) < +\infty$.
+This allows to define 
+
+C'est chiant... utiliser $X$ ou $\bX$ comment appeler le vecteur ?
+
 
 % section least_squares_estimator (end)
 
