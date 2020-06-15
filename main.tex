@@ -72,10 +72,13 @@
 \DeclareMathOperator{\bB}{\boldsymbol B}
 \DeclareMathOperator{\bI}{\boldsymbol I}
 \DeclareMathOperator{\bX}{\boldsymbol X}
+\DeclareMathOperator{\by}{\boldsymbol y}
+\DeclareMathOperator{\bO}{\boldsymbol O}
+\DeclareMathOperator{\beps}{\boldsymbol \varepsilon}
 
 \DeclareMathOperator{\bSigma}{\boldsymbol \Sigma}
 
-
+\DeclareMathOperator{\tr}{tr}
 \DeclareMathOperator{\nor}{Normal}
 \DeclareMathOperator{\ber}{Bernoulli}
 \DeclareMathOperator{\bin}{Binomial}
@@ -90,6 +93,7 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \renewcommand{\span}{\mathrm{span}}
 \DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\cov}{cov}
 
 \newcommand{\eps}{\varepsilon}
 
@@ -351,7 +355,7 @@ How can we \emph{estimate} or \emph{train} $\theta \in \R^d$ ?
 A natural idea is to find $\wh \theta_n \in \R^d$ such that $X_i^\top \wh \theta_n$ is close to $Y_i$ for each $i=1, \ldots, n$. The simplest way to measure this closeness is to use the Euclidean distance on $\R^n$.
 Let us first introduce the following notations:
 \begin{equation*}
-	Y = \begin{bmatrix}
+	\by = \begin{bmatrix}
 		Y_1 \\
 		\vdots \\
 		Y_n
@@ -384,7 +388,7 @@ There notation $X^j$ for the $j$-th columns of $\bX$ and $X_i$ is the $i$-th row
 A \emph{least squares} estimator or \emph{ordinary least squares} is defined as
 \begin{equation}
 	\label{eq:least-squares-estimator}
-	\wh \theta_n \in \argmin_{\theta \in \R^d} \norm{Y - \bX \theta}^2 = \argmin_{\theta \in \R^d} \sum_{i=1}^n (Y_i - X_i^\top \theta)^2
+	\wh \theta_n \in \argmin_{\theta \in \R^d} \norm{\by - \bX \theta}^2 = \argmin_{\theta \in \R^d} \sum_{i=1}^n (Y_i - X_i^\top \theta)^2
 \end{equation}
 How can we compute $\wh \theta_n$ ?
 The definition of $\wh \theta_n$ given by Equation~\eqref{eq:least-squares-estimator} entails that
@@ -396,18 +400,78 @@ where $\proj_V$ is the orthogonal projection operator onto $V = \{ \bX u : u \in
 We need to have that $Y - \bX \wh \theta_n \perp V$, namely $\inr{\bX u, Y - \bX \wh \theta_n} = 0$ for any $u \in \R^d$, namely $u^\top \bX^\top (Y - \bX \wh \theta_n) = 0$ for any $u$ which leads to the so-called \emph{normal equation}
 \begin{equation}
 	\label{eq:least-squares-normal-equation}
-	\bX^\top \bX \wh \theta_n = \bX^\top Y.
+	\bX^\top \bX \wh \theta_n = \bX^\top \by.
 \end{equation}
 This means that $\wh \theta_n$ is a solution to this normal equation, which in turn is simply a linear system.
 Another approach that leads to the same result is to put $F(\theta) = \norm{Y - \bX \theta}^2$, which is a \emph{convex} and differentiable function on $\R^d$, so that $\wh \theta_n$ is an $\argmin$ if and only if it is a critical point, namely $\grad F(\wh \theta_n) = 0$, but $\grad F(\theta) = 2 \bX^\top (\bX \theta - \theta)$ so that we end up with the same normal Equation~\eqref{eq:least-squares-normal-equation}.
 
 A least squares estimator is therefore solution tothe linear system???
 
-From now on, let us assume that $\E \norm{X_1}^2 < +\infty$ and $\E(Y_1^2) < +\infty$.
-This allows to define 
+From now on, let us assume that $\E \norm{X}^2 < +\infty$ and $\E(Y^2) < +\infty$.
+This allows to define the $d \times d$ matrix
+\begin{equation}
+	\E(X X^\top) = (\E(X_j X_k))_{1 \leq j, k \leq d}
+\end{equation}
+and let us recall that the covariance matrix between two random vectors $U$ and $V$ is, whenever it makes sense, given by
+\begin{equation*}
+	\cov(U, V) = \E [(U - \E U)(V - \E V)^\top]
+\end{equation*}
+\todo{les matrices avec du gras !!!}
+and we will denote $\var (U) = \cov(U, U)$ the covariance matrix of $U$.
+Let us also remark that whenever $V = A U + b$ for some deterministic matrix $A$ and vector $b$ we have that $\E [V] = A \E [U] + b$ and $\var[V] = A \var(U) A^\top$.
+Also, we will write $\bA \succ 0$ to say that a matrix $\bA$ is positive definite.
+\begin{theorem}
+	\label{thm:least-squares-existence}
+	Let $n \geq d$. The following points about $\P_X$ are all equivalent whenever $X_1, \ldots, X_n$ are independent.
+	\begin{enumerate}
+		\item $\E(X X^\top) \succ 0$
+		\item For any hyperplane $H \subset \R^d$ we have $\P(X \in H) = 0$, namely $\P(X^\top \theta = 0) = 0$ for any $\theta \in S^{d-1}$
+		\item $\bX^\top \bX = \sum_{i=1}^n X_i X_i^\top \succ 0$ almost surely
+		\item The least squares estimator is uniquely defined and given by
+		\begin{equation*}
+			\wh \theta_n = (\bX \bX)^{-1} \bX^\top \by
+		\end{equation*}
+		almost surely.
+	\end{enumerate}
+	Whenever $\P_X$ satisfies either of this points, we say that $\P_X$ is \emph{non-degenerate}.
+\end{theorem}
+Theorem~\ref{thm:least-squares-existence} explains exaclty when the least squares estimatpr is 
 
-C'est chiant... utiliser $X$ ou $\bX$ comment appeler le vecteur ?
+\begin{proof}
+	Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
+	The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\span(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\span(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \span(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \span(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
+\end{proof}
 
+\section{Some properties of the least squares estimator} % (fold)
+\label{sec:some_properties_of_the_least_squares_estimator}
+
+In this section, we will simplify further the problem, and assume that everything will be computed conditionally on $X_1, \ldots, X_n$, so that we will threat them as if these were deterministic random vectors.
+We assume also that $\eps_1, \ldots, \eps_n$ are iid and such that $\E[\eps_i] = 0$ and $\var[\eps_i] = \sigma^2 < +\infty$, which means that $\E[\beps] = 0$ and $\var[\beps] = \sigma^2 \bI_n$, so that
+\begin{equation*}
+	Y_i = X_i^\top \theta + \eps_i.
+\end{equation*}
+We assume also that $\bX^\top \bX \succ 0$ (namely $\bX$ is full rank, we saw in Theorem~\ref{thm:least-squares-existence} what this means whenever $X_i$ are random).
+In this case we can write $\wh \theta_n = (\bX^\top \bX)^{-1} \bX^\top \by$ so that
+\begin{equation*}
+	\E_\theta[\wh \theta_n] = (\bX^\top \bX)^{-1} \bX^\top \E_\theta[\by] = (\bX^\top \bX)^{-1} \bX^\top \bX \theta = \theta
+\end{equation*}
+which means that $\wh \theta_n$ is an \emph{unbiased} estimator. We can write also
+\begin{equation*}
+	\var_\theta[\wh \theta_n] = \var_\theta[ (\bX^\top \bX)^{-1} \bX^\top \by] = \bA \var_\theta(\by) \bA^\top = \sigma^2 \bA \bA^\top = \sigma^2 (\bX^\top \bX)^{-1}
+\end{equation*}
+where we put $\bA = (\bX^\top \bX)^{-1} \bX^\top$.
+In particular, this proves that the quadratic risk of $\wh \theta_n$ is given by
+\begin{equation*}
+	\E_\theta[(\wh \theta_j - \theta_j)^2] = \var_\theta[\wh \theta_j] = \sigma^2 ((\bX^\top \bX)^{-1})_{j, j}
+\end{equation*}
+or equivalently that
+\begin{equation*}
+	\E_\theta \norm{\wh \theta - \theta}^2 = \sigma^2 \tr [(\bX^\top \bX)^{-1}].
+\end{equation*}
+We don't know either the variance $\sigma^2$ of the noise, so we want to build an estimator for it as well.
+
+
+% section some_properties_of_the_least_squares_estimator (end)
 
 % section least_squares_estimator (end)
 
