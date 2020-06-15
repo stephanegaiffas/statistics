@@ -374,11 +374,11 @@
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-% \input{chap01_introduction}
+\input{chap01_introduction}
 
-% \input{chap02_statistical_models}
+\input{chap02_statistical_models}
 
-% \input{chap03_statistical_inference}
+\input{chap03_statistical_inference}
 
 
 \setchapterpreamble[u]{\margintoc}
@@ -1060,8 +1060,38 @@ Indeed, we assume that there is $\alpha \in (0, 1]$ and $C \geq 1$ such that
 	\label{eq:quanti-nondegenerate}
 	\P[ |\inr{X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
 \end{equation}
-for any $t > 0$ and non-zero vector $\theta \in \R^d$. Note that this assumption is equivalent to the same proability control, but for 
+for any $t > 0$ and non-zero vector $\theta \in \R^d$. Note that this assumption is equivalent to the assumption that $\P[ |\inr{\tilde X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1} X$. \todo{sidenote proof}
+This assumeption quantifies the assumption $\P(\inr{X, \theta} = 0) = 0$ BLABLA
 
+We need also another assumption that $P_X$ satifies
+\begin{equation*}
+	\E [\norm{\bSigma^{-1/2} X}^4] \leq \kappa d^2.
+\end{equation*}
+This is entailed by the $L^4$-$L^2$ condition $\E[\inr{\theta, X}^4]^{1/4} \leq \kappa \E[ \inr{\theta, X}^2]^{1/2}$ for any $\theta \in \R^d$.
+
+Indeed if $\theta = \bSigma^{-1/2} e_j$ then $\inr{\theta, X} = \wt X_j$ so that $\E[\wt X_j^4] \leq \E [\wt X_j^2]^2 = \kappa$ (since $\E[\wt X \wt X^\top] = \bI_d$) so that $\E \norm{\wt X}^4 = \E (\sum_j \wt X_j^2 )^2 = \sum_{1 \leq j, k \leq d} \E[ \wt X_j^2 \wt X_k^2] \leq \sum_{j, k} \sqrt{\E[ \wt X_j^4] \E[] \wt X_k^4]} \leq \kappa d^2$ by assumption. 
+
+\begin{theorem}
+	Grant assumptions ?a nd ? and put $C' = 3 C^4 e^{1 + 9 / \alpha}$. If $n \geq 6 \frac d \alpha \vee 12 \log(12 / \alpha) / \alpha$ then
+	\begin{equation*}
+		\frac 1n \E \tr [ (\wt \bSigma)^{-1}] \leq \frac dn + 8 C' \kappa \Big( \frac dn \Big)^2,
+	\end{equation*}
+	which entails together with ??? that
+	\begin{equation*}
+		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(P_X, \sigma^2)} \E \cE_P(\wh \theta) \leq \sigma^2 \frac dn 
+		\Big( 1 + 8 C' \kappa \Big( \frac dn \Big)
+	\end{equation*}
+\end{theorem}
+The proof of this theorem is quite technical and beyond the scope of this book. The interesting reader can read it in ????
+The technicity of the proof comes from a sharp control of $\E [\tr (\wt \bSigma)^{-1}]$ or more simply the smallest eigenvalue of $(\wt \bSigma)^{-1}$.
+
+Let us wrap us what are the important things we learned in this Section:
+\begin{itemize}
+	\item The least-squares procedure is minimax optimal for the well-specified linear regression model
+	\item The Gaussian design is almost the most favorable in the minimax sense
+	\item The minimax rate is of order $\sigma^2 d / n$
+	\item The statistical complexity of the problem of linear regression is, when measured by the minimax rate, fully explained by the distribution a leverage of a sample among $n+1$
+\end{itemize}
 
 
 \end{document}
