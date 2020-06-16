@@ -42,7 +42,7 @@ as $n \rightarrow +\infty$, where $\nor(\mu, \sigma^2)$ stands for the Gaussian 
 Note that statement~\eqref{eq:lln-binomial} comes from the law of large numbers, while~\eqref{eq:tcl-binomial} comes from the central limit theorem.
 In the field of probabilities, the object of interest would be the \emph{random variable} $S_n$, that we study knowing the value of $p$.
 In particular, if we replace the $\ber(p)$ distribution by the \emph{Rademacher distribution} $\text{Rademacher}(p)$ where $\P(X_i = 1) = 1 - \P(X_i = -1) = p$, the random variable $S_n$ becomes a \emph{random walk} for which many things can be said, depending on the value of $p$.%
-\sidenote{But such things are way beyond the topic of this book, great references about the study of the random walk and its utmost importance in the field of probabilities are ???}
+\sidenote{But such things are way beyond the topic of this book, let us just cite~\cite{lawler2010random} as a reference on the study of the random walk and its importance in the field of probability theory.}
 
 \paragraph{Statistics.} % (fold)
 
@@ -111,7 +111,6 @@ Since these lengths are highly concentrated around the theoretical desired lengt
 	\item[Distribution choice.] We choose the distribution $\nor(\mu, \sigma^2)$ for the lengths. So, we implicitly assume that the true underlying distribution of the lengths is \emph{symmetrical} and highly \emph{concentrated} around $\mu$. This may or may not be realistic.%
 	\sidenote{A real random variable $X$ is \emph{symmetrical} whenever $\P_X = \P_{-X}$. This means that $\P(X \leq -x) = \P(X \geq x)$ so that $F(-x) = 1 - F(x_-)$ if $F$ is the distribution function of $X$. Also, if $X$ has a density $f$ with respect to the Lebesgue measure, then $f$ is an even function.}
 	\item[The iid assumption.] We will assume also that $X_i$ are iid. What this means in practice is that we need to very careful in the way we select the screws coming out of the production lines: for instance, we should pick screws all along a week or a month, at different times, and not all from the same production line, in order to avoid time and machine biases.
-	The construction of a clean sampling scheme is hard work, that we won't discuss further.\todo{reference ou qq chose ?}
 \end{description}
 
 Once again, a statistical model is always a simplification and an approximation of the truth.
@@ -184,9 +183,11 @@ Intuitively, an ``equivalent'' experiment is $S := \sum_{i=1}^n X_i$ and $(E, \c
 Let us observe that
 \begin{equation}
 	\label{eq:X_cond_S}
-	\P_\theta (X_1 = x_1, \ldots, X_n = x_n | S = k) = 
-	\frac{\theta^k (1 - \theta)^{n-k}}{\binom{n}{k} \theta^k (1 - \theta)^{n-k}} 
-	= \frac{1}{\binom{n}{k}}
+	\begin{split}
+	\P_\theta (X_1 = x_1, \ldots, X_n = x_n | S = k) &= 
+	\frac{\theta^k (1 - \theta)^{n-k}}{\binom{n}{k} \theta^k (1 - \theta)^{n-k}} \\
+	&= \frac{1}{\binom{n}{k}}		
+	\end{split}
 \end{equation}
 whenever $x_i \in \{ 0, 1 \}$ for $i=1, \ldots, n$ and $k = \sum_{i=1}^n x_i$, while $\P_\theta (X_1 = x_1, \ldots, X_n = x_n | S = k) = 0$ otherwise.
 This proves that the conditional distribution of $(X_1, \ldots, X_n) | S$ \emph{does not depend} on $\theta$.
