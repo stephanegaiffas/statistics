@@ -1,0 +1,712 @@
+
+\setchapterpreamble[u]{\margintoc}
+\chapter{Linear regression}
+\label{chap:linear_regression}
+
+We observe iid pairs $(X_1, Y_1), \ldots, (X_n, Y_n)$ where $X_i \in \R^d$ and $Y_i \in \R$.
+We want to \emph{predict} $Y_i$ from $X_i$.
+Actually, we want to study the conditional distribution $Y_1 | X_1$, namely we want to \emph{regress} $Y_i$ on $X_i$.
+We know that the closest $X_1$-measurable function from $Y_1$ is the conditional expectation $\E (Y | X) = f(X)$  in $L^2$, but we do not know the joint distrivbution of $(X_1, Y_1)$
+So we want to use the observations $(X_i, Y_i)$ in order to build some approximation of $f$.
+
+On the other hand, wat kind of functions could we consider ?
+As a start, we should consider the simplest non-constant function $\R^d \go \R$ we can think of, which is naturally a \emph{linear} function $f(x) = x^\top \theta + c$.
+
+\begin{kaobox}[frametitle=Features engineering]
+	Considering only linear function is of course very limiting. But let us stress that, in practice, we can do whatever we want with the data $(X_i, Y_i)$. A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings such as a polynomial mapping, pairwise products leading to $d(d-1)/2$ extra coordinates, etc. The construction of such a \emph{features mapping} is called \emph{feature engineering} in statistical and machine learning, and is more an art than a science. Note that many industrial large scale problems (such as web-display advertisment) are handled using such linear methods, but on highly tested and engineered features. We won't discuss this in this chapter, and will assume that $X_i$ are well crafted features vectors on which we want to train a linear method.	
+	This makes the model linear we respect to $\phi(X_i)$ but certainly not with respect to $X_i$.
+	We forget about it and work on $X_i$ assuming that...
+\end{kaobox}
+
+Also, to simplify notations we will forget about the \emph{intercept}, also called \emph{population bias} $b \in \R$ since we can, without loss of generality simply replace $\theta$ by $[1 \; \theta^\top]^\top$ and $X_i$ by $[1 \; X_i^\top]^\top$ (by $d$ by $d=1$).
+
+We assume that $\E(Y_i | X_i)$ can reasonably well approximated by $\theta^\top X_i$ for some $\theta \in \R^d$ to be trained and 
+
+We therefore assume that we can write $Y_i = \theta^\top X_i + \eps_i$ where $\eps_i = Y_i - \E(Y_i | X_i)$ and $\E(\eps_i | X_i) = 0$.
+
+\todo{dire que c'est une definition ce modele lineaire et qu'est ce que l'hypothse}
+
+
+\section{Least squares estimator} % (fold)
+\label{sec:least_squares_estimator}
+
+We say that iid real random variables $\eps_1, \ldots, \eps_n$ is the \emph{noise} of the linear model $Y_i = X_i^\top \theta + \eps_i$.
+How can we \emph{estimate} or \emph{train} $\theta \in \R^d$ ?
+A natural idea is to find $\wh \theta_n \in \R^d$ such that $X_i^\top \wh \theta_n$ is close to $Y_i$ for each $i=1, \ldots, n$. The simplest way to measure this closeness is to use the Euclidean distance on $\R^n$.
+Let us first introduce the following notations:
+\begin{equation*}
+	\by = \begin{bmatrix}
+		Y_1 \\
+		\vdots \\
+		Y_n
+	\end{bmatrix}
+	\quad \text{and} \quad
+	\bX = 
+	\begin{bmatrix}
+		X_{1, 1} & \cdots & X_{1, d} \\
+		\vdots & \ddots & \vdots \\
+		X_{n, 1} & \cdots & X_{n, d}
+	\end{bmatrix}	
+	=
+	\begin{bmatrix}
+		X_1^\top \\
+		\vdots \\
+		X_n^\top 
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+		X^1 & \cdots & X^d
+	\end{bmatrix}	
+	\in \R^{n \times d}
+\end{equation*}
+and we will denote also $\eps = [\eps_1 \cdots \eps_n]^\top \in \R^n$ the noise vector 
+
+There notation $X^j$ for the $j$-th columns of $\bX$ and $X_i$ is the $i$-th row of $\bX$.
+
+\sidenote{All vectors are written as column matrices BLABLA The norm $\norm{\cdot}$ stands for the Euclidean norm}
+
+A \emph{least squares} estimator or \emph{ordinary least squares} is defined as
+\begin{equation}
+	\label{eq:least-squares-estimator}
+	\wh \theta_n \in \argmin_{\theta \in \R^d} \norm{\by - \bX \theta}^2 = \argmin_{\theta \in \R^d} \sum_{i=1}^n (Y_i - X_i^\top \theta)^2
+\end{equation}
+How can we compute $\wh \theta_n$ ?
+The definition of $\wh \theta_n$ given by Equation~\eqref{eq:least-squares-estimator} entails that
+\begin{equation*}
+	\bX \wh \theta_n = \proj_V (Y)
+\end{equation*}
+where $\proj_V$ is the orthogonal projection operator onto $V = \{ \bX u : u \in \R^d \} = \spa(\bX) = \spa(X^1, \ldots, X^d)$, the linear space in $\R^n$ spanned by the columns of $\bX$.
+\todo{insert picture}
+We need to have that $Y - \bX \wh \theta_n \perp V$, namely $\inr{\bX u, Y - \bX \wh \theta_n} = 0$ for any $u \in \R^d$, namely $u^\top \bX^\top (Y - \bX \wh \theta_n) = 0$ for any $u$ which leads to the so-called \emph{normal equation}
+\begin{equation}
+	\label{eq:least-squares-normal-equation}
+	\bX^\top \bX \wh \theta_n = \bX^\top \by.
+\end{equation}
+This means that $\wh \theta_n$ is a solution to this normal equation, which in turn is simply a linear system.
+Another approach that leads to the same result is to put $F(\theta) = \norm{Y - \bX \theta}^2$, which is a \emph{convex} and differentiable function on $\R^d$, so that $\wh \theta_n$ is an $\argmin$ if and only if it is a critical point, namely $\grad F(\wh \theta_n) = 0$, but $\grad F(\theta) = 2 \bX^\top (\bX \theta - \theta)$ so that we end up with the same normal Equation~\eqref{eq:least-squares-normal-equation}.
+
+A least squares estimator is therefore solution tothe linear system???
+
+From now on, let us assume that $\E \norm{X}^2 < +\infty$ and $\E(Y^2) < +\infty$.
+This allows to define the $d \times d$ matrix
+\begin{equation}
+	\E(X X^\top) = (\E(X_j X_k))_{1 \leq j, k \leq d}
+\end{equation}
+and let us recall that the covariance matrix between two random vectors $U$ and $V$ is, whenever it makes sense, given by
+\begin{equation*}
+	\cov(U, V) = \E [(U - \E U)(V - \E V)^\top]
+\end{equation*}
+\todo{les matrices avec du gras !!!}
+and we will denote $\var (U) = \cov(U, U)$ the covariance matrix of $U$.
+Let us also remark that whenever $V = A U + b$ for some deterministic matrix $A$ and vector $b$ we have that $\E [V] = A \E [U] + b$ and $\var[V] = A \var(U) A^\top$.
+Also, we will write $\bA \succ 0$ to say that a matrix $\bA$ is positive definite.
+\begin{theorem}
+	\label{thm:least-squares-existence}
+	Let $n \geq d$. The following points about $\P_X$ are all equivalent whenever $X_1, \ldots, X_n$ are independent.
+	\begin{enumerate}
+		\item $\E(X X^\top) \succ 0$
+		\item For any hyperplane $H \subset \R^d$ we have $\P(X \in H) = 0$, namely $\P(X^\top \theta = 0) = 0$ for any $\theta \in S^{d-1}$
+		\item $\bX^\top \bX = \sum_{i=1}^n X_i X_i^\top \succ 0$ almost surely
+		\item The least squares estimator is uniquely defined and given by
+		\begin{equation*}
+			\wh \theta_n = (\bX \bX)^{-1} \bX^\top \by
+		\end{equation*}
+		almost surely.
+	\end{enumerate}
+	Whenever $\P_X$ satisfies either of this points, we say that $\P_X$ is \emph{non-degenerate}.
+\end{theorem}
+Theorem~\ref{thm:least-squares-existence} explains exaclty when the least squares estimatpr is 
+
+\begin{proof}
+	Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
+	The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
+\end{proof}
+
+\section{Some properties of the least squares estimator} % (fold)
+\label{sec:some_properties_of_the_least_squares_estimator}
+
+In this section, we will simplify further the problem, and assume that everything will be computed conditionally on $X_1, \ldots, X_n$, so that we will threat them as if these were deterministic random vectors.
+We assume also that $\eps_1, \ldots, \eps_n$ are iid and such that $\E[\eps_i] = 0$ and $\var[\eps_i] = \sigma^2 < +\infty$, which means that $\E[\beps] = 0$ and $\var[\beps] = \sigma^2 \bI_n$, so that
+\begin{equation*}
+	Y_i = X_i^\top \theta + \eps_i.
+\end{equation*}
+We assume also that $\bX^\top \bX \succ 0$ (namely $\bX$ is full rank, we saw in Theorem~\ref{thm:least-squares-existence} what this means whenever $X_i$ are random).
+In this case we can write $\wh \theta_n = (\bX^\top \bX)^{-1} \bX^\top \by$ so that
+\begin{equation*}
+	\E_\theta[\wh \theta_n] = (\bX^\top \bX)^{-1} \bX^\top \E_\theta[\by] = (\bX^\top \bX)^{-1} \bX^\top \bX \theta = \theta
+\end{equation*}
+which means that $\wh \theta_n$ is an \emph{unbiased} estimator. We can write also
+\begin{equation*}
+	\var_\theta[\wh \theta_n] = \var_\theta[ (\bX^\top \bX)^{-1} \bX^\top \by] = \bA \var_\theta(\by) \bA^\top = \sigma^2 \bA \bA^\top = \sigma^2 (\bX^\top \bX)^{-1}
+\end{equation*}
+where we put $\bA = (\bX^\top \bX)^{-1} \bX^\top$.
+In particular, this proves that the quadratic risk of $\wh \theta_n$ is given by
+\begin{equation*}
+	\E_\theta[(\wh \theta_j - \theta_j)^2] = \var_\theta[\wh \theta_j] = \sigma^2 ((\bX^\top \bX)^{-1})_{j, j}
+\end{equation*}
+or equivalently that
+\begin{equation*}
+	\E_\theta \norm{\wh \theta - \theta}^2 = \sigma^2 \tr [(\bX^\top \bX)^{-1}].
+\end{equation*}
+We don't know either the variance $\sigma^2$ of the noise, so we want to build an estimator for it as well.
+It is pretty natural to look at the random vector $\wh \beps := \by - \bX \wh \theta$ called the \emph{residual vector}. 
+Note also that $\bX \wh \theta = \proj_V(\by) = \bH \by$ for the matrix $\bH := \bX (\bX^\top \bX)^{-1} \bX^\top$ that we call the \emph{hat matrix} since $\wh \by := \bX \wh \theta = \bH \by$ (it puts a hat on $\by$).
+The matrix $\bH$ is the projection matrix onto the set $V = \spa(\bX^1, \ldots, \bX^d) = \im(\bX)$.
+This leads to
+\begin{equation*}
+	\by - \bX \wh \theta = (\bI - \bH) \by = (\bI - \bH) (\bX \theta + \eps) = (\bI - \bH) \beps
+\end{equation*}
+since $\bI - \bH$ is the projection matrix onto $V^\perp$ (the space orthogonal to $V$) and since obviously $\bX \theta \in V$.
+Finally, we get
+\begin{equation*}
+	\E_\theta \norm{\wh \theta - \theta}^2 = \E_\theta \norm{ (\bI - \bH) \beps}^2 
+	= \tr \E [ (\bI - \bH) \beps \beps^\top (\bI - \bH)] = \tr ( (\bI - \bH) \E [ \beps \beps^\top ] (\bI - \bH) = \sigma^2 \tr( (\bI - \bH)^2 ) = \sigma^2 \tr( \bI - \bH ) = \sigma^2 (n - d),
+\end{equation*}
+where we used that $\bI - \bH$ is the projection matrix onto the space $V^\perp$ of dimension $n-d$, so that $(\bI - \bH)^2 = \bI - \bH$ and $\tr(\bI - \bH) = n-d$.
+What we just proved is that
+\begin{equation*}
+	\wh \sigma^2 := \frac{1}{n - d} \norm{\by - \bX \wh \theta}^2 = \frac{1}{n - d} \sum_{i=1}^n (Y_i - X_i^\top \wh \theta)^2
+\end{equation*}
+is an \emph{unbiased} estimator of $\sigma^2$.
+Now, if we want to go further about these estimators, we need some extra structure, in particular if we want to study the distribution of $\wh \theta$ and $\wh \sigma^2$. 
+To do so, we assume that the noise vector $\beps$ is Gaussian, as performed in the next section.
+
+\section{Gaussian linear model} % (fold)
+\label{sec:gaussian_linear_model}
+
+
+We keep the same setting as in the previous Section~\ref{sec:some_properties_of_the_least_squares_estimator} but assume furthermore that $\eps_1, \ldots, \eps_n$ are iid and such that $\eps_i \sim \nor(0, \sigma^2)$.
+This means that $\beps$ is a Gaussian vector with multivariate Gaussian distribution $\beps \sim \nor(0, \sigma^2 \bI)$.
+Let us first start this section with some reminders about Gaussian vectors.
+
+\paragraph{Gaussian vectors.} % (fold)
+
+We say that a random vector $Y \in \R^n$ is \emph{Gaussian} whenever $\inr{u, Y}$ is a Gaussian real random variable for any $u \in \R^d$.
+Moreover, if $\bSigma = \var(Y) \succ 0$ and $Y$ is a Gaussian vector, then $Y \sim \nor(\mu, \bSigma)$ where $\mu = \E[Y]$ and has density
+\todo{transformation linear est lineaire, meme si la matrice est degenereea lors on ecrti quand meme ..}
+\begin{equation*}
+	f_Y(y) = \frac{1}{\sqrt{(2 \pi)^d \det \bSigma}} \exp \Big( - (x - \mu)^\top \bSigma^{-1} (x - \mu) \Big)
+\end{equation*}
+with respect to the Lebesgue measure on $\R^n$.
+Note that if $Z \sim \nor(0, \bI_n)$, in this case with say that $Z$ is \emph{standard Gaussian}) then $Y$ has the same distribution as $\bSigma^{1/2} Z + \mu$.
+Also, if $Y \sim N(\mu, \bSigma)$ where $\bSigma$ is a diagonal matrix with positive entries, then the coordinates of $Y$ are independent.
+Note also that if $Z \sim \nor(0, \bI)$ and $\bQ$ is an orthonormal matrix ($\bQ^\top \bQ = \bI$) then $\bQ Z \sim \nor(0, \bI)$\todo{isotropic blabla}
+
+\paragraph{About the $\gam$ distribution.} % (fold)
+
+% paragraph about_the_ (end)
+Gamma distribution. We say that a real random variable $G$ has $\gam(a, \lambda)$ distribution, where $a > 0$ is called the \emph{shape} parameter and $\lambda > 0$ is called the \emph{intensity} parameter whenever $G$ has density
+\begin{equation*}
+	f_{a, \lambda}(x) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x} \ind{x \geq 0}
+\end{equation*}
+with respect to the Lebesgue measure on $\R$.\todo{recall Gamma function}
+Note that if $G \sim \gam(a, \lambda)$ then $\E[G] = a / \lambda$ and $\var[G] = a / \lambda^2$ and note that $\mode(G) = (a - 1) / \lambda$ if $a > 1$.\todo{what is the mode ?}
+Whenever $G_1 \sim \gam(a_1, \lambda)$ and $G_2 \sim \gam(a_2, \lambda)$ are independent random variable, then $G_1 + G_2 \sim \gam(a_1 + a_2, \lambda)$. \todo{note about convolution, stable distribution by convolutions, etc...}
+
+Also, if $E_1, \ldots, E_n$ are iid distributed as $\exp(\lambda)$ then $\sum_{i=1}^n E_i \sim \gam(n, \lambda)$.
+
+\paragraph{About the $\chisq(n)$ distribution.} % (fold)
+
+If $p \in \N \setminus \{ 0 \}$ then $\chisq(p) = \gam(p/2, 1/2)$ is called the \emph{Chi squared distribution with $p$ degrees of freedom}.
+Although being a particular case of $\gam$ distribution, the $\chisq$ distribution is important in statistics, since it is the distribution of the squared Euclidean norm of a standard Gaussian vector.
+Indeed, if $Z \sim \nor(0, \bI_n)$ then $\norm{Z}^2 = \sum_{i=1}^n Z_i^2 \sim \chisq(n)$.
+This easiliy comes from the fact that $Z_i^2 \sim \gam(1/2, 1/2)$ so that by independence $\norm{Z}^2 \sim \gam(n/2, 1/2) = \chisq(n)$.
+The density of $\chisq(n)$ is therefore 
+\begin{equation*}
+	f_n(x) = \frac{2^{-n / 2}}{\Gamma(n/2)} x^{n / 2 - 1} e^{-x / 2} \ind{x \geq 0}.
+\end{equation*}
+with respect to $\leb(\R^n)$.
+
+\paragraph{About the student $t(n)$ distribution.} % (fold)
+
+
+If $U \sim \nor(0, 1)$ and $V \sim \chisq(p)$ are independent random variables, then
+\begin{equation*}
+	\frac{U}{\sqrt{V / n}} \sim t(n)
+\end{equation*}
+where $t(p)$ is called the \emph{student distribution when $p$ degrees of freedom}.\todo{guiness story}, that has density
+\begin{equation*}
+	f_n(x) = \frac{1}{\sqrt{n \pi}} \frac{\Gamma((n+1) / 2)}{\Gamma(n/2)} \frac{1}{(1 + x^2 / n)^{(n + 1)/2}}
+\end{equation*}
+with respect to the Lebesgue density. We have that $\E[T] = 0$ and $\var(T) = n / (n - 2)$ whenever $n > 2$ if $T \sim \stu(n)$.
+
+It can be seen that $\stu(n) \gosto \nor(0, 1)$ whenever $n \rightarrow +\infty$ since ???
+
+\paragraph{About the $\fis(p, q)$ distribution} % (fold)
+
+Let $p, q \in \N \setminus \{ 0 \} $. If $U \sim \chisq(p)$ and $V \sim \chisq(q)$ are independent then
+\begin{equation*}
+	\frac{U / p}{V / q} \sim \fis(p, q)
+\end{equation*}
+where $\fis(p, q)$ stands for the \emph{Fisher distribution} which has density
+\begin{equation*}
+	f_{p, q}(x) = \frac{1}{x \beta(p/2, q/2)} \Big( \frac{px}{px + q} \Big)^{p/2} \Big(1 - \frac{px}{px + q} \Big)^{q/2}
+\end{equation*}
+where $\beta(a, b) = \Gamma(a) \Gamma(b) / \Gamma(a + b) = \int_0^1 t^{a-1} (1 - t)^{b - 1} dt$.
+
+\paragraph{About the $bet(a, b)$ distribution.} % (fold)
+
+If $G_1 \sim \gam(a, \lambda)$ and $G_2 \sim \gam(b, \lambda)$ are independent then
+\begin{equation*}
+	\frac{G_1}{G_1 + G_2} \sim \bet(a, b)
+\end{equation*}
+where $\bet(a, b)$ is called the Beta distribution, which has density
+\begin{equation*}
+	f_{a, b}(x) = \frac{1}{\beta(a, b)} x^{a - 1} (1 - x)^{b - 1} \ind{[0, 1]}(x)
+\end{equation*}
+with respect to the Lebesgue measure on $\R$. Note that if $B \sim \beta(a, b)$ then $\E[B] = \frac{a}{a + b}$, that $\var[B] = ab / ((a + b)^2 (a + b + 1))$ and $\mode(B) = (a - 1) / (a + b - 2)$ whenever $a, b > 1$ \todo{check these formulas}.
+
+
+\paragraph{Back to the Gaussian vectors.}
+
+Let us now provide some stuff about Gaussian vectors, that will prove important for the Gaussian linear model. Indeed, thanks to the additional strucutre we put blablabla
+
+\begin{theorem}
+	Let $Z \sim \nor(0, \bI)_n$ and let $V_1, \ldots, V_k$ be orthogonal linear spaces of $\R^n$. Define the Gaussian vectors $Z_j = \bP_j Z := \proj_{V_j}(Z)$ namely $\bP_j$ is the orthonormal projection matrix onto the space $V_j$. Then, we have that $Z_1, \ldots, Z_k$ are independent random vectors, and that
+	\begin{equation}
+		\norm{Z_j}^2 \sim \chisq(n_j)
+	\end{equation}
+	where $n_j = \dim(V_j)$ (note that $\sum_{j=1}^k n_j \leq n$).
+\end{theorem}
+
+\begin{proof}
+	We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
+	\begin{equation*}
+		\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
+	\end{equation*}
+	since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
+	This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
+	Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
+	We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
+\end{proof}
+
+\paragraph{Back to the gaussian linear model.}
+
+Recal that awe have $\by = \bX \theta + \beps$ with $\beps \sim \nor(0, \sigma^2 \bI_n)$.
+We have now the right tools to give the full distribution of both estimators $\wh \theta$ and $\wh \sigma^2$.
+\begin{theorem}
+	Assume that $\rank(\bX) = d$ that $\by = \bX \theta + \beps$ and that $\beps \sim \nor(0, \sigma^2 \bI_n)$. Put $\wh \by = \bX \wh \theta$ where $\wh \theta = (\bX^\top \bX)^{-1} \bX^\top \by$  and $\wh \sigma^2 = \norm{\by - \wh \by}^2 / (n-d)$. Then we have that $\wh \theta$ and $\wh \sigma^2$ are \emph{independent}, that and that
+	\begin{equation*}
+		\wh \theta \sim \nor(\theta, \sigma^2 (\bX^\top \bX)^{-1}), \quad \norm{\by - \wh \by}^2 / \sigma^2 \sim \chisq(n - d) \quad \text{and} \quad \norm{\bX( \wh \theta - \theta)}^2 / \sigma^2 \sim \chisq(d).
+	\end{equation*}
+\end{theorem}
+
+\begin{proof}
+	We know from before that $\by - \wh \by = \proj_{V^\perp}(\by) = \proj_{V^\perp}(\beps)$
+	 and that $\bX (\wh \theta - \theta) = \proj_V(\by) - \bX \theta = \proj_V(\beps)$
+	 so that, since $V \perp V^\perp$ and $\dim V = d$ and $\dim V^\perp = n - d$, the conclusion follows from the Cochran theorem ???.
+\end{proof}
+
+Theorem~??  has many consequences. For instance if $\sigma^2$ is known, then the set
+\begin{equation*}
+	\cE = \Big \{ \theta \in \R^d : \frac{1}{\sigma} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
+\end{equation*}
+where $q_{\chisq(d)}(1 - \alpha)$ is the quantile function of the $\chisq(d)$ distribution at $1 - \alpha$, if a confidence ellipsoid for $\theta$ in the Gaussian linear model at level $1 - \alpha$, since it satisfies by construction the coverage property $\P_\theta[ \theta \in \cE] = 1 - \alpha$.
+Whenever $\sigma^2$ is unknown (which is always the case) then using the fact that
+\begin{equation*}
+	\frac{\norm{\bX(\wh \theta - \theta)}^2 / d}{\norm{\by - \bX\wh \theta}^2 / (n - d)} \sim \fis(d, n-d)
+\end{equation*}
+entails that the ellipsoid
+\begin{equation*}
+	\Big \{ \theta \in \R^d : \frac{1}{\wh \sigma^2} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\}
+\end{equation*}
+if a confidence region at level $1 - \alpha$.
+Both confidence regions provide coverage for the whole vector $\theta$.
+We can also build confidence intervals for each coordinate of $\theta$.
+Indeed, we have $\theta_j = \theta^\top e_j$ where $e_j$ is the canonical basis vector with $1$ at cordinate $j$ and $0$ elsewhere. More generally we can build a confidence interval for $a^\top \theta$ for any vector $a \in \R^d$ by looking for an ancillary statistic. We know that $a^\top(\wh \theta - \theta) \sim \nor(0, \sigma^2 a^\top (\bX^\top \bX)^{-1} a)$ and that $\wh \theta$ and $\wh \sigma^2$ are independent, so that
+\begin{equation*}
+	\frac{a^\top(\wh \theta - \theta)}{\sigma \sqrt{a^\top (\bX^\top \bX)^{-1} a}} \sim \nor(0, 1) \text{ and } \frac{(n - d) \wh \sigma^2}{\sigma^2} \sim \chisq(n^d).
+\end{equation*}
+This entails that 
+\begin{equation*}
+	\frac{a^\top(\wh \theta - \theta)}{\sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a}} \sim \stu(n - d)
+\end{equation*}
+as the ratio between independent $\nor(0, 1)$ and $\chisq(n - d)$ random variables.
+This leads to the coverage property
+\begin{equation*}
+	\P_{\theta, \sigma^2} \bigg\{ a^\top \theta \in  \Big[  a^\top \wh \theta \pm \sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a} q_{\stu(n-d)}(1 - \alpha/2) \Big] \bigg\} = 1 - \alpha
+\end{equation*}
+in particular for $a = e_j$ we obtain that
+\begin{equation*}
+	\P_{\theta, \sigma^2} \bigg\{ \theta_j \in  \Big[  a^\top \wh \theta \pm \sqrt{\wh \sigma^2 (\bX^\top \bX)_{j, j}^{-1}} q_{\stu(n-d)}(1 - \alpha/2) \Big] \bigg\} = 1 - \alpha
+\end{equation*}
+This allows in particular to build a test for the hypothesis $H_{0, j} : \theta_j = 0$ versus $H_{1, j} : \theta_j \neq 0$.
+A confidence interval for $\sigma^2$ can be also easily built using the ancillary statistic $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
+
+\paragraph{Fisher test.} % (fold)
+
+Using the previous confidence interval we can test $H_0 = \theta_1 = \theta_2$ by using $a = [1, -1, 0, \ldots, 0]$. But, how can we test $H_0 : \theta_1 = \theta_2 = 0$ or more generally a \emph{multiple} null hypothesis such as
+\begin{equation*}
+	H_0 : \theta_1 = \cdots = \theta_k = 0
+\end{equation*}
+for fomr $k = 2, \ldots, d$ ?
+An approach can rely on the use of separate tests with siple ?? null hypotheses $H_{0, j} : \theta_j = 0$ for $j=1, \ldots, k$, with rejection sets $R_{j, \alpha}$ that satisfy $\P_{\theta_j = 0}[R_{j, \alpha}] \leq \alpha$ for each $j=1, \ldots, k$.
+So, an approach to test $H_0$ given by ??? is to consider a rejection set given by the union of these individual rejection sets, but with decreased levels up to $\alpha / k$, since using the union bound
+\begin{equation*}
+	\P_{\theta_1 = \cdot \theta_k = 0} \Big [  \cup_{j=1}^k R_{j, \alpha / k} \Big] 
+	\leq \sum_{j=1}^k \P_{\theta_j = 0} [ R_{j, \alpha / k} ] \leq k \times \alpha / k = \alpha,
+\end{equation*}
+so that the test with rejection set ??? for the hypothesis ??? has, indeed, level $\alpha$
+This is called the Bonferroni correctino, which is the most simple approach for multiple testing ?? more on that later ??? \todo{histoire avec Olive Jean DUnon ???}
+
+This approach relies on decreasing the individua levels of each $\alpha$ by $\alpha / k$, which can be a strong decrease whenever $k$ is large, which deteriorates a lot the power of each individual test, hence the power of the test ????
+We can do much better than that in the Gaussian linear model, thanks to the Fisher test.
+Let us continuer with the null assumption ??? and put $\Theta_0 = \{ \theta \in \R^d : \theta_1 = \cdots \theta_k = 0 \}$ and put again $V = \im(\bX) = \{ \bX u : u \in \R^d\}$ and put $W = \{ \bX u : u \in \Theta_0 \}$. We can consider in general $\theta_0 = \ker(\bA)$ for some matrix $\bA : ? \rightarrow ?$. In the considered example we have that $\bA$ is a $k \times d$ matrix given by 
+$\bA = [\bI_k \bO_{k, d-k}]$ corresponding to the horizontal concatenation of the identity matrix on $\R^k$ and a $k \times (d-k)$ zero matrix.
+We introduce a geometric solution to this testing problem: we decompose $\R^n$ as the following direct sums
+\begin{equation*}
+	\R^n = V^\perp \oplus V = V^\perp \oplus W \oplus W'
+\end{equation*}
+where we note that $\dim(V^\perp) = n - d$, $\dim(W) = d - k$ and $\dim(W') = k$, with $W = \{ \bX \theta : \theta \in \Theta_0 \}$ is a subset of $V$.
+Consider now the projections $\proj_V(\by)$ and $\proj_W(\by)$ of $\by$ onto $V$ and its subspace $W$.
+Pythagora's theorem entails that $\norm{\by - \proj_W(\by)}^2 = \norm{\by - \proj_V(\by)}^2 + \norm{\proj_V(\by) - \proj_W(\by)}^2$ since $\by - \proj_V(\by) \perp \proj_V(\by) - \proj_W(\by) \in V$, so that 
+\begin{equation*}
+	\norm{\proj_V(\by) - \proj_W(\by)}^2 = \norm{\by - \proj_W(\by)}^2 - \norm{\by - \proj_V(\by)}^2.
+\end{equation*}
+Note that $\proj_V(\by) = \bX \wh \theta$ where $\wh \theta$ is the ordinary least squares estimator while $\proj_W(\by) = \bX \tilde \theta$ where $\tilde \theta$ is the least squares estimator computed under $H_0$, namely $\tilde \theta = \argmin_{\theta \in \Theta_0} \norm{\by - \bX \theta}^2$.
+This is where the trick of the test comes in the picture: the quantity $\proj_V(\by) - \proj_W(\by)$ behaves very differently whenever $H_0$ holds or not. Indeed, \emph{under $H_0$, namel when $\bX \theta \in W$, we have}
+\begin{equation*}
+	\proj_V(\by) - \proj_W(\by) = \proj_{W'} (\by) = \proj_{W'}(\bX \theta) + \proj_{W'}(\beps) = \proj_{W'}(\beps)
+\end{equation*}
+since in this case $\bX \theta \in W \perp W'$, while $\proj_{W'}(\bX \theta) \neq 0$ when $\theta \notin \Theta_0$.
+So, under $H_0$, we have that $(\proj_V(\by) - \proj_W(\by)) / \sigma = \proj_{W'}(\beps / \sigma)$ while 
+ $(\by - \proj_V(\by)) / \sigma = \proj_{V^\perp}(\beps / \sigma)$ and therefore since $W' \subset V$ we have $V^\perp \perp W'$, so again, under $H_0$ we have
+ \begin{equation*}
+ 	\frac{\norm{\proj_V(\by) - \proj_W(\by)}^2 / k}{\norm{\by - \proj_V(\by)}^2 / (n - d)} =
+ 	\frac{\norm{\proj_{W'}(\beps / \sigma)}^2 / k}{\norm{\proj_{V^\perp}(\beps / \sigma)}^2 / (n-d)} \sim \fis(k, n-d),
+ \end{equation*}
+ since the Cochran Theroem~?? gives that both numerators and denominators are independent and distributed as $\chisq(k)$ for the numerator and $\chisq(n - d)$ for the denominator, and by the deifintion of the $\fis$ distribution.
+ This can be rewritten, under $H_0$, as 
+ \begin{equation*}
+ 	\frac{\big(\norm{\by - \bX \tilde \theta}^2 - \norm{\by - \bX \tilde \theta}^2\big) / k}
+ 	{\norm{\by - \bX \wh \theta}^2 / (n - d)} = \frac{\norm{\bX (\wh \theta - \tilde \theta)}^2}{k \wh \sigma^2} \sim \fis(k, n-d).
+ \end{equation*}
+ Note that all of this was done so that the ancillary statistic does not depend on the unknown $\sigma^2$, that cancels out thanks for the ratio.
+We can conclude now that the Fisher test for the hypothesis ???? with rejection region
+\begin{equation*}
+	R = \bigg\{  \frac{\norm{\bX (\wh \theta - \tilde \theta)}^2}{k \wh \sigma^2}  \geq q_{\fis(k, n-d)}(1 - \alpha)  \bigg\}
+\end{equation*}
+has level $\alpha$, namely that $\sup_{\theta \in \Theta_0} \P_\theta[R] = \alpha$.
+This test is pretty intuitive and can be understood as follows: if $\theta \in \Theta_0$ then both estimators $\wh \theta$ and $\tilde \theta$ should be close, and $\bX (\wh \theta - \tilde \theta)$ should be, consequently, ``small''. The small miracle in the Fisher test is that, in the Gaussian linear model, we can perfectly quantify how small.
+
+\begin{example}
+	Consider $Y_1, \ldots, Y_n$ iid $\nor(\mu, \sigma^2)$. This is a linear model by putting $\by = \mu \bone + \beps$ where $\beps \sim \nor(0, \sigma^2 \bI_n)$.
+	In this case $\wh \mu = \bar Y_n$ (since $(\bone^\top \bone)^{-1} \bone^\top \by = n^{-1} \sum_{i=1}^n Y_i$ and $\wh \sigma^2 = \frac{1}{n-1} \norm{\by - \bar Y_n \bone}^2 =  \frac{1}{n-1} \sum_{i=1}^n (Y_i - \bar Y_n)^2$ and we know from Theorem~? that $\wh \mu$ and $\wh \sigma^2$ are independent and such that $\sqrt n (\wh \mu - \mu) / \sigma \sim \nor(0, 1)$ and $(n-1) \wh \sigma^2/\sigma^2 \sim \chisq(n-1)$ so that by definition of the $\stu(n-1)$ distribution we have
+	\begin{equation*}
+		\sqrt{\frac{n}{\wh \sigma^2}} (\wh \mu - \mu) \sim \stu(n-1)
+	\end{equation*}
+	so that we can build, using this ancillary statistic a confidence interval and tests for $\mu$ when $\sigma^2$ is unknown.
+\end{example}
+
+\begin{example}
+	The \emph{simple regression} model if $Y_i = a x_i + b + \eps_i$ were $a, b \in \R$, $x_1, \ldots, x_n \in \R$ and $\eps_i \sim \nor(0, \sigma^2)$ are iid. This can be written as a linear model with
+	\begin{equation*}
+		\by = 
+		\begin{bmatrix}
+			1 & x_1 \\
+			\vdots & \vdots \\
+			1 & x_n
+		\end{bmatrix}
+		\begin{bmatrix}
+			a \\
+			b
+		\end{bmatrix}
+		+ \beps
+	\end{equation*}
+	with $d=2$, we can compute explicitly $\wh \theta$ and $\wh \sigma^2$ and obtain their distributions. 
+\end{example}
+
+\paragraph{Residuals and leverages.}
+
+We know that residual vector $\wh \beps = \by - \wh \by = (\bI - \bH) \by$ is such that $\E[\wh \beps] = 0$ and $\var[\beps] = \sigma^2 (\bI - \bH)$, so that
+\begin{equation*}
+	\wh \eps_i \sim \nor(0, \sigma^2 (1 - h_{i,i})) \quad \text{where} \quad h_{i, i} = \bH_{i, i} = X_i^\top (\bX^\top \bX)^{-1} X_i.
+\end{equation*}
+We know that $h_{i, i} \in [0, 1]$ since ??
+We call $h_{i, i}$ the \emph{leverage} of sample $i$. We say that $i$ has small leverage whenever $h_{i, i}$ is close to zero while we say that is as a large leverage when $h_{i, i}$ is close to $1$, since in this case the contribution of sample $i$ to the linear model is important, since $\wh \eps_i \approx 0$.
+Also, we note that 
+\begin{equation*}
+	h_{i, i} = \frac{\partial \wh Y_i}{\partial Y_i}
+\end{equation*}
+since $\wh \bY = \bH \bY$, namely $\wh Y_i = \sum_{j=1}^d \bH_{i, j} Y_j$.
+So, the leverage $h_{i, i}$ can be understood as a quantity that measures the ``self-sensitivity'' to its prediction, namely the influence of $Y_i$ on the computation of $\wh Y_i$.
+We will see also in the next Chapter that the leverage score is a very important concept as it is deeply connected to the \emph{theoretical performance} of the least-squares estimation procedure.
+
+\section{Optimality of the least-squares} % (fold)
+\label{sec:optimality_of_the_least_squares}
+
+While the contents of the previous section is quite classical and well-understood theory the contents of this Section is not.
+It comes from very result (yet simple enough to be exposed here) from a previous PhD Student of mine ????
+
+Let us come back to the more general case where $(X_1, Y_1), \ldots, (X_n, Y_n)$ are iid with same distribution as $(X, Y)$, with $X \in \R^d$, $Y \in \R$ and $\E \norm{X}^2 < +\infty$ and $\E(Y^2) < +\infty$and a non-degenerate distribution $\P_X$, as explained in Theorem~\ref{thm:least-squares-existence}.
+We consider again the linear model (not Gaussian, the results stated here are way more general than that).
+Given $\sigma^2$ and $\P_X$, we consider the following classes of distribution on $(X, Y)$:
+\begin{equation*}
+	\cC(\P_X, \sigma^2) = \{ P_{X, Y} : X \sim P_X, Y = X^\top \theta^* + \eps \text{ for some } \theta^* \in \R^d \text{ and } \E(\eps | X) = 0, \E(\eps^2 | X) \leq \sigma^2 \text{ almost surely }\}
+\end{equation*}
+and the class
+\begin{equation*}
+	\cG(P_X, \sigma^2) = \{ P_{X, Y} : X \sim P_X, Y = X^\top \theta^*, \eps | X \sim \nor(0, \sigma^2) \}.
+\end{equation*}
+The first class is a general class of joint distribution on $(X, Y)$ with fixed marginal distribution $P_X$ and such that $Y$ is a linear function of $X$ plus a noise $\eps$ which is conditionally centered and with finite variance. The set $\cG(P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$ is the same as $\cC(\P_X, \sigma^2)$, but where we assume that noise to be centered Gaussian.
+\todo{sidenote sur le fait que pour caracteriser la loi jointe on peut caracteriser une marginale et la loi conditionnelle}
+
+We consider the quadratic risk \todo{differs from the one in ??? here it is  predition blabla} given by
+\begin{equation*}
+	R(\theta) = \E [ (Y - X^\top \theta)^2].
+\end{equation*}
+If $P_X$ is non degenerate and is $\Sigma = \E[ X X^\top] \succ 0$ then it is easy to see that
+\begin{equation*}
+	\theta^* = \argmin_{\theta \in \R^d} R(\theta) = \Sigma^{-1} \E(Y X).
+\end{equation*}
+Our aim here is to find a function $\wh \theta$ of $(X_1, Y_1), \ldots, (X_n, Y_n)$ such that the \emph{excess risk}
+\begin{equation*}
+	\cE(\wh \theta) := R(\wh \theta) - R(\theta^*)
+\end{equation*}
+is \emph{minimal}.
+Let us first remark that if $(X, Y) \sim P$ with $P \in \cC(P_X, \sigma^2)$ then
+\begin{align*}
+	\cE(\theta) &= \E [ (Y - X^\top  \theta)^2 - (Y - X^\top \theta^*)^2] \\
+	&= \E [ (\theta^* - \theta)^\top X (2 Y - X^\top (\theta + \theta^*))] \\
+	&= \E [ (\theta^* - \theta)^\top X (X^\top (\theta + \theta^*) + 2 \eps)] \\
+	&= \E [ (\theta^* - \theta)^\top X X^\top (\theta + \theta^*)] = \norm{\theta^* - \theta}_\Sigma^2
+\end{align*}
+where we used $Y = X^\top \theta^* + \eps$ and $\E(\eps | X) = 0$ and where $\norm{x}_\Sigma^2 = x^\top \Sigma x$ is a norm since we assumed $\Sigma \succ 0$.
+Whenever $(X, Y) \sim P$ with $P \in \cC(P_X, \sigma^2)$ we will therefore write
+\begin{equation*}
+	\cE_P(\theta) = R(\theta) - R(\theta^*) = \norm{\theta^* - \theta}_\Sigma^2
+\end{equation*}
+and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$ measurable we can consider, since $(X, Y)$ is an independent copy from the data with the same distribution, we can compute
+\begin{equation*}
+	\E [ \cE_P(\wh \theta) ]
+\end{equation*}
+where this expectation is with respect to $P^n$, for the randomness coming from the data. We can now consider the \emph{minimax risk} for a set $\cP$ of distributions:
+\begin{equation*}
+	\inf_{\wh \theta} \sup_{P \in \cP} \E \cE_P(\wh \theta).
+\end{equation*}
+The infimum is taken over any possible estimator, namely any statistic of the data, while the sup is over all distribution in $\cP$. Hence the name minimax, since we look the worst-case excess risk over the considered set $\cP$, but we consider the best possible estimator (with the inf).
+Since $\cG \subset \cC$ we expect the minimax risk of the former to be smaller than the one of the latter.
+
+Some remarks and extra notation is required before we can state the main result of the section.
+\begin{itemize}
+	\item First, the linear model is \emph{well-specified} here since $Y = X^\top \theta^* + \eps$ with $\E[\eps | X] = 0$, so that there is no approximation term of $\E(Y | X)$ by $X^\top \theta^*$.
+This can be done, see for instance ????
+\item For the class $\cP = \cC(P_X, \sigma^2)$ we expect a \emph{minimax estimator} $\wh \theta$ that achieves the minimax risk to depend both on $P_X$ and $\sigma^2$. But quite surprisingly, we will see that it won't depend on this knowledge.
+\end{itemize}
+Let us introduce $\wh \bSigma = \frac 1n \sum_{i=1}^n X_i X_i^\top = \bX^\top \bX / n$ and define the ``whitened'' random vectors $\tilde X_i = \bSigma^{-1/2} X_i$ (so that $\var(\tilde X_i) = \bI_d$) and define
+\begin{equation*}
+	\tilde \bSigma = \frac 1n \sum_{i=1}^n \tilde X_i \tilde X_i^\top = \bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2}.
+\end{equation*}
+The following theorem holds.
+\begin{theorem}[Mourtada~(2019)]
+	Assume that $P_X$ is non-degenerate and $n \geq d$ and $\sigma^2 > 0$. Then
+	\begin{equation}
+		\inf_{\wh \theta} \sup_{P \in \cC(P_X, \sigma^2)} \E \cE_P(\wh \theta) = \inf_{\wh \theta} \sup_{P \in \cG(P_X, \sigma^2)} \E \cE_P(\wh \theta) = \frac{\sigma^2}{n} \E \tr(\tilde \bSigma ^{-1}).
+	\end{equation}
+	Furthermore, the infimum in the minimax risk is achieved by the ordinary least squares estimator.
+\end{theorem}
+This theorem deserves several remarks.
+\begin{itemize}
+	\item The theorem proves that the least-squares estimator is, in fairly general setting, \emph{minimax optimal}: it cannot be improved by another estimator, uniformly over the class of distributions $\cC(P_X, \sigma^2)$.
+	\item The Gaussian noise, namely the class $\cG(P_X, \sigma^2)$ ``saturates'' the minimax risk, and corresponds to the \emph{least favorable} distribution in the minimax sense.
+	\item The minimax risk is invariant by a linear transformation of the features vectors: it is unchanged if one replaces $X_i$ by $X_i' = \bA X_i$ for some deterministic invertible matrix $\bA$. Indeed we have in this case $\wh \bSigma' = \frac 1n \sum_{i=1}^n X_i' X_i'^\top = \bA \wh \bSigma \bA^\top$ so that $(\wh \bSigma')^{-1} \Sigma' = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \bA^{-1} \bA \Sigma \bA^\top = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \Sigma \bA^\top$ which proves that $(\wh \bSigma')^{-1} \Sigma'$ and $(\wh \bSigma)^{-1} \Sigma$ are congruent matrices, so that they share the same trace, namely $\tr((\wh \bSigma')^{-1} \Sigma') = \tr((\wh \bSigma)^{-1} \Sigma)$, and the minimax risk is indeed invariant when replacing $X_i$ by $\bA X_i$. This is of course expected, since the supremum is over linear functoin, so invariance with respect to a invertible linear transformation is expected.
+\end{itemize}
+Since $\bA \mapsto \tr( \bA^{-1})$ is a \emph{convex} function on the set of positive definite matrices, we known from Jensen's inequality that
+\begin{equation*}
+	\E [\tr( \tilde \bSigma^{-1})] \geq \tr (\E [\tilde \bSigma)] )^{-1}
+\end{equation*}
+but $\E[ \tilde \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma^{-1}] \bSigma^{-1/2} = \bI_d$ so $\E [\tr( \tilde \bSigma^{-1})] \geq d$ and consequently the minimax risk is larger than $\sigma^2 d / n$.
+
+The proof of the convexity of $\bA \mapsto \tr[ (\bA)^{-1} ]$ can be easily deduced from the following Taylor expansion. Take $\bA \succ 0$ and $\bB$ a symmetrical matrix.
+We have
+\begin{equation}
+	(\bA + t \bB)^{-1} = (\bA (\bI + t \bA^{-1} \bB)^{-1} = \bA^{-1} - t \bA^{-1} \bB \bA^{-1} + t^2 (\bA^{-1} \bB)^2 \bA^{-1} + \ldots
+\end{equation}
+so that 
+\begin{equation*}
+	\frac{\partial^2 \tr((\bA + t \bB)^{-1})}{partial t^2} = 2 \tr( (\bA^{-1} \bB)^2 \bA^{-1} ) 
+	= 2 \tr( \bA^{-1} \bB \bA^{-1} \bB \bA^{-1} ) = = 2 \tr( \bC \bA^{-1} \bC^\top )
+\end{equation*}
+where $\bC = \bA^{-1} \bB$. But since $\bA^{-1} \succ 0$ we have $\bC \bA^{-1} \bC^\top \mgeq 0$ which proves that the second derivative is non-negative.
+
+Let us provide now the upper bound part from Theorem~??
+We will prove the lower bound later (in Section~???), since it will require some arguments from Bayesian statistics that we did not talked about yet.
+
+\paragraph{Proof of the upper bound frm ???} % (fold)
+
+This is actually mainly a computation with no particular tricks. Recall that $(X, Y)$ is such that $Y = X^\top \theta^* + \eps$ and that $\E(\eps | X) = 0$ and $\E(\eps^2 | X) \leq \sigma^2$.
+Consider $\wh \theta$ as the least squares estimator given by
+\begin{align*}
+	\wh \theta &= (\bX^\top \bX)^{-1} \bX^\top \by = (\bX^\top \bX)^{-1} \bX^\top (\bX \theta^* + \beps) \\
+		&= \theta^* + \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i
+\end{align*}
+so that recalling that $\inr{u, v}_{\bSigma} =u^\top \bSigma v$ and
+ $\norm{u}_{\bSigma}^2 = \inr{u, u}_{\bSigma}$
+\begin{align*}
+	\E \cE(\wh \theta) &= \E \Big\| \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i \Big \|_{\bSigma}^2
+	 = \frac{1}{n^2} \sum_{1 \leq i, i' \leq n} \E \langle \wh \bSigma^{-1} \eps_i X_i, \wh \bSigma^{-1} \eps_{i'} X_{i'} \rangle \\
+	 &= \frac{1}{n^2} \sum_{1 \leq i, i' \leq n} \E \Big[ \E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] \langle \wh \bSigma^{-1}  X_i, \wh \bSigma^{-1} X_{i'} \rangle \Big].
+\end{align*}
+But we have $\E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] = 0$ whenever $i \neq i'$ and $\E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] \leq \sigma^2$ whenever $i=i'$. So, we obtain
+\begin{align*}
+	\E \cE(\wh \theta) &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \norm{\wh \bSigma^{-1} X_i}_{\bSigma}^2 
+	= \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ (\wh \bSigma^{-1} X_i)^\top \bSigma \wh \bSigma^{-1} X_i \big] \\
+	&= \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ \tr (X_i^\top \wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} X_i) \big]
+\end{align*}
+since $\tr(x) = x$ for $x \in \R$, so that finally, using the cyclic invariance of the trace and linearity, we obtain
+\begin{align*}
+	\E \cE(\wh \theta) &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ \tr (\wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} X_i X_i^\top )\big] \\
+	&= \frac{\sigma^2}{n} \E \big[ \tr (\wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} \wh \bSigma)\big] \\
+	&=\frac{\sigma^2}{n} \E \big[ \tr (\wh \bSigma^{-1} \bSigma)\big] \\
+	&=\frac{\sigma^2}{n} \E \big[ \tr ( (\bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2})^{-1}) \big] = \frac{\sigma^2}{n} \E[ \tr (\wt \bSigma^{-1}) ]
+\end{align*}
+which proves the upper bound.
+
+We can also provide another expression for $\E [\tr (\wt \bSigma^{-1})]$ using the leverage score we talked about in the previous Section~??
+Let us recall at this point that since $P_X$ is non-degenerate that if $X_1, \ldots X_{n+1}$ are iid and distributed as $P_X$, we ave that $\sum_{i=1}^{n+1} X_i X_i^\top \succ 0$.
+Indeed, the following theorem holds
+\begin{theorem}
+	\label{thm:minimax-leverage}
+	The minimax risk given in Theorem~? above can be written as
+	\begin{equation*}
+		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
+	\end{equation*}
+	where $\ell_{n+1}$ is the leverage of one data point among $n+1$ given by
+	\begin{equation*}
+		\wh \ell_{n+1} = X_{n+1}^\top \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{n+1}
+	\end{equation*}
+	where $X_1, \ldots, X_n, X_{n+1}$ are iid and with the same distribution as $X$.
+\end{theorem}
+Let us recall that $\wh \ell_{n+1} = \partial \wh Y_{n+1} / \partial Y_{n+1}$ where $Y_{n+1} = X_{n+1}^\top \wh \theta_{n+1}$ where $\wh \theta_{n+1}$ is the ordinary least squares estimator computed on the $n+1$ samples $(X_1, Y_1), \ldots, (X_{n+1}, Y_{n+1})$. 
+This theorem entails that the minimax risk, which measures the complexity of the estimation problem,  is completely determined by the leverage score. 
+Even more than that, it is the expected value of a convex functional of it, so that the minimax risk is small with a small leverage, and gets larger with large leverage, which is natural since in such a case, the statistcal problem is harder. 
+
+\paragraph{Proof of TheoremNNN} % (fold)
+
+
+Let $X_{n+1} \sim P_X$ be independent of $X_1, \ldots, X_n$.
+This proof uses a cute trick based on the Sherman-Morrison Lemma \todo{ortho}
+\begin{align*}
+	\frac 1n \E \tr( \wt \bSigma^{-1}) 
+	= \frac 1n \E \tr( (\wh \bSigma)^{-1} \bSigma) 
+	= \E \tr( (n \wh \bSigma)^{-1} X_{n+1} X_{n+1}^\top) \\
+	= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}}.
+\end{align*}
+We need the following
+\begin{lemma}
+ For any $\bS \succ 0$ and any $v \in \R^d$ we have
+ \begin{equation*}
+ 	\inr{\bS^{-1} v, v} = \frac{\inr{(\bS + v v^\top)^{-1} v, v}}{1 - \inr{(\bS + v v^\top)^{-1} v, v}}.
+ \end{equation*}
+\end{lemma}
+ BLABLA sur le lemma This lemma gives a nice formula that allows to express a quadratic formula as a function of its rank-1 perturbation BLABLA
+\begin{proof}
+	We have $\bS + v v^\top \mgeq \bS \succ 0$ so that $\bS + v v^\top$ is invertible so that using the Sherman Morrison formula we have
+	\begin{equation*}
+		(\bS + v v^\top)^{-1} = \bS^{-1} - \frac{1}{1 + v^\top \bS^{-1} v} \bS^{-1} v v^\top \bS^{-1}
+	\end{equation*}
+	so that 
+	\begin{align*}
+		\inr{(\bS + v v^\top)^{-1} v, v} = v^\top \bS^{-1} v - \frac{v^\top \bS^{-1} v v^\top \bS^{-1} v}{1 + v^\top \bS^{-1} v} = \inr{S^{-1} v, v} - \frac{\inr{S^{-1} v, v}^2}{1 + \inr{S^{-1} v, v}} = \frac{\inr{S^{-1} v, v}}{1 + \inr{S^{-1} v, v}}
+	\end{align*}
+	which concludes the proof of Lemma ???
+\end{proof}
+\todo{put this lemma somewhere and use it, say that it is useful for many things}
+
+This proves in particular that $\wh \ell_{n+1} \in [0, 1)$ almost surely since $\wh \bSigma \succ 0$ almost surely.
+We can know finish the proof of THeorem~? using Lemma ? since now
+\begin{align*}
+	\frac 1n \E \tr( \wt \bSigma^{-1}) &= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}} \\
+	&= \E \bigg[ \frac{ \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} }}{1 - \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} } } \bigg] \\
+	&= \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
+\end{align*}
+which concludes the proof of THeorem???
+% paragraph proof_of_theoremnnn (end)
+% paragraph proof_of_the_upper_bound_frm_ (end)
+
+A corollary of Theorem~? is an improved lower bound than the first one we proved $\sigma^2 d / n$.
+
+\begin{corollary}
+	Under the same assumptions as THeorem we have that the miimax risk is lower bounded by
+	\begin{equation*}
+		\sigma^2 \frac{d}{n - d + 1}.
+	\end{equation*}
+\end{corollary}
+
+\begin{proof}
+	Theorem~? and Jensen's inequality since $x \mapsto x / (1-x)$ is convex on $[0, 1]$ gives
+	\begin{equation*}
+		\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{\E[\wh \ell_{n+1}]}{1 - \E[\wh \ell_{n+1}}] \Big],
+	\end{equation*}
+	but a exchangeability arguments gives
+	\begin{align*}
+		\E [\wh \ell_{n + 1}] &= \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top 
+		\Big)^{-1} X_{n+1}, X_{n+1} \Big \rangle \\
+		&= \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{i}, X_{i} \Big \rangle
+	\end{align*}
+	so that
+	\begin{align*}
+	 	\E [\wh \ell_{n + 1}] &= \frac{1}{n+1} \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{i}, X_{i} \Big \rangle \\
+	 	&= \frac{1}{n+1}  \E \tr \bigg( \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} \sum_{i=1}^{n+1} X_i X_i^\top \bigg) 
+	 	&= \frac{d}{n + 1},
+	 \end{align*}
+	so that
+	\begin{equation*}
+		\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{d}{n - d + 1}.
+	\end{equation*}
+\end{proof}
+
+
+The $\sigma^2 d / (n - d + 1)$ is very sharp since we know from ??? that whenever $P_X = \nor(0, \bSigma)$ then
+\begin{equation*}
+	\E \cE_P(\wh \theta) = \sigma^2 \frac{d}{n - d - 1}
+\end{equation*}
+if $\wh \theta$ is the ordinary least squares estimator. This can be understood also by using Theorem~? (le minimax) together with the use of some knowledge about the Wishart distributions \todo{le faire}.
+This means also that the Gaussian ``design'' $\nor(0, \bSigma)$ is almost the most favorable design for linear regression, since for this distribution, the minimax risk is almost minimal (compare denominator ???).
+\todo{conjecture that the most favorable is the uniform distribution on the unit sphere}
+
+\paragraph{Upper bound on the minimax risk.} 
+
+We were able to provide easily an explicit lower bound (with respect to $d, n$ and $\sigma^2$) for the minimax risk, it remains to provide a similarly explicit upper bound for this quantity.
+\todo{attention y'en a une qui est uniforme $d / n$ et l'autre qui ne l'est pas $d / (n - d + 1$}.
+
+In order to provide such an upper bound, we need some extra technical assumptions on $P_X$.
+
+The first assumption is somehow a quantified version of the non-degenerate assumption about $P_X$. 
+Indeed, we assume that there is $\alpha \in (0, 1]$ and $C \geq 1$ such that
+\begin{equation}
+	\label{eq:quanti-nondegenerate}
+	\P[ |\inr{X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
+\end{equation}
+for any $t > 0$ and non-zero vector $\theta \in \R^d$. Note that this assumption is equivalent to the assumption that $\P[ |\inr{\tilde X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1} X$. \todo{sidenote proof}
+This assumeption quantifies the assumption $\P(\inr{X, \theta} = 0) = 0$ BLABLA
+
+We need also another assumption that $P_X$ satifies
+\begin{equation*}
+	\E [\norm{\bSigma^{-1/2} X}^4] \leq \kappa d^2.
+\end{equation*}
+This is entailed by the $L^4$-$L^2$ condition $\E[\inr{\theta, X}^4]^{1/4} \leq \kappa \E[ \inr{\theta, X}^2]^{1/2}$ for any $\theta \in \R^d$.
+
+Indeed if $\theta = \bSigma^{-1/2} e_j$ then $\inr{\theta, X} = \wt X_j$ so that $\E[\wt X_j^4] \leq \E [\wt X_j^2]^2 = \kappa$ (since $\E[\wt X \wt X^\top] = \bI_d$) so that $\E \norm{\wt X}^4 = \E (\sum_j \wt X_j^2 )^2 = \sum_{1 \leq j, k \leq d} \E[ \wt X_j^2 \wt X_k^2] \leq \sum_{j, k} \sqrt{\E[ \wt X_j^4] \E[] \wt X_k^4]} \leq \kappa d^2$ by assumption. 
+
+\begin{theorem}
+	Grant assumptions ?a nd ? and put $C' = 3 C^4 e^{1 + 9 / \alpha}$. If $n \geq 6 \frac d \alpha \vee 12 \log(12 / \alpha) / \alpha$ then
+	\begin{equation*}
+		\frac 1n \E \tr [ (\wt \bSigma)^{-1}] \leq \frac dn + 8 C' \kappa \Big( \frac dn \Big)^2,
+	\end{equation*}
+	which entails together with ??? that
+	\begin{equation*}
+		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(P_X, \sigma^2)} \E \cE_P(\wh \theta) \leq \sigma^2 \frac dn 
+		\Big( 1 + 8 C' \kappa \Big( \frac dn \Big)
+	\end{equation*}
+\end{theorem}
+The proof of this theorem is quite technical and beyond the scope of this book. The interesting reader can read it in ????
+The technicity of the proof comes from a sharp control of $\E [\tr (\wt \bSigma)^{-1}]$ or more simply the smallest eigenvalue of $(\wt \bSigma)^{-1}$.
+
+Let us wrap us what are the important things we learned in this Section:
+\begin{itemize}
+	\item The least-squares procedure is minimax optimal for the well-specified linear regression model
+	\item The Gaussian design is almost the most favorable in the minimax sense
+	\item The minimax rate is of order $\sigma^2 d / n$
+	\item The statistical complexity of the problem of linear regression is, when measured by the minimax rate, fully explained by the distribution a leverage of a sample among $n+1$
+\end{itemize}

@@ -3,8 +3,9 @@
 \chapter{Statistical inference}
 \label{chap:statistical_inference}
 
-In this Chapter, we will consider all along the simple Bernoulli model, where we have iid samples $X_1, \ldots, X_n$ distributed as $\ber(\theta)$ with $\theta \in (0, 1)$.
-Let us start with the first \emph{inference} problem: the \emph{estimation} problem.
+In this Chapter, we introduce the three main \emph{statistical inference} problems: \emph{estimation}, \emph{confidence intervals} and \emph{tests}.
+Each problem will be instantiated with the simple Bernoulli model, where we have iid samples $X_1, \ldots, X_n$ distributed as $\ber(\theta)$ with $\theta \in (0, 1)$.
+Let us start with the first inference problem: \emph{estimation}.
 
 \section{Estimation} % (fold)
 \label{sec:estimation}
@@ -14,7 +15,7 @@ We want to \emph{infer} $\theta$, or \emph{estimate} it by finding a statistic w
 or a measurable function of $S_n = \sum_{i=1}^n X_i$ thereof, since $S_n$ is sufficient, see Section~\ref{sec:statistics}.
 We will denote such a statistic as
 \begin{equation*}
- 	\wh \theta_n = \wh \theta(X_1, \ldots, X_n).
+ 	\wh \theta_n = \wh \theta_n(X_1, \ldots, X_n).
 \end{equation*}
 This function \emph{does not depend} on $\theta$, but its distribution does.
 Ideally, we want $\wh \theta_n$ to be ``close'' to $\theta$, since we want a good estimator, so that the first thing we need to do is to quantify ``closeness''.
@@ -580,3 +581,4 @@ In many sciences, in order to publish conclusions based on experimental observat
 
 
 \pagelayout{margin}
+
