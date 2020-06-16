@@ -508,6 +508,24 @@ Let us remark that
 	&= \int_{y \in \cY : p_Y(y) = 0} p_Y(y) \nu(dy) = 0
 \end{align*}
 namely $P_{X, Y}[ \{ y \in \cY : p_Y(y) = 0 \}] = 0$.
+So, given any density $q$ we can define
+\begin{equation*}
+	p_{X | Y}(x | y) = \frac{p(x, y)}{p_Y(y)} \ind{p_Y(y) > 0} + k(x) \ind{p_Y(y) = 0},
+\end{equation*}
+so that any version of $p_{X | Y}$ associated to the choice of $q$ are all equal $P_{X, Y}$-almost surely, since we can check immediatly that $\int_{\cX} p_{X | Y}(x | y) \lambda(dx) = 1$, so that it is a probability density with respect to $\lambda$ on $\cX$.
+Moreover, if we define
+\begin{equation*}
+	g(y) = \int_{\cX} f(x) p_{X | Y}(x | y) \lambda(dx)
+\end{equation*}
+we have for any measurable bounded function $h$, because of the Fubini theorem and using the fact that $\{y \in \cY : p_Y(y) = 0\}$ is a $P_{X, Y}$ -negligeable set that
+\begin{align*}
+	\E[ g(Y) h(Y)] &= \int_{\cY} g(y) h(y) p_Y(y) \nu(dy) \\
+	\int_{\{ y \in \cY : p_Y(y) > 0 \}} h(y) p_Y(y) \nu(dy) \int_{\cX} f(x) \frac{p(x, y)}{p_Y(x)} \lambda (dx)
+\end{align*}
+warning $g$ is not any function but the function such that $g(Y) = \E[ f(X) | Y]$ almost surely.
+
+ICI ICI ICI
+
 % section about_conditional_distributions_and_densities (end)
 
 
