@@ -67,6 +67,9 @@
 \DeclareMathOperator{\cM}{\mathcal M}
 \DeclareMathOperator{\cN}{\mathcal N}
 \DeclareMathOperator{\cP}{\mathcal P}
+\DeclareMathOperator{\cX}{\mathcal X}
+\DeclareMathOperator{\cY}{\mathcal Y}
+\DeclareMathOperator{\cZ}{\mathcal Z}
 
 \DeclareMathOperator{\bA}{\boldsymbol A}
 \DeclareMathOperator{\bB}{\boldsymbol B}
@@ -374,14 +377,141 @@
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-\input{chap01_introduction}
+% \input{chap01_introduction}
 
-\input{chap02_statistical_models}
+% \input{chap02_statistical_models}
 
-\input{chap03_statistical_inference}
+% \input{chap03_statistical_inference}
 
-\input{chap04_linear_regression}
+% \input{chap04_linear_regression}
 
+
+\setchapterpreamble[u]{\margintoc}
+\chapter{Bayesian statistics}
+\label{chap:bayesian_statistics}
+
+Let us go back to the statistical problems we considered in Chapter~\ref{chap:statistical_inference}.
+In each case, we had a set of decisions $A$, for instance a set of parameter $A = \Theta \subset \R^d$ for estimation problems, a set of binary decisions $A = \{ 0, 1 \}$ for statistial tests, etc..
+
+\section{Elements of decision theory} % (fold)
+\label{sec:elements_of_decision_theory}
+
+
+We have data $X \in E$ where $E$ is the values set of the observations.
+Given a statistical procedure $\delta : E \go A$, we \emph{decide} $\delta(X) \in A$.
+In order to assess or to quantify a decision, we need a \emph{loss function} $\ell : \Theta \times A \go \R$.
+This means that if the true parameter $\theta \in \Theta$ and if we decide $a \in A$ then we incur a loss $\ell(\theta, a)$.
+\begin{example}
+	For the estimation of a scalar parameter we have $\Theta = \R = A$ and $\ell(\theta, \theta') = (\theta - \theta')$ which corresponds to the quadratic risk introducion in Definitino~\ref{def:quadratic_risk}. 
+\end{example}
+
+\begin{example}
+	For a statistical test with hypothesis $H_0 : \theta \in \Theta_0$ and $H_1 : \theta \in \Theta_1$ with $\{ \Theta_0, \Theta_1 \}$ a partition of the set of parameters $\Theta$, we can consider the loss satisfying $\ell(\theta, 0) = 0$ if $\theta \in \Theta_0$, $\ell(\theta, 01) = 0$ if $\theta \in \Theta_1$ and $\ell(\theta, 0) = c_0$ if $\theta \in \Theta_1$, $\ell(\theta, 1) = c_1$ if $\theta \in \Theta_0$, where both constants $c_0, c_1 > 0$ allow to tune we importance we given to the Type~I and Type~II errors.
+\end{example}
+
+\begin{definition}
+	Consider a statistical experiment with data $X \in E$ and a set of parameters $\Theta$, a set $A$ of decisions and a loss function $\ell : \Theta \times A \go \R$. The \emph{risk} of a statistical procedure $\delta : E \go A$ is the function $\Theta \go \R$ given by
+	\begin{equation*}
+		R(\theta, \delta) = \E_\theta[ \ell(\theta, \delta(X))]
+	\end{equation*}
+	for any $\theta \in \Theta$.
+\end{definition}
+
+\begin{example}
+	For estimation with $A = \Theta = \R$ we can choose $\ell(\theta, \theta')$ so that $R(\theta, \delta)$ is the quadratic risk, but we can used $\ell(\theta, \theta') = |\theta - \theta'|^p$ for some $p \geq 1$ as well. For tests we have $R(\theta, \delta) = c_i \P_\theta[\delta(X) = 1 - i]$ if $\theta \in \Theta_i$ for $i \in \{ 0, 1\}$ (which leads to an approach to statistical testing different from what we did in Section~\ref{sec:tests}).
+\end{example}
+
+
+\section{Bayes risk} % (fold)
+
+
+Given two statistical procedures $\delta, \delta'$ for the same problem of statistical inference, we do not have in general that $R(\theta, \delta) < R(\theta, \delta')$ uniformly for $\theta \in \Theta$.
+\todo{give bernoulli or gaussian example, exercice on Stein effect ?}
+We we can do instead is to consider an ``averaged risk'': we consider a distribution $\mu$ on $\Theta$ and we use it to integrate the risk over $\Theta$.
+This distribution is called the \emph{prior distribution} or simply the \emph{prior}.
+\begin{definition}[Bayesian risk]
+	The Bayesian risk of a procedure $\delta$ associated to the prior $\mu$ is given by
+	\begin{equation*}
+		R_B(\mu, \delta) = \int_{\Theta} R(\theta, \delta) \mu(d \theta) = \int_{\Theta} \mu(d \theta) 
+		\int_E \ell(\theta, \delta(x)) P_\theta(dx).
+	\end{equation*}
+\end{definition}
+Note that $R_B(\mu, \delta) \leq \max_{\theta \in \Theta} R(\theta, \delta)$ which means that the Bayes risk is always smaller than the minimax risk.
+We understand this risk as an average of the risk over $\Theta$ ``weighted'' by the prior $\mu$.
+\begin{example}
+	For tests, the Bayes risk associated to a prior $\mu$ writes
+	\begin{align*}
+		R_B(\mu, \delta) &= c_0 \int_{\Theta_0} \P_\theta(\delta(X) = 1) \mu(d \theta) \\
+		& \quad + c_1 \int_{\Theta_1} \P_\theta(\delta(X) = 0) \mu(d \theta)
+	\end{align*}
+	which is a weighted combination of the Type~I and Type~II errors averaged by the prior $\mu$.
+\end{example}
+
+But we can understand it differently as well. 
+Indeed, we could say instead that the parameter $\theta$ is itself a random variable distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ conditionally on $T = \theta$. 
+In that case we can write
+\begin{equation*}
+	R_B(\mu, \delta) = \E[ \ell(T, \delta(X))] = \E_Q[ \ell(T, \delta(X))]
+\end{equation*}
+where the expectation is computed with respect to the joint distribution of $(T, X)$, namely integration with respect to $Q$ defined by
+\begin{align*}
+	Q(B \times C) &= \P[ T \in B, X \in C] = \int_B \mu(d \theta) \int_C P_\theta(dx) \\
+	&= \int_B P_\theta[C] \mu(d \theta).
+\end{align*}
+We do ``as if'' $\theta$ where random and with distribution $\mu$.
+The distribution $P_\theta$ becomes the conditional distribution of $X | T = \theta$, namely
+\begin{equation*}
+	P_\theta[A] = \E [\ind{A}(X) | T = \theta],
+\end{equation*}
+or even $P_T[A] = \E [\ind{A}(X) | T]$.
+
+In what follows, we will assume that we have a dominating measure $\lambda$ on $\Theta$ such that $\mu = g \cdot \lambda$ where $g$ is the density of $T$ on $\Theta$ with resoect tp $\lambda$ (often $\lambda$ is the lEbuesgue measure).
+We suppose also that thre is a measure $\nu$ on $E$ for which $P_\theta = f(\cdot | \theta) \cdot \nu$ where similarly $\frac{d P_\theta}{d \nu} = f(x | \theta)$. 
+We use here the notation $f(\cot | \theta)$ instead of $f_\theta$ to stress that it will correspond to a conditional density.
+We need at this point to classify things about conditional distributions and conditional densities.
+
+\section{About conditional distributions and densities} % (fold)
+\label{sec:about_conditional_distributions_and_densities}
+
+Let $X$ and $Y$ be random variables on the same probability space and values in sets $\cX$ and $\cY$.
+For any integrable function $f(X)$, we can define the conditional expectation $\E [f(X) | Y]$ as the random variable $g(Y)$ (for some measurable function $g$) which is unique almost surely, such that
+\begin{equation}
+	\E[f(X) h(Y)] = \E[ g(Y) h(Y)]
+\end{equation}
+for any measurable and bounded function $h$.
+The particular value $g(y)$ of this conditional expectation is denoted $\E[f(X) | Y = y]$. 
+In particular, we have that
+\begin{align*}
+	\E[f(X) h(Y) | Y] &= h(Y) \E[ f(X) | Y]
+\end{align*}
+almost surely and
+\begin{align}
+	\E [\E[ f(X) | Y]] = \E[f(X)].
+\end{align}
+Let us suppose now that the joint distribution $\P_{X, Y}$ of $X$ and $Y$ has a density $p(x, y)$ with respect to $\lambda \otimes \nu$ on $\cX \times \cY$.
+We can define the marginal distributions of $X$ and $Y$ as
+\begin{equation*}
+	p_X(x) = \int_{\cY} p(x, y) \mu(dx), \quad
+	p_Y(y) = \int_{\cX} p(x, y) \lambda(dy)
+\end{equation*}
+\todo{bon y'a des $\lambda$ qui est pris avant non ?}
+which correpsond to the marginal distributions $\P_X$ and $\P_Y$ of $X$ and $Y$ so that
+\begin{align*}
+	\E[f(X)] &= \int_{\cX} f(x) P_X(dx) = \int_{\cX} f(x) p_X(x) \lambda(dx) \\ 
+	\E[f(Y)] &= \int_{\cY} g(y) P_Y(dx) = \int_{\cY} g(y) p_Y(x) \nu(dy)
+\end{align*}
+for any $f, g$ such that $f(X)$ and $g(Y)$ are integrabel. \todo{attention $g$ c'est pas deja pris ?}
+Let us remark that
+\begin{align*}
+	P_{X, Y} \big[ \{ y \in \cY : p_Y(y) = 0 \} \big] &= \int_{\cX \times \cY} \ind{p_Y(y) = 0} p(x, y) \lambda(dx) \nu(dy) \\
+	&= \int_{y \in \cY : p_Y(y) = 0} \nu(dy) \int_{\cX} p(x, y) \lambda (dx) \\
+	&= \int_{y \in \cY : p_Y(y) = 0} p_Y(y) \nu(dy) = 0
+\end{align*}
+namely $P_{X, Y}[ \{ y \in \cY : p_Y(y) = 0 \}] = 0$.
+% section about_conditional_distributions_and_densities (end)
+
+
+% section bayes_risk (end)
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
