@@ -39,6 +39,8 @@
 \usepackage[english]{babel} % Load characters and hyphenation
 \usepackage[english=british]{csquotes} % English quotes
 
+\usepackage{bm}
+
 % Load packages for testing
 \usepackage{blindtext}
 %\usepackage{showframe} % Uncomment to show boxes around the text area, margin, header and footer
@@ -57,75 +59,75 @@
 
 % \RequirePackage{times}
 
-\DeclareMathOperator{\cA}{\mathcal A}
-\DeclareMathOperator{\cB}{\mathcal B}
-\DeclareMathOperator{\cC}{\mathcal C}
-\DeclareMathOperator{\cD}{\mathcal D}
-\DeclareMathOperator{\cE}{\mathcal E}
-\DeclareMathOperator{\cF}{\mathcal F}
-\DeclareMathOperator{\cG}{\mathcal G}
-\DeclareMathOperator{\cM}{\mathcal M}
-\DeclareMathOperator{\cN}{\mathcal N}
-\DeclareMathOperator{\cP}{\mathcal P}
-\DeclareMathOperator{\cX}{\mathcal X}
-\DeclareMathOperator{\cY}{\mathcal Y}
-\DeclareMathOperator{\cZ}{\mathcal Z}
+\DeclareMathOperator{\cA}{{\mathcal A}}
+\DeclareMathOperator{\cB}{{\mathcal B}}
+\DeclareMathOperator{\cC}{{\mathcal C}}
+\DeclareMathOperator{\cD}{{\mathcal D}}
+\DeclareMathOperator{\cE}{{\mathcal E}}
+\DeclareMathOperator{\cF}{{\mathcal F}}
+\DeclareMathOperator{\cG}{{\mathcal G}}
+\DeclareMathOperator{\cM}{{\mathcal M}}
+\DeclareMathOperator{\cN}{{\mathcal N}}
+\DeclareMathOperator{\cP}{{\mathcal P}}
+\DeclareMathOperator{\cX}{{\mathcal X}}
+\DeclareMathOperator{\cY}{{\mathcal Y}}
+\DeclareMathOperator{\cZ}{{\mathcal Z}}
 
-\DeclareMathOperator{\bA}{\boldsymbol A}
-\DeclareMathOperator{\bB}{\boldsymbol B}
-\DeclareMathOperator{\bC}{\boldsymbol C}
-\DeclareMathOperator{\bD}{\boldsymbol D}
-\DeclareMathOperator{\bE}{\boldsymbol E}
-\DeclareMathOperator{\bF}{\boldsymbol F}
-\DeclareMathOperator{\bG}{\boldsymbol G}
-\DeclareMathOperator{\bH}{\boldsymbol H}
-\DeclareMathOperator{\bI}{\boldsymbol I}
-\DeclareMathOperator{\bJ}{\boldsymbol J}
-\DeclareMathOperator{\bK}{\boldsymbol K}
-\DeclareMathOperator{\bL}{\boldsymbol L}
-\DeclareMathOperator{\bM}{\boldsymbol M}
-\DeclareMathOperator{\bN}{\boldsymbol N}
-\DeclareMathOperator{\bO}{\boldsymbol O}
-\DeclareMathOperator{\bP}{\boldsymbol P}
-\DeclareMathOperator{\bQ}{\boldsymbol Q}
-\DeclareMathOperator{\bR}{\boldsymbol R}
-\DeclareMathOperator{\bS}{\boldsymbol S}
-\DeclareMathOperator{\bT}{\boldsymbol T}
-\DeclareMathOperator{\bU}{\boldsymbol U}
-\DeclareMathOperator{\bV}{\boldsymbol V}
-\DeclareMathOperator{\bW}{\boldsymbol W}
-\DeclareMathOperator{\bX}{\boldsymbol X}
-\DeclareMathOperator{\bY}{\boldsymbol Y}
-\DeclareMathOperator{\bZ}{\boldsymbol Z}
+\DeclareMathOperator{\bA}{{\boldsymbol A}}
+\DeclareMathOperator{\bB}{{\boldsymbol B}}
+\DeclareMathOperator{\bC}{{\boldsymbol C}}
+\DeclareMathOperator{\bD}{{\boldsymbol D}}
+\DeclareMathOperator{\bE}{{\boldsymbol E}}
+\DeclareMathOperator{\bF}{{\boldsymbol F}}
+\DeclareMathOperator{\bG}{{\boldsymbol G}}
+\DeclareMathOperator{\bH}{{\boldsymbol H}}
+\DeclareMathOperator{\bI}{{\boldsymbol I}}
+\DeclareMathOperator{\bJ}{{\boldsymbol J}}
+\DeclareMathOperator{\bK}{{\boldsymbol K}}
+\DeclareMathOperator{\bL}{{\boldsymbol L}}
+\DeclareMathOperator{\bM}{{\boldsymbol M}}
+\DeclareMathOperator{\bN}{{\boldsymbol N}}
+\DeclareMathOperator{\bO}{{\boldsymbol O}}
+\DeclareMathOperator{\bP}{{\boldsymbol P}}
+\DeclareMathOperator{\bQ}{{\boldsymbol Q}}
+\DeclareMathOperator{\bR}{{\boldsymbol R}}
+\DeclareMathOperator{\bS}{{\boldsymbol S}}
+\DeclareMathOperator{\bT}{{\boldsymbol T}}
+\DeclareMathOperator{\bU}{{\boldsymbol U}}
+\DeclareMathOperator{\bV}{{\boldsymbol V}}
+\DeclareMathOperator{\bW}{{\boldsymbol W}}
+\DeclareMathOperator{\bX}{{\boldsymbol X}}
+\DeclareMathOperator{\bY}{{\boldsymbol Y}}
+\DeclareMathOperator{\bZ}{{\boldsymbol Z}}
 
-\DeclareMathOperator{\ba}{\boldsymbol a}
-\DeclareMathOperator{\bb}{\boldsymbol b}
-\DeclareMathOperator{\bc}{\boldsymbol c}
-\DeclareMathOperator{\bd}{\boldsymbol d}
-\DeclareMathOperator{\be}{\boldsymbol e}
-% \DeclareMathOperator{\bf}{\boldsymbol f}
-\DeclareMathOperator{\bg}{\boldsymbol g}
-\DeclareMathOperator{\bh}{\boldsymbol h}
-\DeclareMathOperator{\bi}{\boldsymbol i}
-\DeclareMathOperator{\bj}{\boldsymbol j}
-\DeclareMathOperator{\bk}{\boldsymbol k}
-\DeclareMathOperator{\bl}{\boldsymbol l}
-% \DeclareMathOperator{\bm}{\boldsymbol m}
-\DeclareMathOperator{\bn}{\boldsymbol n}
-\DeclareMathOperator{\bo}{\boldsymbol o}
-\DeclareMathOperator{\bp}{\boldsymbol p}
-\DeclareMathOperator{\bq}{\boldsymbol q}
-\DeclareMathOperator{\br}{\boldsymbol r}
-\DeclareMathOperator{\bs}{\boldsymbol s}
-\DeclareMathOperator{\bt}{\boldsymbol t}
-\DeclareMathOperator{\bu}{\boldsymbol u}
-\DeclareMathOperator{\bv}{\boldsymbol v}
-\DeclareMathOperator{\bw}{\boldsymbol w}
-\DeclareMathOperator{\bx}{\boldsymbol x}
-\DeclareMathOperator{\by}{\boldsymbol y}
-\DeclareMathOperator{\bz}{\boldsymbol z}
+\DeclareMathOperator{\ba}{{\boldsymbol a}}
+\DeclareMathOperator{\bb}{{\boldsymbol b}}
+\DeclareMathOperator{\bc}{{\boldsymbol c}}
+\DeclareMathOperator{\bd}{{\boldsymbol d}}
+\DeclareMathOperator{\be}{{\boldsymbol e}}
+% \DeclareMathOperator{\bf}{{\boldsymbol f}}
+\DeclareMathOperator{\bg}{{\boldsymbol g}}
+\DeclareMathOperator{\bh}{{\boldsymbol h}}
+\DeclareMathOperator{\bi}{{\boldsymbol i}}
+\DeclareMathOperator{\bj}{{\boldsymbol j}}
+\DeclareMathOperator{\bk}{{\boldsymbol k}}
+\DeclareMathOperator{\bl}{{\boldsymbol l}}
+% \DeclareMathOperator{\bm}{{\boldsymbol m}}
+\DeclareMathOperator{\bn}{{\boldsymbol n}}
+\DeclareMathOperator{\bo}{{\boldsymbol o}}
+\DeclareMathOperator{\bp}{{\boldsymbol p}}
+\DeclareMathOperator{\bq}{{\boldsymbol q}}
+\DeclareMathOperator{\br}{{\boldsymbol r}}
+\DeclareMathOperator{\bs}{{\boldsymbol s}}
+\DeclareMathOperator{\bt}{{\boldsymbol t}}
+\DeclareMathOperator{\bu}{{\boldsymbol u}}
+\DeclareMathOperator{\bv}{{\boldsymbol v}}
+\DeclareMathOperator{\bw}{{\boldsymbol w}}
+\DeclareMathOperator{\bx}{{\boldsymbol x}}
+\DeclareMathOperator{\by}{{\boldsymbol y}}
+\DeclareMathOperator{\bz}{{\boldsymbol z}}
 
-\DeclareMathOperator{\bLambda}{\boldsymbol \Lambda}
+\DeclareMathOperator{\bLambda}{{\boldsymbol \Lambda}}
 
 \DeclareMathOperator{\bone}{\boldsymbol 1}
 
@@ -380,13 +382,13 @@
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-% \input{chap01_introduction}
+\input{chap01_introduction}
 
-% \input{chap02_statistical_models}
+\input{chap02_statistical_models}
 
-% \input{chap03_statistical_inference}
+\input{chap03_statistical_inference}
 
-% \input{chap04_linear_regression}
+\input{chap04_linear_regression}
 
 
 \setchapterpreamble[u]{\margintoc}
