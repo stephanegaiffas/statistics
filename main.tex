@@ -576,29 +576,28 @@ We really need at this point to tell the reader what a \emph{statistic} is.%
 If $X$ is a random variable in $\R^n$ and $S$ a random variable in $\R$, then we know that $S$ is a statistic, namely $S = f(X)$ for some Borel measurable function $f$, if an only if $S$ is $\sigma(X)$-measurable (or simply $X$-measurable).
 \sidenote[][*-2]{We recall that $\sigma(X)$ is the $\sigma$-algebra \emph{generated} by $X$, namely $\sigma(X) = X^{-1}(\cB^n)$ where $\cB^n$ is the Borel $\sigma$-algebra of $\R^n$ and note that this statement comes from the Doob lemma: for such $X$ and $S$, we have that $S$ is $X$-measurable if and only if $S = f(X)$ for some Borel measurable function $\R^n \go \R$.}
 
-ICI ICI ICI ICI
 Now, let us go back to the $\ber(\theta)$ experiment.
 Let us first recall that for this experiment we have iid samples $X = (X_1, \ldots, X_n)$, that
-$(E, \cE) = (\{0, 1\}^n, \cP(\{0, 1\}^n))$ and that $P_\theta^{\otimes n} = \ber(\theta)^{\otimes n}$ with $\Theta = (0, 1)$.
-Intuitively, an ``equivalent'' experiment is $S := \sum_{i=1}^n X_i$ and $(E, \cE) = (\{ 0, \ldots, n\}, \cP(\{0, \ldots, n\}))$ with $\Theta = (0, 1)$.
+$(E, \cE) = (\{0, 1\}^n, \cP(\{0, 1\}^n))$ and that $P_\theta = \ber(\theta)$ with $\Theta = (0, 1)$.
+Intuitively, an ``equivalent'' experiment is $S_n := \sum_{i=1}^n X_i$ and $(E, \cE) = (\{ 0, \ldots, n\}, \cP(\{0, \ldots, n\}))$ with $P_\theta = \bin(n, \theta)$ and $\theta \in \Theta = (0, 1)$.
 Let us observe that
 \begin{equation}
 	\label{eq:X_cond_S}
 	\begin{split}
-	\P_\theta (X_1 = x_1, \ldots, X_n = x_n | S = k) &= 
+	\P_\theta [X_1 = x_1, \ldots, X_n = x_n | S_n = k] &= 
 	\frac{\theta^k (1 - \theta)^{n-k}}{\binom{n}{k} \theta^k (1 - \theta)^{n-k}} \\
 	&= \frac{1}{\binom{n}{k}}		
 	\end{split}
 \end{equation}
-whenever $x_i \in \{ 0, 1 \}$ for $i=1, \ldots, n$ and $k = \sum_{i=1}^n x_i$, while $\P_\theta (X_1 = x_1, \ldots, X_n = x_n | S = k) = 0$ otherwise.
-This proves that the conditional distribution of $(X_1, \ldots, X_n) | S$ \emph{does not depend} on $\theta$.
-If we know $S$, then we can, \emph{without knowing} $\theta$, build a ``copy'' $X' = (X_1', \ldots, X_n')$ of the original sample $X$, in the sense that $X'$ has the same distribution as $X$.
-This is simply achieved, as indicated by~\eqref{eq:X_cond_S}, by choosing the positions of the $S=k$ ones (among $n$ ones and zeros) uniformly at random.
-This means that $X$ does not bring more information about $\theta$ than $S$, and that that $S$ is somehow ``sufficient'' from a statistical point of view.
+whenever $x_i \in \{ 0, 1 \}$ for $i=1, \ldots, n$ and $k = \sum_{i=1}^n x_i$, while $\P_\theta [X_1 = x_1, \ldots, X_n = x_n | S_n = k] = 0$ otherwise.
+This proves that the \emph{conditional distribution} of $(X_1, \ldots, X_n) | S_n$ \emph{does not depend} on $\theta$.
+If we know $S_n$, then we can, \emph{without knowing} $\theta$, build a ``copy'' $X' = (X_1', \ldots, X_n')$ of the original sample $X$, in the sense that $X'$ has the same distribution as $X$.
+This is simply achieved, as indicated by Equation~\eqref{eq:X_cond_S}, by choosing the positions of the $S_n = k$ ones (among $n$ ones and zeros) uniformly at random.
+This means that $X$ does not bring more information about $\theta$ than $S_n$, and that that $S_n$ is somehow ``sufficient'' from a statistical point of view.
 Such a random variable is called a \emph{sufficient statistic}.
 
 For the $\ber(\theta)$ experiment, we will look for statistics of $X$ allowing to infer the unknown parameter $\theta$.
-We already now that we can restrict ourselves to statistics of $S$ instead of $X$, since $S$ is  sufficient.
+We already now that we can restrict ourselves to statistics of $S_n$ instead of $X$, since $S_n$ is  sufficient.
 
 \section{Identifiable models} % (fold)
 
@@ -620,30 +619,33 @@ If $\theta \mapsto P_\theta$ is not injective, then there is no way to find back
 In Example~\ref{ex:identifiabiliy}, we used the sigmoid function given by $\sigmoid(x) = 1 / (1 + e^{-x})$ for any $x \in \R$.%
 \sidenote{The sigmoid function is heavily used in statistics and machine learning, we will come back to it later in the book.}
 Identifiability is generally a property that we ensure by choosing and parametrizing correctly the considered statistical model.
-An interesting example of \emph{non-identifiable} model is given by \emph{mixture models}, such as the Gaussian mixture model, where we consider a distribution on $\R^d$ with density
-\sidenote{In the paramatrization of the Gaussian mixture we have expectations $\mu_k \in \R^d$ that correspond to the centroids of the clusters, we have covariances $\bSigma_k \in \R^{d \times d}$ such that $\bSigma_k \succ 0$, which means that $\bSigma_k$ is a symmetric and positive matrix, that parametrizes the shape cluster $k$ around its centroid and finally we have $\pi_k \geq 0$ that are such that $\sum_{k=1}^K \pi_k = 1$ and parametrize the relative population of each cluster.}%
+
+However, not all interesting and useful statistical models are identifiable. 
+An interesting example of \emph{non-identifiable} model is given by \emph{mixture models}, such as the Gaussian mixture model, where we consider a distribution on $\R^d$ with a density with respect to the Lebesgue measure given by 
+\sidenote[][*-4]{The expectations $\mu_k \in \R^d$ correspond to the centroids of the clusters. The covariances $\bSigma_k \in \R^{d \times d}$ are such that $\bSigma_k \succ 0$, which means that $\bSigma_k$ is a positive definite matrix. The matrix $\bSigma_k$ parametrizes the shape of cluster $k$ around $\mu_k$. Finally, the parameters $\pi_k \geq 0$ are such that $\sum_{k=1}^K \pi_k = 1$ and parametrize the relative population of each cluster.}%
 \begin{align*}
 	f_\theta(x) &= \sum_{k=1}^K \pi_k \phi_{\mu_k, \bSigma_k}(x) \\ 
 	&=: \sum_{k=1}^K \frac{\pi_k }{\sqrt{(2 \pi)^d \det (\bSigma_k)}} 
 	\exp\Big( -\frac 12 (x - \mu_k)^\top \bSigma_k^{-1} (x - \mu_k) \Big)
 \end{align*}
-\begin{marginfigure}
-	\includegraphics{images/gmm.pdf}
-	\caption{$500$ realizations of a Gaussian mixture with $d=2$, $K=3$ and the following parameters $\pi = [\pi_1, \pi_2, \pi_3] = [0.1, 0.6, 0.3]$, $\mu_1 = [-1, 1]$, $\mu_2 = [0, 1]$, $\mu_3 = [-0.5, 0.5]$ and $\bSigma_1 = \bSigma_2 = \bSigma_3 = 0.01 \times \bI_2$.}
-\end{marginfigure}
 for any $x \in \R^d$, where $\theta = (\pi_k, \mu_k, \bSigma_k)_{k=1, \ldots, K}$ and $K \geq 1$ is an integer corresponding to the number of ``clusters''.
+\begin{figure}[htbp]
+	\includegraphics{images/gmm.pdf}
+	\caption{$500$ realizations of a Gaussian mixture with $d=2$, $K=3$ $\pi = [\pi_1, \pi_2, \pi_3] = [0.1, 0.6, 0.3]$, $\mu_1 = [-1, 1]$, $\mu_2 = [0, 1]$, $\mu_3 = [-0.5, 0.5]$ and $\bSigma_1 = \bSigma_2 = \bSigma_3 = 0.01 \times \bI_2$.}
+\end{figure}
 Such a mixture density is non-identifiable, since we have $f_{\theta} = f_{\sigma(\theta)}$
 for any permutation $\sigma(\theta) = (\pi_{\sigma(k)}, \mu_{\sigma(k)}, \bSigma_{\sigma(k)})_{k=1, \ldots, K}$ of $\theta$ where $\sigma$ is a permutation of $\{1, \ldots, K \}$.
 This simply means that the density distribution $f_\theta$ is invariant by a relabeling of the clusters numbers.
-Despite the fact that such a mixture model is not identifiable, it is often used for \emph{model-based clustering}, which is an instance of \emph{unsupervised learning}.
-Another family of non-identifiable models is deep neural networks, in which an infinitely large number of parametrizations lead to the same prediction function.
+Despite the fact that such a mixture model is not identifiable, it is often used for \emph{model-based clustering}, which is an instance of \emph{unsupervised learning}~\sidecite{murphy2012probabilistic}.
+Another family of non-identifiable models is deep neural networks, in which an infinitely large number of parametrizations lead to the same prediction function~\sidecite{goodfellow2016deep}.
 
 \section{Dominated models} 
 
 Whenever $\cP = \{ P_\theta : \theta \in \Theta \}$ with $\Theta \subset \R^d$, we say that $\cP$ is a \emph{parametric} model, since it is parametrized by a finite-dimensional parameter, trivial instances being $\{ \ber(\theta) : \theta \in (0, 1) \}$ for which $d=1$ and $\{ \nor(\mu, v) : (\mu, v) \in \R \times (0, +\infty) \}$ for which $d=2$.
 We say that both models are \emph{dominated}, the first being dominated by the counting measure $\nu = \delta_0 + \delta_1$ on $\{ 0, 1\}$,%
 \sidenote{The notation $\delta_x$ will stand for the Dirac mass at $x$ which is the probability measure satisfying $\int f(u) \delta_x(du) = f(x)$ for any measurable function $f$.}%
-and the second by the Lebesgue measure on $\R$.\sidenote{We recall that if $P$ and $Q$ are two measures on the same probability space, $P \ll Q$ means that the measure $P$ is \emph{absolutely continuous} with respect to $Q$, namely that $Q(A) = 0 \Rightarrow P(A)= 0$ for any measurable set $A$.}
+and the second by the Lebesgue measure on $\R$.%
+\sidenote{We recall that if $P$ and $Q$ are two finite measures on the same probability space, $P \ll Q$ means that the measure $P$ is \emph{absolutely continuous} with respect to $Q$, namely that $Q(A) = 0 \Rightarrow P(A)= 0$ for any measurable set $A$.}
 \begin{definition}
 	\label{def:dominated-model}
 	We say that a model $\cP = \{ P_\theta : \theta \in \Theta \}$ is dominated if there is a $\sigma$-finite measure $\mu$ such that $P_\theta \ll \mu$ for all $\theta \in \Theta$.
@@ -652,27 +654,45 @@ In Definition~\ref{def:dominated-model}, we require that the dominating measure 
 \begin{equation*}
 	f_\theta = \frac{dP_\theta}{d\mu}
 \end{equation*}
-for all $\theta \in \Theta$.
-This domination property allows to work with densities instead of distributions: a model can be therefore defined as a family of densities $\{ f_\theta : \theta \in \Theta \}$ together with a dominating measure (which is in most cases the Lebesgue measure, a counting measure, or a combination of them.)
+for all $\theta \in \Theta$, with is unique $\mu$-almost surely.
+This means that $P_\theta[A] = \int f_\theta(x) \mu(dx)$ for any measurable set $A$.%
+\marginnote{Let us recall the Radon-Nikodym theorem. Let $P$ be a probability and $Q$ be a $\sigma$-finite measure on a measurable space $(\Omega, \cA)$ and assume that $P \ll Q$. Then, there is a non-negative random variable $L$ such that $P[A] = \int_\Omega L(\omega) \ind{A}(\omega) Q(d \omega)$ for any $A \in \cA$. We denote $L = dP / dQ$ and $L$ is unique $Q$-almost surely.}
+This domination property allows to work with densities instead of distributions: a model can be therefore defined as a family of densities $\{ f_\theta : \theta \in \Theta \}$ together with a dominating measure (which is in most cases the Lebesgue measure, a counting measure, or a combination of both.)
 \begin{example}
 	Let us consider the \emph{zero-inflated Laplace distribution}, which is a distribution on $\R$ given by
 	\begin{equation*}
 		P_\theta(dx) = \pi_0 \delta_0(dx) + (1 - \pi_0) \frac{\lambda}{2} e^{-\lambda |x|} dx
 	\end{equation*}
-	for $\theta = (\pi_0, \lambda) \in \Theta = (0, 1) \times (0, +\infty)$, which is dominated by the measure $\mu = \delta_0 + \leb$, where $\leb$ stands from now on for the Lebesgue measure on $\R$.
+	for $\theta = (\pi_0, \lambda) \in \Theta = (0, 1) \times (0, +\infty)$, which is dominated by the measure $\mu = \delta_0 + \leb$, where $\leb$ stands for the Lebesgue measure on $\R$.
 \end{example}
+\marginnote[*-4]{The notation $P(dx) = f(x) dx$ means that the distribution $P$ has density $f$ with respect to the Lebesgue measure.}%
 Non-dominated models are usually pathological and uninteresting examples, such as the model
 \begin{equation*}
-	P_\lambda = \frac 1e \sum_{n \geq 0} \frac{1}{n!} \delta_{\lambda n}
+	P_\theta = \frac 1e \sum_{n \in \N} \frac{1}{n!} \delta_{\theta n}
 \end{equation*}
-for $\lambda \in (0, +\infty)$, which cannot be dominated by a $\sigma$-finite measure.
+for $\theta \in (0, +\infty)$, which cannot be dominated by a $\sigma$-finite measure.
 
-Let us finish this chapter with an example of non-parametric model: we observe $X_1, \ldots, X_n$ with a density $f \in F$ with respect to the Lebesgue measure, where $F$ is the set of probability densities on $[0, 1]^d$ that are $C^2$ and such that $\grad^2 f(x) \mleq L \bI_d$.%
-\sidenote{The notation $\nabla^2 f(x)$ stands for the Hessian matrix of $f$, while $\bI_d$ is the identity matrix on $\R^d$. Finally, for two symmetric matrices $\bA$ and $\bB$, the notation $\bA \mleq \bB$ means $\bB - \bA \mgeq 0$, namely that $\bB - \bA$ is a symmetric and positive semi-definite matrix.}%
-In such a setting, we work with an infinite dimensional set of parameters $F$, and need to build a \emph{non-parametric} estimator of the unknown density $f$.
+% Let us finish this chapter with an example of non-parametric model: we observe $X_1, \ldots, X_n$ with a density $f \in F$ with respect to the Lebesgue measure, where $F$ is the set of probability densities on $[0, 1]^d$ that are $C^2$ and such that $\grad^2 f(x) \mleq L \bI_d$.%
+% \sidenote{The notation $\nabla^2 f(x)$ stands for the Hessian matrix of $f$, while $\bI_d$ is the identity matrix on $\R^d$. Finally, for two symmetric matrices $\bA$ and $\bB$, the notation $\bA \mleq \bB$ means $\bB - \bA \mgeq 0$, namely that $\bB - \bA$ is a symmetric and positive semi-definite matrix.}%
+% In such a setting, we work with an infinite dimensional set of parameters $F$, and need to build a \emph{non-parametric} estimator of the unknown density $f$.
 
 \section{Proofs} % (fold)
 \label{sec:chap02-proofs}
+
+\begin{proof}[Proof of Inequalities~\eqref{eq:gaussian_queue}]
+	The upper bound is just easily obtained using
+\begin{equation*}
+	1 - \Phi(x) = \frac{1}{\sqrt{2 \pi}} \int_{x}^{+\infty} e^{-t^2 / 2} dt \leq \frac{1}{\sqrt{2 \pi}} \int_{x}^{+\infty} \frac{t}{x} e^{-t^2 / 2} dt = \frac{e^{-x^2 / 2}}{x \sqrt{2 \pi}} 
+\end{equation*}
+while the lower bound comes from the fact that
+\begin{equation*}
+	\int_{x}^{+\infty} \Big(1 - \frac{3}{t^4} \Big) e^{-t^2 / 2} dt = \Big( \frac{1}{x} - \frac{1}{x^3} \Big) e^{-x^2 / 2}
+\end{equation*}
+which concludes the proof.
+\end{proof}
+
+
+% paragraph paragraph_name (end)
 
 
 % section proofs (end)
