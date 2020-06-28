@@ -267,7 +267,7 @@
 %	NUMBERING
 %----------------------------------------------------------------------------------------
 
-\setcounter{secnumdepth}{1} % Number only up to sections
+\setcounter{secnumdepth}{2} % Number only up to sections
 
 \counterwithin*{sidenote}{chapter} % Uncomment to reset the sidenote counter at each chapter
 %\counterwithout{sidenote}{chapter} % Uncomment to have one sidenote counter for the whole document

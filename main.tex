@@ -308,8 +308,24 @@
 %	PREFACE
 %----------------------------------------------------------------------------------------
 
-% \chapter*{Preface}
-% \addcontentsline{toc}{chapter}{Preface} % Add the preface to the table of contents as a chapter
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface} % Add the preface to the table of contents as a chapter
+
+
+The aim of this course is, as the title indicated, to learn some stuff about statistics, and to try to exhibit some good looking mathematics from this field of applied mathematics, beyond convincing you that statistics are useful\sidenote{We won't list here, exhaustively, the numerous fields that make a regular use of mathematical statistics: marketing, medicine and more broadly health, finance, insurance, banking, etc.}
+
+We will try to provide, all along the course, at material featuring 60\% of classical and unavoidable material from a course about statistics, and 40\% of more recent research results and some open questions.
+
+The tentative agenda for the course is as follows:
+
+\begin{itemize}
+ 	\item Modelization and the main statistical inference problems (estimation, confidence regions and tests)
+ 	\item Gaussian vectors and the Gaussian linear model
+ 	\item Theoretical guarantees and the optimality of least-squares
+ 	\item Estimation methods: methods of moments, maximum likelihood and other things
+ 	\item Exponential models and generalized linear models, logistic regression (optimal rates and some open questions)
+ 	\item Tests and multiple tests
+ \end{itemize} 
 
 % I am of the opinion that every \LaTeX\xspace geek, at least once during 
 % his life, feels the need to create his or her own class: this is what 
@@ -343,9 +359,9 @@
 % make of it. I share this work in the hope that someone might find here 
 % the inspiration for writing his or her own class.
 
-% \begin{flushright}
-% 	\textit{Federico Marotta}
-% \end{flushright}
+\begin{flushright}
+	\textit{St\'ephane Ga\"iffas}
+\end{flushright}
 
 
 %----------------------------------------------------------------------------------------
@@ -365,13 +381,13 @@
 
 \tableofcontents % Output the table of contents
 
-\listoffigures % Output the list of figures
+% \listoffigures % Output the list of figures
 
 % Comment both of the following lines to have the LOF and the LOT on different pages
-\let\cleardoublepage\bigskip
-\let\clearpage\bigskip
+% \let\cleardoublepage\bigskip
+% \let\clearpage\bigskip
 
-\listoftables % Output the list of tables
+% \listoftables % Output the list of tables
 
 \endgroup
 
@@ -382,9 +398,7 @@
 \mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
 \setchapterstyle{kao} % Choose the default chapter heading style
 
-\todo{Introdudction ca devrait etre en fait une preface}
-
-\input{chap01_introduction}
+% \input{chap01_introduction}
 
 \input{chap02_statistical_models}
 

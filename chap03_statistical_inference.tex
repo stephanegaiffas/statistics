@@ -104,6 +104,12 @@ These questions can be answered by considering another inference problem: confid
 \label{sec:confidence_intervals}
 
 Here, we don't only want to build an estimator $\wh \theta_n$ but also to quantify the uncertainty associated to this estimation.
+
+\subsection{Non-asymptotic coverage} % (fold)
+\label{sub:non_asymptotic_coverage}
+
+% subsection non_asymptotic_coverage (end)
+
 Combining Inequalities~\eqref{eq:l2_entrails_proba} and~\eqref{eq:bernoulli-quadratic-risk} leads to
 \begin{equation*}
 	\P_\theta[ |\wh \theta_n - \theta| > t] \leq \frac{1}{4 n t^2},
@@ -203,7 +209,13 @@ since $n \wh \theta_n \sim \bin(n, \theta)$.
 This confidence interval is called ``exact'' since it uses the exact quantile function of $n \wh \theta_n$. It is therefore even tighter than the previous ones.
 \todo{check this paragraph about the exact is correct and insert as sidenote the value on 1000 tosses and 420 heads that it's correct and insert values}
 
-\paragraph{Asymptotic coverage.}
+
+\subsection{Asymptotic coverage} % (fold)
+\label{sub:asymptotic_coverage}
+
+% subsection asymptotic_coverage (end)
+% subsection subsection_name (end)
+% \paragraph{Asymptotic coverage.}
 
 For the previous confidence intervals, we adopted a \emph{non-asymptotic} approach: the coverage properties hold for any value of $n \geq 1$.
 This was possible since the distribution of $S_n$ is a simple $\bin(n, \theta)$ distribution, for which many computations can be made explicit.
