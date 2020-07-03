@@ -1313,34 +1313,39 @@ with respect to the Lebesgue density on $\R$.
 If $T \sim \stu(n)$ we have $\E[T] = 0$ and $\var(T) = n / (n - 2)$ whenever $n > 2$.
 Also, we have that $\stu(n) \gosto \nor(0, 1)$ as $n \rightarrow +\infty$ since $V / n \gopro 1$ (using the law of large numbers and Theorem~\ref{thm:slutsky}).
 
-ICI ICI ICI
-
-\paragraph{About the $\fis(p, q)$ distribution} % (fold)
+\paragraph{The Fisher distribution.}
 
 Let $p, q \in \N \setminus \{ 0 \} $. If $U \sim \chisq(p)$ and $V \sim \chisq(q)$ are independent then
 \begin{equation*}
 	\frac{U / p}{V / q} \sim \fis(p, q)
 \end{equation*}
-where $\fis(p, q)$ stands for the \emph{Fisher distribution} which has density
+where $\fis(p, q)$ stands for the \emph{Fisher distribution} with density
 \begin{equation*}
-	f_{p, q}(x) = \frac{1}{x \beta(p/2, q/2)} \Big( \frac{px}{px + q} \Big)^{p/2} \Big(1 - \frac{px}{px + q} \Big)^{q/2}
+	f_{p, q}(x) = \frac{1}{x \beta(p/2, q/2)} \Big( \frac{px}{px + q} \Big)^{p/2} \Big(1 - \frac{px}{px + q} \Big)^{q/2} \ind{x \geq 0}
 \end{equation*}
-where $\beta(a, b) = \Gamma(a) \Gamma(b) / \Gamma(a + b) = \int_0^1 t^{a-1} (1 - t)^{b - 1} dt$.
+with respect to the Lebesgue measure on $\R$, where
+\begin{equation}
+	\label{eq:beta-function}
+	\beta(a, b) = \frac{\Gamma(a) \Gamma(b)}{\Gamma(a + b)}  = \int_0^1 t^{a-1} (1 - t)^{b - 1} dt.
+\end{equation}
 
-\paragraph{About the $bet(a, b)$ distribution.} % (fold)
+\paragraph{The Beta distribution.} % (fold)
 
 If $G_1 \sim \gam(a, \lambda)$ and $G_2 \sim \gam(b, \lambda)$ are independent then
 \begin{equation*}
 	\frac{G_1}{G_1 + G_2} \sim \bet(a, b)
 \end{equation*}
-where $\bet(a, b)$ is called the Beta distribution, which has density
+where $\bet(a, b)$ is the Beta distribution with density
 \begin{equation*}
 	f_{a, b}(x) = \frac{1}{\beta(a, b)} x^{a - 1} (1 - x)^{b - 1} \ind{[0, 1]}(x)
 \end{equation*}
-with respect to the Lebesgue measure on $\R$. Note that if $B \sim \beta(a, b)$ then $\E[B] = \frac{a}{a + b}$, that $\var[B] = ab / ((a + b)^2 (a + b + 1))$ and $\mode(B) = (a - 1) / (a + b - 2)$ whenever $a, b > 1$ \todo{check these formulas}.
+with respect to the Lebesgue measure on $\R$, where the $\beta$ function is given by~\eqref{eq:beta-function}.
+If $B \sim \bet(a, b)$ then $\E[B] = \frac{a}{a + b}$, $\var[B] = ab / ((a + b)^2 (a + b + 1))$ and $\mode(B) = (a - 1) / (a + b - 2)$ whenever $a, b > 1$.
 
 
-\paragraph{Back to the Gaussian vectors.}
+\subsection{Properties of the Gaussian vectors}
+
+ICI ICI ICI
 
 Let us now provide some stuff about Gaussian vectors, that will prove important for the Gaussian linear model. Indeed, thanks to the additional strucutre we put blablabla
 
