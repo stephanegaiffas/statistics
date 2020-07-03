@@ -1343,7 +1343,7 @@ with respect to the Lebesgue measure on $\R$, where the $\beta$ function is give
 If $B \sim \bet(a, b)$ then $\E[B] = \frac{a}{a + b}$, $\var[B] = ab / ((a + b)^2 (a + b + 1))$ and $\mode(B) = (a - 1) / (a + b - 2)$ whenever $a, b > 1$.
 
 
-\subsection{Properties of the Gaussian vectors}
+\subsection{Joint Distribution of $\wh \theta_n$ and $\wh \sigma^2$ and consequences}
 
 ICI ICI ICI
 
@@ -1400,6 +1400,7 @@ entails that the ellipsoid
 \end{equation*}
 if a confidence region at level $1 - \alpha$.
 Both confidence regions provide coverage for the whole vector $\theta$.
+\todo{intervalle de prediction et intervalle de confiance}
 We can also build confidence intervals for each coordinate of $\theta$.
 Indeed, we have $\theta_j = \theta^\top e_j$ where $e_j$ is the canonical basis vector with $1$ at cordinate $j$ and $0$ elsewhere. More generally we can build a confidence interval for $a^\top \theta$ for any vector $a \in \R^d$ by looking for an ancillary statistic. We know that $a^\top(\wh \theta - \theta) \sim \nor(0, \sigma^2 a^\top (\bX^\top \bX)^{-1} a)$ and that $\wh \theta$ and $\wh \sigma^2$ are independent, so that
 \begin{equation*}
@@ -1421,7 +1422,10 @@ in particular for $a = e_j$ we obtain that
 This allows in particular to build a test for the hypothesis $H_{0, j} : \theta_j = 0$ versus $H_{1, j} : \theta_j \neq 0$.
 A confidence interval for $\sigma^2$ can be also easily built using the ancillary statistic $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
 
-\paragraph{Fisher test.} % (fold)
+\subsection{The Fisher test} % (fold)
+\label{sub:the_fisher_test}
+
+% subsection the_fisher_test (end)
 
 Using the previous confidence interval we can test $H_0 = \theta_1 = \theta_2$ by using $a = [1, -1, 0, \ldots, 0]$. But, how can we test $H_0 : \theta_1 = \theta_2 = 0$ or more generally a \emph{multiple} null hypothesis such as
 \begin{equation*}
@@ -1477,6 +1481,8 @@ We can conclude now that the Fisher test for the hypothesis ???? with rejection 
 has level $\alpha$, namely that $\sup_{\theta \in \Theta_0} \P_\theta[R] = \alpha$.
 This test is pretty intuitive and can be understood as follows: if $\theta \in \Theta_0$ then both estimators $\wh \theta$ and $\tilde \theta$ should be close, and $\bX (\wh \theta - \tilde \theta)$ should be, consequently, ``small''. The small miracle in the Fisher test is that, in the Gaussian linear model, we can perfectly quantify how small.
 
+\subsection{Examples and extra things} % (fold)
+
 \begin{example}
 	Consider $Y_1, \ldots, Y_n$ iid $\nor(\mu, \sigma^2)$. This is a linear model by putting $\by = \mu \bone + \beps$ where $\beps \sim \nor(0, \sigma^2 \bI_n)$.
 	In this case $\wh \mu = \bar Y_n$ (since $(\bone^\top \bone)^{-1} \bone^\top \by = n^{-1} \sum_{i=1}^n Y_i$ and $\wh \sigma^2 = \frac{1}{n-1} \norm{\by - \bar Y_n \bone}^2 =  \frac{1}{n-1} \sum_{i=1}^n (Y_i - \bar Y_n)^2$ and we know from Theorem~? that $\wh \mu$ and $\wh \sigma^2$ are independent and such that $\sqrt n (\wh \mu - \mu) / \sigma \sim \nor(0, 1)$ and $(n-1) \wh \sigma^2/\sigma^2 \sim \chisq(n-1)$ so that by definition of the $\stu(n-1)$ distribution we have
@@ -1520,7 +1526,7 @@ since $\wh \bY = \bH \bY$, namely $\wh Y_i = \sum_{j=1}^d \bH_{i, j} Y_j$.
 So, the leverage $h_{i, i}$ can be understood as a quantity that measures the ``self-sensitivity'' to its prediction, namely the influence of $Y_i$ on the computation of $\wh Y_i$.
 We will see also in the next Chapter that the leverage score is a very important concept as it is deeply connected to the \emph{theoretical performance} of the least-squares estimation procedure.
 
-\section{Optimality of the least-squares} % (fold)
+\section{Least squares are minimax optimal} % (fold)
 \label{sec:optimality_of_the_least_squares}
 
 While the contents of the previous section is quite classical and well-understood theory the contents of this Section is not.
