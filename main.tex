@@ -1,28 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% kaobook
-% LaTeX Template
-% Version 1.2 (4/1/2020)
-%
-% This template originates from:
-% https://www.LaTeXTemplates.com
-%
-% For the latest template development version and to make contributions:
-% https://github.com/fmarotta/kaobook
-%
-% Authors:
-% Federico Marotta (federicomarotta@mail.com)
-% Based on the doctoral thesis of Ken Arroyo Ohori (https://3d.bk.tudelft.nl/ken/en)
-% and on the Tufte-LaTeX class.
-% Modified for LaTeX Templates by Vel (vel@latextemplates.com)
-%
-% License:
-% CC0 1.0 Universal (see included MANIFEST.md file)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
 
 \documentclass[
 	fontsize=11pt, % Base font size
@@ -152,7 +127,7 @@
 \DeclareMathOperator{\gam}{Gamma}
 \DeclareMathOperator{\mul}{Multinomial}
 \DeclareMathOperator{\nor}{Normal}
-\DeclareMathOperator{\stu}{student}
+\DeclareMathOperator{\stu}{Student}
 \DeclareMathOperator{\uni}{Uniform}
 
 
@@ -184,7 +159,7 @@
 \newcommand{\goes}{\rightarrow}
 \newcommand{\go}{\rightarrow}
 
-\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\norm}[1]{\| #1 \|}
 \newcommand{\inr}[1]{\langle #1 \rangle}
 
 \newcommand{\gopro}{\overset{\P}{\rightarrow}}
@@ -1173,7 +1148,7 @@ for any $u \in \R^d$, which is equivalent to the so-called \emph{normal equation
 	\bX^\top \bX \wh \theta_n = \bX^\top \by.
 \end{equation}
 This means that $\wh \theta_n$ is a solution to linear system~\eqref{eq:least-squares-normal-equation}.%
-\sidenote{However, from an algorithmic point of view, note that $\wh \theta_n$ is usually \emph{not}  computed by solving the linear system, but instead by using an optimization algorithm to minimize the convex function~$F$. INSERT REFERENCE ABOUT THIS}
+\sidenote{However, from an algorithmic point of view, note that $\wh \theta_n$ is usually \emph{not}  computed by solving the linear system, but instead by using an optimization algorithm to minimize the convex function~$F$.}
 Another explanation leading to the same characterization is to use the fact $F$ is convex%
 \sidenote{since its Hessian matrix is positive semidefinite: $\grad^2 F(\theta) = \bX^\top \bX \mgeq 0$}   and differentiable on $\R^n$, so that a minimizer must satisfy the first-order condition $\grad F(\theta) = 0$ with $\grad F(\theta) =  2 \bX^\top (\bX \theta - \by)$, leading again to Equation~\eqref{eq:least-squares-normal-equation}.
 
@@ -1238,101 +1213,107 @@ In particular, this proves that the quadratic risk of $\wh \theta_n$ is given by
 	\E_\theta \norm{\wh \theta_n - \theta}^2 = \sigma^2 \tr [(\bX^\top \bX)^{-1}].
 \end{equation*}
 \marginnote[*-2]{Use $\norm{\wh \theta_n - \theta}^2 = \norm{\wh \theta_n - \E_\theta[\wh \theta_n]}^2$ together with the fact that $\E \norm{Z - \E Z}^2 = \tr (\var[Z])$ for a random vector $Z$ such that $\E \norm{Z}^2 < +\infty$.}%
-
-ICI ICI : definir d'abord $\wh y$ puis $\wh \eps$ puis la hat matrix, etc
-
-In practice, we don't know the variance $\sigma^2$ either, so we need to build an estimator for it.
-It is natural to look at the random vector
+Given $\wh \theta_n$ we can build the vector $\wh \by$ of predictions and the vector $\wh \beps$ of \emph{residuals} given by
 \begin{equation*}
-	\wh \beps := \by - \bX \wh \theta_n,
+	\wh \by := \bX \wh \theta_n \quad \text{and} \quad \wh \beps := \by - \bX \wh \theta_n.
 \end{equation*}
-that we call the \emph{residual vector}.
-Note also that $\bX \wh \theta_n = \proj_V(\by) = \bH \by$ for the matrix
+Note also that $\wh \by = \proj_V(\by) = \bH \by$ where
 \begin{equation*}
 	\bH := \bX (\bX^\top \bX)^{-1} \bX^\top	
 \end{equation*}
-that we call the \emph{hat matrix}.
-This fancy name comes from the fact that  $\wh \by := \bX \wh \theta = \bH \by$ (it puts a hat on $\by$).
-The matrix $\bH$ is the projection matrix onto the set $V = \spa(\bX^1, \ldots, \bX^d) = \im(\bX)$.
-This leads to
+is the projection matrix onto $V$.
+This matrix is called the \emph{hat matrix} because of the equation $\wh \by = \bH \by$: it puts a hat on $\by$.
+Also, note that
 \begin{equation*}
-	\by - \bX \wh \theta = (\bI - \bH) \by = (\bI - \bH) (\bX \theta + \eps) = (\bI - \bH) \beps
+	\by - \wh \by = (\bI_n - \bH) \by = (\bI_n - \bH) (\bX \theta_0 + \beps) = (\bI_n - \bH) \beps
+\end{equation*} 
+since $\bI_n - \bH$ is the projection matrix onto $V^\perp$ (the orthogonal of $V$ which is of dimension $n-d$ since $\bX$ is full rank) and since $\bX \theta_0 \in V$ so that
+\begin{equation*}
+	\E_\theta \norm{\by - \wh \by}^2 = \E \norm{(\bI_n - \bH) \beps}^2 = \tr \var[(\bI_n - \bH) \beps] = \sigma^2 (n - d),
 \end{equation*}
-since $\bI - \bH$ is the projection matrix onto $V^\perp$ (the space orthogonal to $V$) and since obviously $\bX \theta \in V$.
-Finally, we get
+where we used the fact that $(\bI_n - \bH) (\bI_n - \bH)^\top = \bI_n - \bH$ and $\tr(\bI_n - \bH) = n - d$.
+This proves that the estimator
 \begin{equation*}
-	\E_\theta \norm{\wh \theta - \theta}^2 = \E_\theta \norm{ (\bI - \bH) \beps}^2 
-	= \tr \E [ (\bI - \bH) \beps \beps^\top (\bI - \bH)] = \tr ( (\bI - \bH) \E [ \beps \beps^\top ] (\bI - \bH) = \sigma^2 \tr( (\bI - \bH)^2 ) = \sigma^2 \tr( \bI - \bH ) = \sigma^2 (n - d),
-\end{equation*}
-where we used that $\bI - \bH$ is the projection matrix onto the space $V^\perp$ of dimension $n-d$, so that $(\bI - \bH)^2 = \bI - \bH$ and $\tr(\bI - \bH) = n-d$.
-What we just proved is that
-\begin{equation*}
-	\wh \sigma^2 := \frac{1}{n - d} \norm{\by - \bX \wh \theta}^2 = \frac{1}{n - d} \sum_{i=1}^n (Y_i - X_i^\top \wh \theta)^2
+	\wh \sigma^2 := \frac{1}{n - d} \norm{\by - \wh \by}^2 
+	= \frac{1}{n - d} \norm{\by - \bX \wh \theta_n}^2
 \end{equation*}
 is an \emph{unbiased} estimator of $\sigma^2$.
-Now, if we want to go further about these estimators, we need some extra structure, in particular if we want to study the distribution of $\wh \theta$ and $\wh \sigma^2$. 
-To do so, we assume that the noise vector $\beps$ is Gaussian, as performed in the next section.
+
+Now, if we want to go further about these estimators, we need some extra structure, in particular if we want to study the distributions of $\wh \theta_n$ and $\wh \sigma^2$. 
+To do so, we assume in the next section that the noise vector $\beps$ is Gaussian.
 
 \section{Gaussian linear model} % (fold)
 \label{sec:gaussian_linear_model}
 
 
-We keep the same setting as in the previous Section~\ref{sec:some_properties_of_the_least_squares_estimator} but assume furthermore that $\eps_1, \ldots, \eps_n$ are iid and such that $\eps_i \sim \nor(0, \sigma^2)$.
-This means that $\beps$ is a Gaussian vector with multivariate Gaussian distribution $\beps \sim \nor(0, \sigma^2 \bI)$.
-Let us first start this section with some reminders about Gaussian vectors.
+We keep the same setting as in Section~\ref{sec:some_properties_of_the_least_squares_estimator} but furthermore assume that $\eps_1, \ldots, \eps_n$ are iid and that $\eps_i \sim \nor(0, \sigma^2)$.
+This means that $\beps$ is a Gaussian vector with multivariate Gaussian distribution $\beps \sim \nor(0, \sigma^2 \bI_n)$.
+Let us start with some reminders about Gaussian vectors.
 
 \paragraph{Gaussian vectors.} % (fold)
 
-We say that a random vector $Y \in \R^n$ is \emph{Gaussian} whenever $\inr{u, Y}$ is a Gaussian real random variable for any $u \in \R^d$.
-Moreover, if $\bSigma = \var(Y) \succ 0$ and $Y$ is a Gaussian vector, then $Y \sim \nor(\mu, \bSigma)$ where $\mu = \E[Y]$ and has density
-\todo{transformation linear est lineaire, meme si la matrice est degenereea lors on ecrti quand meme ..}
+We say that a random vector $Z \in \R^n$ is \emph{Gaussian} whenever $\inr{u, Z}$ is a Gaussian real random variable for any $u \in \R^d$.
+In this case, we write $Z \sim \nor(\mu, \bSigma)$ where $\mu = \E[Z]$ and $\bSigma = \var[Z]$.
+Moreover, if $\bSigma \succ 0$, then $Z$ has density
 \begin{equation*}
-	f_Y(y) = \frac{1}{\sqrt{(2 \pi)^d \det \bSigma}} \exp \Big( - (x - \mu)^\top \bSigma^{-1} (x - \mu) \Big)
+	f_Z(z) = \frac{1}{\sqrt{(2 \pi)^d \det \bSigma}} \exp \Big( - (z - \mu)^\top \bSigma^{-1} (z - \mu) \Big)
 \end{equation*}
 with respect to the Lebesgue measure on $\R^n$.
-Note that if $Z \sim \nor(0, \bI_n)$, in this case with say that $Z$ is \emph{standard Gaussian}) then $Y$ has the same distribution as $\bSigma^{1/2} Z + \mu$.
-Also, if $Y \sim N(\mu, \bSigma)$ where $\bSigma$ is a diagonal matrix with positive entries, then the coordinates of $Y$ are independent.
-Note also that if $Z \sim \nor(0, \bI)$ and $\bQ$ is an orthonormal matrix ($\bQ^\top \bQ = \bI$) then $\bQ Z \sim \nor(0, \bI)$\todo{isotropic blabla}
+If $Z \sim \nor(0, \bI_n)$, we say that $Z$ is \emph{standard Gaussian} and note that in this case 
+$\bA^{1/2} Z + b \sim \nor(b, \bA)$ for any matrix $\bA \mgeq 0$.
+Also, if $Z \sim N(\mu, \bSigma)$ where $\bSigma$ is a diagonal matrix, then the coordinates of $Z$ are independent.
+Note also that if $Z \sim \nor(0, \bI_n)$ and $\bQ$ is orthonormal then $\bQ Z \sim \nor(0, \bI_n)$.
 
-\paragraph{About the $\gam$ distribution.} % (fold)
 
-% paragraph about_the_ (end)
-Gamma distribution. We say that a real random variable $G$ has $\gam(a, \lambda)$ distribution, where $a > 0$ is called the \emph{shape} parameter and $\lambda > 0$ is called the \emph{intensity} parameter whenever $G$ has density
+\subsection{Some classical distributions} % (fold)
+\label{sub:some_classical_distributions}
+
+In the section, we give some reminders about classical distributions, that will prove useful for the study of the Gaussian linear model.
+
+
+\paragraph{Gamma distribution.} % (fold)
+
+The Gamma distribution $\gam(a, \lambda)$, where $a > 0$ is the \emph{shape} and $\lambda > 0$ is the \emph{intensity} has density
 \begin{equation*}
 	f_{a, \lambda}(x) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x} \ind{x \geq 0}
 \end{equation*}
-with respect to the Lebesgue measure on $\R$.\todo{recall Gamma function}
-Note that if $G \sim \gam(a, \lambda)$ then $\E[G] = a / \lambda$ and $\var[G] = a / \lambda^2$ and note that $\mode(G) = (a - 1) / \lambda$ if $a > 1$.\todo{what is the mode ?}
-Whenever $G_1 \sim \gam(a_1, \lambda)$ and $G_2 \sim \gam(a_2, \lambda)$ are independent random variable, then $G_1 + G_2 \sim \gam(a_1 + a_2, \lambda)$. \todo{note about convolution, stable distribution by convolutions, etc...}
-
+with respect to the Lebesgue measure on $\R$.
+\marginnote[*-2]{Recall that $\Gamma(a) = \int_0^{+\infty} x^{a-1} e^{-x} dx$ for $a > 0$ and that $\Gamma(a+1) = a \Gamma(a)$.}%
+If $G \sim \gam(a, \lambda)$ then $\E[G] = a / \lambda$ and $\var[G] = a / \lambda^2$ and $\mode(G) = (a - 1) / \lambda$ if $a > 1$.\sidenote{The mode is defined, whenever it exists, as the argmax of the density. It is therefore a value around which we expect to see the most observations.}
+Whenever $G_1 \sim \gam(a_1, \lambda)$ and $G_2 \sim \gam(a_2, \lambda)$ are independent random variable, then $G_1 + G_2 \sim \gam(a_1 + a_2, \lambda)$.
 Also, if $E_1, \ldots, E_n$ are iid distributed as $\exp(\lambda)$ then $\sum_{i=1}^n E_i \sim \gam(n, \lambda)$.
 
-\paragraph{About the $\chisq(n)$ distribution.} % (fold)
+\paragraph{The Chi-squared distribution.} % (fold)
 
-If $p \in \N \setminus \{ 0 \}$ then $\chisq(p) = \gam(p/2, 1/2)$ is called the \emph{Chi squared distribution with $p$ degrees of freedom}.
-Although being a particular case of $\gam$ distribution, the $\chisq$ distribution is important in statistics, since it is the distribution of the squared Euclidean norm of a standard Gaussian vector.
-Indeed, if $Z \sim \nor(0, \bI_n)$ then $\norm{Z}^2 = \sum_{i=1}^n Z_i^2 \sim \chisq(n)$.
-This easiliy comes from the fact that $Z_i^2 \sim \gam(1/2, 1/2)$ so that by independence $\norm{Z}^2 \sim \gam(n/2, 1/2) = \chisq(n)$.
+If $n \in \N \setminus \{ 0 \}$ then $\chisq(n) = \gam(n/2, 1/2)$ is called the \emph{Chi-squared distribution with $n$ degrees of freedom}.
+Although being an instance of the $\gam$ distribution, the $\chisq(n)$ distribution is particularly useful  in statistics, in particular since it is the distribution of $\norm{Z}^2$ where $Z \sim \nor(0, \bI_n)$. 
+This comes from the fact that $Z_i^2 \sim \gam(1/2, 1/2)$ so that by independence $\norm{Z}^2 = \sum_{i=1}^n Z_i^2 \sim \gam(n/2, 1/2) = \chisq(n)$.
 The density of $\chisq(n)$ is therefore 
 \begin{equation*}
-	f_n(x) = \frac{2^{-n / 2}}{\Gamma(n/2)} x^{n / 2 - 1} e^{-x / 2} \ind{x \geq 0}.
+	f_n(x) = \frac{2^{-n / 2}}{\Gamma(n/2)} x^{n / 2 - 1} e^{-x / 2} \ind{x \geq 0}
 \end{equation*}
-with respect to $\leb(\R^n)$.
+with respect to the Lebesgue measure on $\R$.
 
-\paragraph{About the student $t(n)$ distribution.} % (fold)
+\paragraph{The Student's $t$ distribution.} % (fold)
 
-
-If $U \sim \nor(0, 1)$ and $V \sim \chisq(p)$ are independent random variables, then
+If $U \sim \nor(0, 1)$ and $V \sim \chisq(n)$ are independent random variables, then
 \begin{equation*}
-	\frac{U}{\sqrt{V / n}} \sim t(n)
+	\frac{U}{\sqrt{V / n}} \sim \stu(n)
 \end{equation*}
-where $t(p)$ is called the \emph{student distribution when $p$ degrees of freedom}.\todo{guiness story}, that has density
+where $\stu(n)$ is called the \emph{student distribution with $n$ degrees of freedom}%
+\sidenote{The name ``Student'' comes from the use of ``Student'' as a pen name for a research paper by W. William Gosset, a statistician and chemist who worked on stabilizing the taste of the beer at the Guiness factory in Dublin (he used ``Student'' in order to stay anonymous and keep secret the use of the $t$-test at the factory).}
+which has density%
+\begin{marginfigure}
+	\includegraphics{images/student.png}
+\end{marginfigure}
 \begin{equation*}
 	f_n(x) = \frac{1}{\sqrt{n \pi}} \frac{\Gamma((n+1) / 2)}{\Gamma(n/2)} \frac{1}{(1 + x^2 / n)^{(n + 1)/2}}
 \end{equation*}
-with respect to the Lebesgue density. We have that $\E[T] = 0$ and $\var(T) = n / (n - 2)$ whenever $n > 2$ if $T \sim \stu(n)$.
+with respect to the Lebesgue density on $\R$.
+If $T \sim \stu(n)$ we have $\E[T] = 0$ and $\var(T) = n / (n - 2)$ whenever $n > 2$.
+Also, we have that $\stu(n) \gosto \nor(0, 1)$ as $n \rightarrow +\infty$ since $V / n \gopro 1$ (using the law of large numbers and Theorem~\ref{thm:slutsky}).
 
-It can be seen that $\stu(n) \gosto \nor(0, 1)$ whenever $n \rightarrow +\infty$ since ???
+ICI ICI ICI
 
 \paragraph{About the $\fis(p, q)$ distribution} % (fold)
 
