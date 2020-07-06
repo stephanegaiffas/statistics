@@ -130,6 +130,9 @@
 \DeclareMathOperator{\stu}{Student}
 \DeclareMathOperator{\uni}{Uniform}
 
+\DeclareMathOperator{\new}{new}
+
+
 
 \DeclareMathOperator{\sigmoid}{sigmoid}
 \DeclareMathOperator{\leb}{Lebesgue}
@@ -1199,13 +1202,15 @@ So, without loss of generality, and in order to simplify notations, we consider 
 and such that $\bX^\top \bX \succ 0$, so that $\eps_1, \ldots, \eps_n$ are iid and such that $\E[\beps] = 0$.
 Furthermore, we assume that the noise is \emph{homoscedastic}, namely $\var[\eps_i] = \sigma^2 < +\infty$, which means $\var[\beps] = \sigma^2 \bI_n$, or equivalently that the covariance of $\beps$ is \emph{isotropic}.
 In this setting, the least-squares estimator is given by $\wh \theta_n = (\bX^\top \bX)^{-1} \bX^\top \by$ so that
-\begin{equation*}
+\begin{equation}
+	\label{eq:mean-ols}
 	\E_\theta[\wh \theta_n] = (\bX^\top \bX)^{-1} \bX^\top \E_\theta[\by] = (\bX^\top \bX)^{-1} \bX^\top \bX \theta = \theta
-\end{equation*}
+\end{equation}
 which means that $\wh \theta_n$ is an \emph{unbiased} estimator. We can write also
-\begin{equation*}
+\begin{equation}
+	\label{eq:var-ols}
 	\var_\theta[\wh \theta_n] = \var_\theta[ \bA \by] = \bA \var_\theta[\by] \bA^\top = \sigma^2 \bA \bA^\top = \sigma^2 (\bX^\top \bX)^{-1},
-\end{equation*}
+\end{equation}
 \marginnote[*-2]{this is because $\var_\theta[\by] = \var_\theta[\bX \theta_0 + \beps] = \var_\theta[\beps] = \sigma^2 \bI_n$}%
 where we used $\bA = (\bX^\top \bX)^{-1} \bX^\top$.
 In particular, this proves that the quadratic risk of $\wh \theta_n$ is given by
@@ -1224,9 +1229,10 @@ Note also that $\wh \by = \proj_V(\by) = \bH \by$ where
 is the projection matrix onto $V$.
 This matrix is called the \emph{hat matrix} because of the equation $\wh \by = \bH \by$: it puts a hat on $\by$.
 Also, note that
-\begin{equation*}
+\begin{equation}
+	\label{eq:residual-noise-relation}
 	\by - \wh \by = (\bI_n - \bH) \by = (\bI_n - \bH) (\bX \theta_0 + \beps) = (\bI_n - \bH) \beps
-\end{equation*} 
+\end{equation} 
 since $\bI_n - \bH$ is the projection matrix onto $V^\perp$ (the orthogonal of $V$ which is of dimension $n-d$ since $\bX$ is full rank) and since $\bX \theta_0 \in V$ so that
 \begin{equation*}
 	\E_\theta \norm{\by - \wh \by}^2 = \E \norm{(\bI_n - \bH) \beps}^2 = \tr \var[(\bI_n - \bH) \beps] = \sigma^2 (n - d),
@@ -1297,9 +1303,10 @@ with respect to the Lebesgue measure on $\R$.
 \paragraph{The Student's $t$ distribution.} % (fold)
 
 If $U \sim \nor(0, 1)$ and $V \sim \chisq(n)$ are independent random variables, then
-\begin{equation*}
+\begin{equation}
+	\label{eq:student-definition}
 	\frac{U}{\sqrt{V / n}} \sim \stu(n)
-\end{equation*}
+\end{equation}
 where $\stu(n)$ is called the \emph{student distribution with $n$ degrees of freedom}%
 \sidenote{The name ``Student'' comes from the use of ``Student'' as a pen name for a research paper by W. William Gosset, a statistician and chemist who worked on stabilizing the taste of the beer at the Guiness factory in Dublin (he used ``Student'' in order to stay anonymous and keep secret the use of the $t$-test at the factory).}
 which has density%
@@ -1316,9 +1323,10 @@ Also, we have that $\stu(n) \gosto \nor(0, 1)$ as $n \rightarrow +\infty$ since 
 \paragraph{The Fisher distribution.}
 
 Let $p, q \in \N \setminus \{ 0 \} $. If $U \sim \chisq(p)$ and $V \sim \chisq(q)$ are independent then
-\begin{equation*}
+\begin{equation}
+	\label{eq:fisher-definition}
 	\frac{U / p}{V / q} \sim \fis(p, q)
-\end{equation*}
+\end{equation}
 where $\fis(p, q)$ stands for the \emph{Fisher distribution} with density
 \begin{equation*}
 	f_{p, q}(x) = \frac{1}{x \beta(p/2, q/2)} \Big( \frac{px}{px + q} \Big)^{p/2} \Big(1 - \frac{px}{px + q} \Big)^{q/2} \ind{x \geq 0}
@@ -1345,82 +1353,128 @@ If $B \sim \bet(a, b)$ then $\E[B] = \frac{a}{a + b}$, $\var[B] = ab / ((a + b)^
 
 \subsection{Joint Distribution of $\wh \theta_n$ and $\wh \sigma^2$ and consequences}
 
-ICI ICI ICI
 
-Let us now provide some stuff about Gaussian vectors, that will prove important for the Gaussian linear model. Indeed, thanks to the additional strucutre we put blablabla
-
-\begin{theorem}
-	Let $Z \sim \nor(0, \bI)_n$ and let $V_1, \ldots, V_k$ be orthogonal linear spaces of $\R^n$. Define the Gaussian vectors $Z_j = \bP_j Z := \proj_{V_j}(Z)$ namely $\bP_j$ is the orthonormal projection matrix onto the space $V_j$. Then, we have that $Z_1, \ldots, Z_k$ are independent random vectors, and that
+In order to study the distribution of $\wh \theta_n$ and $\wh \sigma^2$, we need the following theorem, which proves that the projection of a Gaussian vector, with isometric covariance, onto orthogonal spaces are independent and Gaussian.
+\begin{theorem}[Cochran theorem]
+	\label{thm:cochran}
+	Let $Z \sim \nor(0, \bI_n)$ and let $V_1, \ldots, V_k$ be orthogonal linear spaces of $\R^n$. Define the Gaussian vectors $Z_j = \bP_j Z := \proj_{V_j}(Z)$, where $\bP_j$ is the orthonormal projection matrix onto $V_j$. Then, we have that $Z_1, \ldots, Z_k$ are independent Gaussian vectors, and that
 	\begin{equation}
 		\norm{Z_j}^2 \sim \chisq(n_j)
 	\end{equation}
 	where $n_j = \dim(V_j)$ (note that $\sum_{j=1}^k n_j \leq n$).
 \end{theorem}
-
-\begin{proof}
-	We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
-	\begin{equation*}
-		\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
-	\end{equation*}
-	since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
-	This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
-	Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
-	We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
-\end{proof}
-
-\paragraph{Back to the gaussian linear model.}
-
-Recal that awe have $\by = \bX \theta + \beps$ with $\beps \sim \nor(0, \sigma^2 \bI_n)$.
-We have now the right tools to give the full distribution of both estimators $\wh \theta$ and $\wh \sigma^2$.
+The proof of Theorem~\ref{thm:cochran} is given in Section~\ref{sec:chap04_proofs} below.
+Let us go back to the Gaussian linear model where $\by = \bX \theta_0 + \beps$ with $\beps \sim \nor(0, \sigma^2 \bI_n)$.
+We know that $\wh \theta_n$ is a Gaussian vector, as a linear transformation of the Gaussian vector $\by$, so that
+\begin{equation*}
+	\wh \theta_n \sim \nor(\theta, \sigma^2 (\bX^\top \bX)^{-1})
+\end{equation*}
+in view of Equations~\eqref{eq:mean-ols} and~\eqref{eq:var-ols}.
+Moreover, we know from~\eqref{eq:residual-noise-relation} that $\by - \bX \wh \theta_n = (\bI_n - \bH) \beps = \proj_{V^\perp}(\beps)$ and that $\bX (\wh \theta_n - \theta_0) = \proj_V(\by - \bX \theta_0) = \proj_V(\beps)$.
+Since $V \perp V^\perp$, Theorem~\ref{thm:cochran} entails that $\by - \bX \wh \theta_n$ and $\bX (\wh \theta_n - \theta_0)$ are independent, so that $\wh \sigma^2$ and $\wh \theta_n$ are also independent.
+Moreover, since $\bX$ is full rank, we have $\dim V = d$ and $\dim V^\perp = n - d$, which entails with Theorem~\ref{thm:cochran} that
+\begin{equation*}
+	(n - d) \frac{\wh \sigma^2}{\sigma^2} = \norm{\proj_{V^\perp}(\beps / \sigma)}^2 \sim \chisq(n-d)
+\end{equation*}
+and
+\begin{equation*}
+	\frac{\norm{\bX(\wh \theta_n - \theta_0)}^2}{\sigma^2 } = \norm{\proj_{V}(\beps / \sigma)}^2 \sim \chisq(n-d).
+\end{equation*}
+This proves the following theorem.
 \begin{theorem}
-	Assume that $\rank(\bX) = d$ that $\by = \bX \theta + \beps$ and that $\beps \sim \nor(0, \sigma^2 \bI_n)$. Put $\wh \by = \bX \wh \theta$ where $\wh \theta = (\bX^\top \bX)^{-1} \bX^\top \by$  and $\wh \sigma^2 = \norm{\by - \wh \by}^2 / (n-d)$. Then we have that $\wh \theta$ and $\wh \sigma^2$ are \emph{independent}, that and that
+	\label{thm:gaussian-ols-distribution}
+	Assume that $\bX$ is full rank and that $\by = \bX \theta_0 + \beps$ with $\beps \sim \nor(0, \sigma^2 \bI_n)$. Put $\wh \by = \bX \wh \theta_n$ where $\wh \theta_n = (\bX^\top \bX)^{-1} \bX^\top \by$  and $\wh \sigma^2 = \norm{\by - \wh \by}^2 / (n-d)$. 
+	Then, we have that $\wh \theta_n$ and $\wh \sigma^2$ are \emph{independent} and such that
 	\begin{equation*}
-		\wh \theta \sim \nor(\theta, \sigma^2 (\bX^\top \bX)^{-1}), \quad \norm{\by - \wh \by}^2 / \sigma^2 \sim \chisq(n - d) \quad \text{and} \quad \norm{\bX( \wh \theta - \theta)}^2 / \sigma^2 \sim \chisq(d).
+		\wh \theta_n \sim \nor(\theta, \sigma^2 (\bX^\top \bX)^{-1}), \quad (n-d) \frac{\wh \sigma^2}{\sigma^2} \sim \chisq(n - d)
 	\end{equation*}
+	and $\norm{\bX(\wh \theta_n - \theta)}^2 / \sigma^2 \sim \chisq(d)$.
 \end{theorem}
 
-\begin{proof}
-	We know from before that $\by - \wh \by = \proj_{V^\perp}(\by) = \proj_{V^\perp}(\beps)$
-	 and that $\bX (\wh \theta - \theta) = \proj_V(\by) - \bX \theta = \proj_V(\beps)$
-	 so that, since $V \perp V^\perp$ and $\dim V = d$ and $\dim V^\perp = n - d$, the conclusion follows from the Cochran theorem ???.
-\end{proof}
+Theorem~\ref{thm:gaussian-ols-distribution} has many consequences for the inference of $\theta$ and $\sigma^2$ in the Gaussian linear model.
+If $\sigma^2$ is known, the set
+\begin{equation*}
+	\cE = \Big \{ \theta \in \R^d : \frac{1}{\sigma} \norm{(\bX^\top \bX)^{-1} (\wh \theta_n - \theta)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
+\end{equation*}
+where $q_{\chisq(d)}(1 - \alpha)$ is the quantile function of the $\chisq(d)$ distribution at $1 - \alpha$, is a \emph{confidence set}%
+\sidenote{we call also $\cE$ a confidence ellipsoid in view of its definition}
+for $\theta_0$ in the Gaussian linear model at level $1 - \alpha$, since it satisfies by construction the coverage property $\P_\theta[ \theta \in \cE] = 1 - \alpha$.
+If $\sigma^2$ is unknown (which is always the case), we use the fact%
+\sidenote{We proved above that $\norm{\bX(\wh \theta_n - \theta_0)}^2 / \sigma^2 \sim \chisq(d)$ and that $(n-d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$ are independent random variables, so that the definition~\eqref{eq:fisher-definition} of the Fisher distributions entails the result.}
+that
+\begin{equation*}
+	\frac{\norm{\bX(\wh \theta_n - \theta)}^2}{d \wh \sigma^2} \sim \fis(d, n-d)
+\end{equation*}
+and consider instead the ellipsoid
+\begin{equation}
+	\label{eq:fisher-ellipsoid-construction}
+	\Big \{ \theta \in \R^d : \frac{1}{d \wh \sigma^2} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\},
+\end{equation}
+which is by construction a confidence set at level $1 - \alpha$.
+Note the cute trick involved in~\eqref{eq:fisher-ellipsoid-construction}: the ratio structure allows to cancel out $\sigma^2$, leading to a statistic that does not depend on $\sigma^2$, with a \emph{known} distribution.
 
-Theorem~??  has many consequences. For instance if $\sigma^2$ is known, then the set
+\todo{Y'a quand meme un probleme avec la notation $\theta_0$. Pourquoi pas $\sigma_0^2$ et en dessous y'en a plus. Faut decider quelque chose}
+
+\paragraph{Confidence intervals.}
+
+Both previous confidence regions provide coverage for the whole vector $\theta \in \R^d$.
+We can also build confidence intervals for each coordinate of~$\theta$.
+\todo{Parler aussi intervalle de prediction et intervalle de confiance}
+Indeed, we have $\theta_j = \theta^\top e_j$ where $e_j$ is the canonical basis vector with $1$ at coordinate $j$ and $0$ elsewhere. 
+More generally, we can build a confidence interval for $a^\top \theta$ for any vector $a \in \R^d$.
+We know that $a^\top(\wh \theta_n - \theta) \sim \nor(0, \sigma^2 a^\top (\bX^\top \bX)^{-1} a)$, so that
 \begin{equation*}
-	\cE = \Big \{ \theta \in \R^d : \frac{1}{\sigma} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
+	\frac{a^\top(\wh \theta_n - \theta)}{\sigma \sqrt{a^\top (\bX^\top \bX)^{-1} a}} \sim \nor(0, 1)
 \end{equation*}
-where $q_{\chisq(d)}(1 - \alpha)$ is the quantile function of the $\chisq(d)$ distribution at $1 - \alpha$, if a confidence ellipsoid for $\theta$ in the Gaussian linear model at level $1 - \alpha$, since it satisfies by construction the coverage property $\P_\theta[ \theta \in \cE] = 1 - \alpha$.
-Whenever $\sigma^2$ is unknown (which is always the case) then using the fact that
+and let us recall that $\wh \theta_n$ and $\wh \sigma^2$ are independent and that $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
+This entails
+\begin{equation}
+	\label{eq:ci-construction-gaussian-linear-model}
+	\frac{a^\top(\wh \theta_n - \theta)}{\sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a}} 
+	\sim \stu(n - d)
+\end{equation}
+in view of the definition~\eqref{eq:student-definition} of the $\stu$ distribution.%
+\sidenote{Note again the fact that the ratio structure in~\eqref{eq:ci-construction-gaussian-linear-model} cancels out $\sigma^2$ and that its \emph{exact} distribution is known, thanks to the assumption that the noise $\beps$ is Gaussian.}
+This proves that the interval
 \begin{equation*}
-	\frac{\norm{\bX(\wh \theta - \theta)}^2 / d}{\norm{\by - \bX\wh \theta}^2 / (n - d)} \sim \fis(d, n-d)
+	I_{a, 1 - \alpha} = \Big[a^\top \wh \theta_n \pm q_{\stu(n-d)}(1 - \alpha/2) 
+	\sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a} \Big],
 \end{equation*}
-entails that the ellipsoid
+where $q_{\stu(n-d)}$ is the quantile function of the $\stu(n-d)$ distribution,
+is a confidence interval for $a^\top \theta$ at level $1 - \alpha$, since it satisfies $\P_\theta[ a^\top \theta \in I_{a, 1 - \alpha}] = 1 - \alpha$ by construction.%
+\sidenote{We use the fact that $q_{\stu(k)}(\alpha) = - q_{\stu(k)}(1 - \alpha)$ in this construction, since $\stu(k)$ is a symmetrical distribution.}
+In particular, for $a = e_j$, we obtain that
 \begin{equation*}
-	\Big \{ \theta \in \R^d : \frac{1}{\wh \sigma^2} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\}
+	\Big[  (\wh \theta_n)_j \pm q_{\stu(n-d)}(1 - \alpha/2) \sqrt{\wh \sigma^2 ((\bX^\top \bX)^{-1})_{j, j}} \Big]
 \end{equation*}
-if a confidence region at level $1 - \alpha$.
-Both confidence regions provide coverage for the whole vector $\theta$.
-\todo{intervalle de prediction et intervalle de confiance}
-We can also build confidence intervals for each coordinate of $\theta$.
-Indeed, we have $\theta_j = \theta^\top e_j$ where $e_j$ is the canonical basis vector with $1$ at cordinate $j$ and $0$ elsewhere. More generally we can build a confidence interval for $a^\top \theta$ for any vector $a \in \R^d$ by looking for an ancillary statistic. We know that $a^\top(\wh \theta - \theta) \sim \nor(0, \sigma^2 a^\top (\bX^\top \bX)^{-1} a)$ and that $\wh \theta$ and $\wh \sigma^2$ are independent, so that
+is a confidence interval for $\theta_j$ at level $1 - \alpha$.
+
+This confidence interval allows to build a test for the hypotheses $H_{0, j} : \theta_j = 0$ versus $H_{1, j} : \theta_j \neq 0$, which can help to quantify the statistical importance of the $j$-th feature in the considered dataset.
+Also, a confidence interval for $\sigma^2$ can be easily built using the ancillary statistic $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
+
+\paragraph{Prediction intervals.}
+
+In the previous paragraph, we built confidence sets and intervals for the parameter $\theta \in \R^d$.
+But, let us remind ourselves that one of the main usages of the linear model is to provide \emph{predictions} of the label $Y \in \R$ associated to a vector of features $X \in \R^d$.
+Once the least-squares estimator $\wh \theta_n$ is computed, we predict the unknown label $Y_{\new}$ of a \emph{new}%
+\sidenote{In the sense that $X_{\new}$ does not belong to the dataset $(X_1, Y_1), \ldots, (X_n, Y_n)$ with which $\wh \theta_n$ is trained}
+ feature vector $X_{\new} \in \R^d$ using $\wh Y_{\new} = X_{\new}^\top \wh \theta_n$.
+If we are willing to assume that the model is Gaussian, namely $\beps \sim \nor(0, \sigma^2 \bI_n)$, and that the unknown label $Y_{\new}$ satisfies the same Gaussian linear model $Y_{\new} = X_{\new}^\top \theta + \eps_{\new}$ where $\eps_{\new}$ is independent of $\beps$ and
+ $\eps_{\new} \sim \nor(0, \sigma^2)$, then we know that $\wh Y_{\new}$ and $Y_{\new}$ are independent Gaussian random variables, so that $\wh Y_{\new} - Y_{\new}$ is also Gaussian, and
+ $\E_\theta[\wh Y_{\new} - Y_{\new}] = X_{\new}^\top \E_\theta[\wh \theta_n] - X_{\new}^\top \theta = 0$ and ICI ICI ICI
+ \begin{equation}
+ 	\var_\theta[\wh Y_{\new} - Y_{\new}] = \var_\theta[\wh Y_{\new}] + \var_\theta[Y_{\new}] = ???
+ \end{equation}
+
+ can write
 \begin{equation*}
-	\frac{a^\top(\wh \theta - \theta)}{\sigma \sqrt{a^\top (\bX^\top \bX)^{-1} a}} \sim \nor(0, 1) \text{ and } \frac{(n - d) \wh \sigma^2}{\sigma^2} \sim \chisq(n^d).
+	\wh Y_{\new} - Y_{\new} = X_{\new}^\top \wh \theta_n - (X_{\new}^\top \theta + \eps_{\new}) = X^\top (\bX^\top \bX)^{-1} \bX \beps - \eps
 \end{equation*}
-This entails that 
-\begin{equation*}
-	\frac{a^\top(\wh \theta - \theta)}{\sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a}} \sim \stu(n - d)
-\end{equation*}
-as the ratio between independent $\nor(0, 1)$ and $\chisq(n - d)$ random variables.
-This leads to the coverage property
-\begin{equation*}
-	\P_{\theta, \sigma^2} \bigg\{ a^\top \theta \in  \Big[  a^\top \wh \theta \pm \sqrt{\wh \sigma^2 a^\top (\bX^\top \bX)^{-1} a} q_{\stu(n-d)}(1 - \alpha/2) \Big] \bigg\} = 1 - \alpha
-\end{equation*}
-in particular for $a = e_j$ we obtain that
-\begin{equation*}
-	\P_{\theta, \sigma^2} \bigg\{ \theta_j \in  \Big[  a^\top \wh \theta \pm \sqrt{\wh \sigma^2 (\bX^\top \bX)_{j, j}^{-1}} q_{\stu(n-d)}(1 - \alpha/2) \Big] \bigg\} = 1 - \alpha
-\end{equation*}
-This allows in particular to build a test for the hypothesis $H_{0, j} : \theta_j = 0$ versus $H_{1, j} : \theta_j \neq 0$.
-A confidence interval for $\sigma^2$ can be also easily built using the ancillary statistic $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
+
+\todo{finish this and }
+we can also build a prediction interval for $Y$.
+
+% paragraph prediction_intervals (end)
 
 \subsection{The Fisher test} % (fold)
 \label{sub:the_fisher_test}
@@ -1815,6 +1869,17 @@ Let us wrap us what are the important things we learned in this Section:
 Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
 The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
 
+
+\paragraph{Proof of Theorem~\ref{thm:cochran}} % (fold)
+
+We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
+\begin{equation*}
+	\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
+\end{equation*}
+since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
+This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
+Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
+We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
 
 
 
