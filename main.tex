@@ -1566,20 +1566,22 @@ Pythagora's theorem entails that%
 \begin{tikzpicture}[scale=1]%
 \draw [dashed, thick, color=gray!80] (2, 2) -- ++(-2, -1.2) -- ++(4.5, -1);%
 \fill [color=gray!10] (0, 0.8) -- ++(4.8, 2.88) -- ++(0, -3.95);%
-\draw (4.2, 0.2) node[right]{$V$};%
+\draw (4.5, 3) node {$V$};%
 \draw (3, 3) node[right] {$\by$};%
 \draw (3, 3) node {$\bullet$};%
 \draw (3, 3) -- (3, 1);%
-\draw (3, 1) node[right]{$\bX \wh \theta_n$};%
-\draw (3, 1) -- ++(-0.9, 0.2);%
-\draw (2.1, 1.2) node[left] {$\bX u$};
-\draw (2.1, 1.2) node {$\bullet$};
+\draw (3, 1) node[left]{$\proj_V(\by)\;$};%
+\draw (3.4, 0.8) node[below] {$W$};
+\draw[dashed, thick] (2.6, 0.5) -- ++(2, 1);
+\draw (4.2, 1.3) node {$\bullet$};
+\draw (4.2, 1.3) node[right] {$\; \proj_W(\by)$};
+\draw (4.34, 1.37) -- ++(-0.12, 0.17) -- ++(-0.14, -0.07);
+\draw (3, 3) -- (4.2, 1.3);
 \draw (3, 1) node {$\bullet$};%
 \draw (3, 1.2) -- ++(-0.18, 0.04) -- ++(0, -0.2);%
 \end{tikzpicture}%
-\caption{Geometric explanation of the normal Equation~\eqref{eq:least-squares-normal-equation} where $V = \spa(\bX)$}
+\caption{Geometric construction of the Fisher test}
 \end{marginfigure}%
-\todo{FAIRE FIGURE}
 \begin{equation*}
 	\norm{\by - \proj_W(\by)}^2 = \norm{\by - \proj_V(\by)}^2 + \norm{\proj_V(\by) - \proj_W(\by)}^2
 \end{equation*}
@@ -1620,11 +1622,87 @@ We can conclude now that the Fisher test with rejection region
 has level $\alpha$ for the null hypothesis~\eqref{eq:fisher-null-hypothesis}, namely that $\sup_{\theta \in \Theta_0} \P_\theta[R_\alpha] = \alpha$.
 This test is pretty intuitive and can be understood as follows: if $\theta \in \Theta_0$ then both estimators $\wh \theta_n$ and $\wt \theta_n$ should be close, and $\bX (\wh \theta_n - \wt \theta_n)$ should be, consequently, ``small'', the small miracle being that, in the Gaussian linear model, we can perfectly quantify how small.
 
-\todo{Mettre comme exemple le cas ou $\bone \in \spa(\bX)$ et on teste que tous les coeffs sont zero. commencer par le cas tout le monde est 0}
-
+\begin{example}
+	Consider a Gaussian linear model $Y_i = X_i^\top w + b + \eps_i$ where $w \in \R^{d-1}$, where $b \in \R$ is an intercept%
+	\marginnote{You should always include an intercept in a linear model.}
+	and the noise $\eps_i \sim \nor(0, \sigma^2)$ is iid. Using the same notations as before, we can rewrite this as $\by = \bX \theta + \beps$ where $\beps \sim \nor(0, \sigma^2 \bI_n)$, where $\theta = [b, w^\top]^\top \in \R^d$ and where $\bX = [\bone X^1 \cdots X^{d-1}]$ is assumed to be full-rank. In this model, we wish to test if the features $X_i$ are useful or if a constant intercept is enough to predict $Y$.
+	Namely, we want to test $H_0 : w = 0$ versus $H_1 : w \neq 0$, namely $H_0 : \theta_2 = \cdots = \theta_d = 0$. This can be done using the Fisher test, putting $W = \spa(\bone)$ so that $\dim(W) = 1 = d - k$ with $k = d - 1$ and $\Theta_0 = \{ \theta \in \R^d : \theta_2 = \cdots = \theta_d = 0 \}$. 
+	Since $\proj_W(\by) = \bar Y_n \bone_n$, the least-squares estimator under $H_0$ is $\wt \theta_n = \bar Y_n \bone_d$, so that the rejection set at level $\alpha$ of the Fisher test writes in this case 
+	\begin{equation}
+		\label{eq:linreg-f-test}
+		\bigg\{  \frac{\norm{\bX \wh \theta_n - \bar Y_n \bone_n}^2}{(d - 1) \wh \sigma^2}  
+		\geq q_{\fis(d-1, n-d)}(1 - \alpha)  \bigg\},
+	\end{equation}
+	with the same notations as before. The $p$-value of this test can be therefore used as a quantification of how much the features are informative globally to predict the label using a linear model, versus a constant intercept. This test is known as the \emph{$F$-test} for linear regression and the statistic used in~\eqref{eq:linreg-f-test} is known as the \emph{$F$-statistic}.
+\end{example}
 
 \subsection{Analysis of variance} % (fold)
 \label{sub:analysis_of_variance}
+
+Consider independent random variables $X_{i, j} \sim \nor(m_i, \sigma^2)$ for $i=1, \ldots, k$ and $j=1, \ldots, n_i$, namely, we observe $k$ Gaussian iid samples with respective sizes $n_1, n_2,\dots, n_k$, denoted
+\begin{equation*}
+	X_{i, \bullet} = [X_{i, 1} \cdots X_{i, n_i}]^\top \in \R^{n_i}.
+\end{equation*}
+The parameters $m = [m_1 \cdots m_k]^\top \in \R^k$ and $\sigma^2 > 0$ are unknown, and we want to build a test for the hypotheses
+\begin{equation*}
+  H_0 : m_1 = m_2 = \cdots = m_k  \quad \text{against} \quad H_1 : \exists i \neq i': m_i \neq m_{i'},
+\end{equation*}
+namely, we want to test if all the expectations of all the samples are equal.
+We consider the random vector
+\begin{equation*}
+	X = [X_{1, \bullet}^\top \cdots, X_{k, \bullet}^\top]^\top
+\end{equation*}
+which is the vertical concatenation of $X_{1, \bullet}, \ldots, X_{k, \bullet}$.
+
+ICI ICI ICI utiliser ce qui est commenter pour le finish
+
+% Montrez que $\mu=\E(X)$ appartient à un sous-espace vectoriel $E$ de dimension $k$.
+% Calculez $X_E = \proj_E(X)$ la projection orthogonale de $X$ dans $E$.
+
+% On a
+% \begin{equation*}
+%  \mu = \E X = 
+%  \begin{bmatrix}
+%   m_1 \cdots m_1 \, m_2 \cdots m_2 \cdots m_k \cdots m_k
+%  \end{bmatrix}^\top \in \R^n
+% \end{equation*}
+% où chaque terme $m_i$ est répété $n_i$ fois pour $i=1, \ldots, k$.
+% On introduit le vecteur $e_1 \in \R^d$ dont les $n_1$ premières coordonnées sont $1$ et toutes les autres $0$, le vecteur $e_2$ dont les $n_1$ premières coordonnées sont $0$, les $n_2$ suivantes sont $1$, toutes les autres $0$, et ainsi de suite pour définir les vecteurs $e_1, \ldots, e_k$ de $\R^n$ qui sont clairement orthogonaux. On a ainsi $\mu = \sum_{i=1}^k m_i e_i$ ce qui montre que $\mu \in V$ où $V = \vect(e_1, \ldots, e_k)$ est un sous-espace de dimension $k$ de $\R^n$.
+% Les $e_1, \ldots, e_k$ sont orthogonaux et de normes respectives $\sqrt n_1, \ldots, \sqrt n_k$ de sorte que $X_E = \proj_E(X) = \sum_{i=1}^k \inr{X, \frac{1}{\sqrt{n_i}} e_i} \frac{1}{\sqrt{n_i}} e_i = \sum_{i=1}^k \frac{1}{n_i} \inr{X, e_i} e_i = \sum_{i=1}^k \wb X_{i, \bullet} e_i$ où on a posé $\wb X_{i, \bullet} = \frac{1}{n_i} \inr{X, e_i} = \frac{1}{n_i} \sum_{j=1}^{n_i} X_{i, j}=$ la moyenne du $i$-ème échantillon.
+
+% Montrez que l'hypothèse nulle s'écrit $H_0: \mu\in F$, où $F$ est un sous-espace vectoriel de $E$ de dimension $1$. Calculez $X_F$.
+
+% Sous $H_0$ toutes les coordonnées de $\mu$ sont égales, donc $\mu \in F$ où $F = \vect(\mathbf{1})$ avec $\mathbf{1} \in \R^n$ le vecteur dont toutes les coordonnées sont constantes et égales à $1$ et évidemment $\dim(F) = 1$ et $X_F = \proj_F(X) = \wb X \mathbf{1}$ où $\wb X = \frac 1n \sum_{i=1}^k \sum_{j=1}^{n_i} X_{i, j}$ est la moyenne de l'union des $k$ échantillons.
+
+% Construisez alors un test de Fisher pour les hypothèses décrites au dessus.
+
+% On peut écrire $X = \mu + \eps$ où $\eps \sim \nor(0, \sigma^2 I_n)$. On décompose $\R^n = E^\perp \oplus E = E^\perp \oplus F \oplus W$. Le principe du test est d'utiliser le fait que $X_E - X_F = X_W = \proj_W(\mu + \eps) = \proj_W(\mu) + \proj_W(\eps)$ et que \emph{quand $H_0$ est vraie} $\mu \in F$ donc $\proj_W(\mu) = 0$. On a donc, \emph{sous $H_0$}, que $\frac{1}{\sigma^2} \| X_E - X_F \|^2 = \| \proj_W( \eps / \sigma) \|^2$. De plus $X - X_E = \proj_{E^\perp}(X) = \proj_{E^\perp}(\mu + \eps) = \proj_{E^\perp}(\eps)$ car $\mu \in E$ et donc $\frac{1}{\sigma^2} \| X - X_E \|^2 = \| \proj_{E^\perp}( \eps / \sigma) \|^2$.
+% Puisque $\eps / \sigma \sim \nor(0, I_n)$ on a d'après le théorème de Cochran que $
+% \| \proj_W( \eps / \sigma) \|^2 \sim \chi^2(\dim(W))$, que $
+% \| \proj_{E^\perp}( \eps / \sigma) \|^2 \sim \chi^2(\dim(E^\perp))$ et que $\| \proj_{E^\perp}( \eps / \sigma) \|^2$ et $\|\proj_W( \eps / \sigma)\|^2$ sont indépendantes car $E^\perp \perp W$. Par ailleurs $\dim(E^\perp) = n - k$ et $\dim(W) = k-1$.
+% Cela entraine d'après la définition de la loi de Fisher $\cF(p, q)$ a $p, q$ degrés de libertés que   
+% \begin{equation*}
+%   T = \frac{\| X_E - X_F \|^2 / (k-1)}{\| X - X_E \|^2 / (n-k)} \sim \cF(k-1, n-k)
+% \end{equation*}
+% et qu'on peut donc considérer le test de Fisher de région de rejet $R = \{ T \geq q_{k-1, n - k}(1 - \alpha) \}$ où $q_{p, q}(1 - \alpha)$ est le quantile d'ordre $1 - \alpha$ de la loi $\cF(k-1, n-k)$.
+% Écrivons $T$ sous une forme un peu plus interprétable. 
+% On a d'une part
+% \begin{equation*}
+%   \| X - X_E \|^2 = \sum_{i=1}^k \sum_{j=1}^{n_i} (X_{i, j} - \bX_{i, \bullet})^2 
+%   =\sum_{i=1}^k n_i  \frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - \bX_{i, \bullet})^2 = n  V_{\text{intra}}
+% \end{equation*}
+% où $V_{\text{intra}}$ est la \emph{variance intra-classes} (une \emph{classe} correspondant à un échantillon $i$) qui correspond à la moyenne des variances $\frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - \bX_{i, \bullet})^2$ de chaque échantillon $i=1, \ldots, k$ et d'autre part
+% \begin{equation*}
+%   \| X_E - X_F \|^2 = \sum_{i=1}^k n_i (\wb X_{i, \bullet} - \wb X)^2 = n V_{\text{inter}}
+% \end{equation*}
+% où $V_{\text{inter}}$ est la \emph{variance inter-classes} qui correspond à la variance des moyennes de chaque échantillon.
+% Cela explique le nom d'ANOVA (ANalysis of VAriance), car le de Fisher utilise dans ce cas particulier la statistique de test 
+% \begin{equation*}
+%   T = \frac{V_\text{inter} / (k-1)}{V_\text{intra} / (n - k)},
+% \end{equation*}
+% qui est basée sur le ratio des variances inter et intra $V_{\text{inter}}$ et $V_\text{intra}$.
+
+
 
 \todo{insert things from the exam}
 % subsection analysis_of_variance (end)
