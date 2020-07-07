@@ -945,6 +945,7 @@ Indeed, we need to remove the dependence on $\theta$ from the distribution in or
 
 There is of course a strong connection between confidence intervals and tests, as explained in the following proposition.
 \begin{proposition}
+	\label{prop:ci-and-tests}
 	If $S(X)$ is a confidence set of level $1 - \alpha$, namely $\P_\theta[ \theta \in S(X)] \geq 1 - \alpha$ for any $\theta \in \Theta$, then the test with rejection set $\{ x : D(x) \cap \Theta_0  = \emptyset\}$ is of level $\alpha$.
 \end{proposition}
 This proposition easily follows from the fact that $\P_\theta[ S(X) \cap \Theta_0 = \emptyset] \leq \P_\theta[ \theta \notin S(X) ] \leq \alpha$ for any $\theta \in \Theta_0$.
@@ -1320,6 +1321,8 @@ with respect to the Lebesgue density on $\R$.
 If $T \sim \stu(n)$ we have $\E[T] = 0$ and $\var(T) = n / (n - 2)$ whenever $n > 2$.
 Also, we have that $\stu(n) \gosto \nor(0, 1)$ as $n \rightarrow +\infty$ since $V / n \gopro 1$ (using the law of large numbers and Theorem~\ref{thm:slutsky}).
 
+\todo{Insert exercise on the Student distribution}
+
 \paragraph{The Fisher distribution.}
 
 Let $p, q \in \N \setminus \{ 0 \} $. If $U \sim \chisq(p)$ and $V \sim \chisq(q)$ are independent then
@@ -1419,7 +1422,6 @@ Note the cute trick involved in~\eqref{eq:fisher-ellipsoid-construction}: the ra
 
 Both previous confidence regions provide coverage for the whole vector $\theta \in \R^d$.
 We can also build confidence intervals for each coordinate of~$\theta$.
-\todo{Parler aussi intervalle de prediction et intervalle de confiance}
 Indeed, we have $\theta_j = \theta^\top e_j$ where $e_j$ is the canonical basis vector with $1$ at coordinate $j$ and $0$ elsewhere. 
 More generally, we can build a confidence interval for $a^\top \theta$ for any vector $a \in \R^d$.
 We know that $a^\top(\wh \theta_n - \theta) \sim \nor(0, \sigma^2 a^\top (\bX^\top \bX)^{-1} a)$, so that
@@ -1442,15 +1444,45 @@ This proves that the interval
 \end{equation*}
 where $q_{\stu(n-d)}$ is the quantile function of the $\stu(n-d)$ distribution,
 is a confidence interval for $a^\top \theta$ at level $1 - \alpha$, since it satisfies $\P_\theta[ a^\top \theta \in I_{a, 1 - \alpha}] = 1 - \alpha$ by construction.%
-\sidenote{We use the fact that $q_{\stu(k)}(\alpha) = - q_{\stu(k)}(1 - \alpha)$ in this construction, since $\stu(k)$ is a symmetrical distribution.}
+\sidenote{We use the fact that $q_{\stu(k)}(\alpha) = - q_{\stu(k)}(1 - \alpha)$ in this construction, since we know that $\stu(k)$ is a symmetrical distribution in view of~\eqref{eq:student-definition}.}
 In particular, for $a = e_j$, we obtain that
-\begin{equation*}
+\begin{equation}
+	\label{eq:ci-gaussian-linear-coordinate}
 	\Big[  (\wh \theta_n)_j \pm q_{\stu(n-d)}(1 - \alpha/2) \sqrt{\wh \sigma^2 ((\bX^\top \bX)^{-1})_{j, j}} \Big]
-\end{equation*}
+\end{equation}
 is a confidence interval for $\theta_j$ at level $1 - \alpha$.
 
 This confidence interval allows to build a test for the hypotheses $H_{0, j} : \theta_j = 0$ versus $H_{1, j} : \theta_j \neq 0$, which can help to quantify the statistical importance of the $j$-th feature in the considered dataset.
 Also, a confidence interval for $\sigma^2$ can be easily built using the ancillary statistic $(n - d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$.
+
+\begin{example}
+	Consider $Y_1, \ldots, Y_n$ iid $\nor(\mu, \sigma^2)$. This is a Gaussian linear model since $\by = \mu \bone + \beps$ where $\beps \sim \nor(0, \sigma^2 \bI_n)$ and $\bone = [1 \cdots 1]^\top \in \R^n$.
+	We have%
+	\marginnote{using $(\bone^\top \bone)^{-1} \bone^\top \by = n^{-1} \sum_{i=1}^n Y_i$}
+	$\wh \mu_n = \bar Y_n$ together with $\wh \sigma^2 = \frac{1}{n-1} \norm{\by - \bar Y_n \bone}^2 = \frac{1}{n-1} \sum_{i=1}^n (Y_i - \bar Y_n)^2$ and we know from Theorem~\ref{thm:gaussian-ols-distribution} that $\wh \mu_n$ and $\wh \sigma^2$ are independent and such that $\sqrt n (\wh \mu_n - \mu) / \sigma \sim \nor(0, 1)$ and $(n-1) \wh \sigma^2/\sigma^2 \sim \chisq(n-1)$ so that by definition of the $\stu(n-1)$ distribution we have
+	\begin{equation*}
+		\sqrt{\frac{n}{\wh \sigma^2}} (\wh \mu_n - \mu) \sim \stu(n-1)
+	\end{equation*}
+	so that we can build, using this ancillary statistic, a confidence interval and tests for $\mu$ when $\sigma^2$ is unknown.
+\end{example}
+
+\begin{example}
+	Consider the simple Gaussian linear regression model where $Y_i = a x_i + b + \eps_i$, with $a, b \in \R$, $x_1, \ldots, x_n \in \R$ and $\eps_i \sim \nor(0, \sigma^2)$ iid. This can be written as a linear model with
+	\begin{equation*}
+		\by = \bX \theta + \beps =
+		\begin{bmatrix}
+			1 & x_1 \\
+			\vdots & \vdots \\
+			1 & x_n
+		\end{bmatrix}
+		\begin{bmatrix}
+			a \\
+			b
+		\end{bmatrix}
+		+ \beps,
+	\end{equation*}
+	where we can compute explicitly $\wh \theta_n$ and $\wh \sigma^2$ and obtain their distributions using Theorem~\ref{thm:gaussian-ols-distribution}.
+\end{example}
 
 \paragraph{Prediction intervals.}
 
@@ -1461,110 +1493,150 @@ Once the least-squares estimator $\wh \theta_n$ is computed, we predict the unkn
  feature vector $X_{\new} \in \R^d$ using $\wh Y_{\new} = X_{\new}^\top \wh \theta_n$.
 If we are willing to assume that the model is Gaussian, namely $\beps \sim \nor(0, \sigma^2 \bI_n)$, and that the unknown label $Y_{\new}$ satisfies the same Gaussian linear model $Y_{\new} = X_{\new}^\top \theta + \eps_{\new}$ where $\eps_{\new}$ is independent of $\beps$ and
  $\eps_{\new} \sim \nor(0, \sigma^2)$, then we know that $\wh Y_{\new}$ and $Y_{\new}$ are independent Gaussian random variables, so that $\wh Y_{\new} - Y_{\new}$ is also Gaussian, and
- $\E_\theta[\wh Y_{\new} - Y_{\new}] = X_{\new}^\top \E_\theta[\wh \theta_n] - X_{\new}^\top \theta = 0$ and ICI ICI ICI
- \begin{equation}
- 	\var_\theta[\wh Y_{\new} - Y_{\new}] = \var_\theta[\wh Y_{\new}] + \var_\theta[Y_{\new}] = ???
- \end{equation}
-
- can write
+ $\E_\theta[\wh Y_{\new} - Y_{\new}] = X_{\new}^\top \E_\theta[\wh \theta_n] - X_{\new}^\top \theta = 0$ and
+ \begin{align*}
+ 	\var[\wh Y_{\new} - Y_{\new}] &= \var[\wh Y_{\new}] + \var[Y_{\new}] \\
+ 	&= \sigma^2 (X_{\new}^\top (\bX^\top \bX)^{-1} X_{\new} + 1),
+ \end{align*}
+which means that
 \begin{equation*}
-	\wh Y_{\new} - Y_{\new} = X_{\new}^\top \wh \theta_n - (X_{\new}^\top \theta + \eps_{\new}) = X^\top (\bX^\top \bX)^{-1} \bX \beps - \eps
+	\wh Y_{\new} - Y_{\new} \sim \nor\big(0, \sigma^2 (1 + X_{\new}^\top (\bX^\top \bX)^{-1} X_{\new})\big)
 \end{equation*}
+and using again the fact that $\wh \sigma^2$ and $\wh \theta_n$ are independent and $(n-d) \wh \sigma^2 / \sigma^2 \sim \chisq(n -d)$ we obtain
+\begin{equation*}
+	\frac{\wh Y_{\new} - Y_{\new}}{\sqrt{\wh \sigma^2  (1 + X_{\new}^\top (\bX^\top \bX)^{-1} X_{\new}) }} \sim \stu(n-d)
+\end{equation*}
+so that the interval
+\begin{align*}
+	I_{\new}(X_{\new}) = \Big[ \wh Y_{\new} \pm &q_{\stu(n-d)}(1 - \alpha / 2) \\
+	& \times \sqrt{\wh \sigma^2  (1 + X_{\new}^\top (\bX^\top \bX)^{-1} X_{\new}) } \Big]
+\end{align*}
+is a prediction interval at level $1 - \alpha$, since we have by construction $\P[Y_{\new} \in I_{\new}(X_{\new})] = 1 - \alpha$.
 
-\todo{finish this and }
-we can also build a prediction interval for $Y$.
-
-% paragraph prediction_intervals (end)
 
 \subsection{The Fisher test} % (fold)
 \label{sub:the_fisher_test}
 
-% subsection the_fisher_test (end)
-
-Using the previous confidence interval we can test $H_0 = \theta_1 = \theta_2$ by using $a = [1, -1, 0, \ldots, 0]$. But, how can we test $H_0 : \theta_1 = \theta_2 = 0$ or more generally a \emph{multiple} null hypothesis such as
-\begin{equation*}
+Using the confidence interval~\eqref{eq:ci-construction-gaussian-linear-model} we can test $H_0 = \theta_1 = \theta_2$ by using $a = [1, -1, 0, \ldots, 0]$. 
+But, how can we test $H_0 : \theta_1 = \theta_2 = 0$ or more generally a \emph{multiple} null hypothesis such as
+\begin{equation}
+	\label{eq:fisher-test-multiple-null-example}
 	H_0 : \theta_1 = \cdots = \theta_k = 0
-\end{equation*}
-for fomr $k = 2, \ldots, d$ ?
-An approach can rely on the use of separate tests with siple ?? null hypotheses $H_{0, j} : \theta_j = 0$ for $j=1, \ldots, k$, with rejection sets $R_{j, \alpha}$ that satisfy $\P_{\theta_j = 0}[R_{j, \alpha}] \leq \alpha$ for each $j=1, \ldots, k$.
-So, an approach to test $H_0$ given by ??? is to consider a rejection set given by the union of these individual rejection sets, but with decreased levels up to $\alpha / k$, since using the union bound
+\end{equation}
+for $k = 2, \ldots, d$ ?
+If we fix $j \in \{ 1, \ldots, k\}$ and consider the simple null hypothesis $H_{0, j} : \theta_j = 0$ versus the alternative $H_{1, j} : \theta_j \neq 0$, we know thanks to the confidence interval~\eqref{eq:ci-gaussian-linear-coordinate} together with Proposition~\ref{prop:ci-and-tests} that the test with rejection set 
 \begin{equation*}
-	\P_{\theta_1 = \cdot \theta_k = 0} \Big [  \cup_{j=1}^k R_{j, \alpha / k} \Big] 
+	R_{j, \alpha} = \Big\{ |(\wh \theta_n)_j| > q_{\stu(n-d)}(1 - \alpha/2) \sqrt{\wh \sigma^2 ((\bX^\top \bX)^{-1})_{j, j}} \Big\}
+\end{equation*}
+has level $\alpha$, namely $\P_{\theta_j = 0}[R_{j, \alpha}] = \alpha$, for any $j=1, \ldots, k$.
+So, an approach to test the multiple hypothesis $H_0$ given by~\eqref{eq:fisher-test-multiple-null-example} would be to consider a rejection set given by the \emph{union} of the individual $R_{j, \alpha}$, with a decreased level $\alpha / k$, since
+\marginnote[*2]{The notation $\P_{H_0}$ means that we compute the probability assuming that $H_0$ holds, namely $\theta_1 = \cdots = \theta_k = 0$}
+\begin{equation*}
+	\P_{H_0} \Big [ \bigcup_{j=1}^k R_{j, \alpha / k} \Big] 
 	\leq \sum_{j=1}^k \P_{\theta_j = 0} [ R_{j, \alpha / k} ] \leq k \times \alpha / k = \alpha,
 \end{equation*}
-so that the test with rejection set ??? for the hypothesis ??? has, indeed, level $\alpha$
-This is called the Bonferroni correctino, which is the most simple approach for multiple testing ?? more on that later ??? \todo{histoire avec Olive Jean DUnon ???}
+so that the test with rejection set $\cup_{j=1}^k R_{j, \alpha / k}$ for the null hypothesis~\eqref{eq:fisher-test-multiple-null-example} has indeed level $\alpha$.
+This strategy, which relies on a union bound for the construction of a \emph{multiple test} is called the Bonferroni correction.%
+\sidenote{This is called Bonferroni correction, although this strategy is due to Olive Jean Dunn (1915–2008) who worked on statistical testing for biostatistics.}
+It is the simplest approach for multiple testing, more about multiple tests will follow later in this book.
 
-This approach relies on decreasing the individua levels of each $\alpha$ by $\alpha / k$, which can be a strong decrease whenever $k$ is large, which deteriorates a lot the power of each individual test, hence the power of the test ????
-We can do much better than that in the Gaussian linear model, thanks to the Fisher test.
-Let us continuer with the null assumption ??? and put $\Theta_0 = \{ \theta \in \R^d : \theta_1 = \cdots \theta_k = 0 \}$ and put again $V = \im(\bX) = \{ \bX u : u \in \R^d\}$ and put $W = \{ \bX u : u \in \Theta_0 \}$. We can consider in general $\theta_0 = \ker(\bA)$ for some matrix $\bA : ? \rightarrow ?$. In the considered example we have that $\bA$ is a $k \times d$ matrix given by 
-$\bA = [\bI_k \bO_{k, d-k}]$ corresponding to the horizontal concatenation of the identity matrix on $\R^k$ and a $k \times (d-k)$ zero matrix.
-We introduce a geometric solution to this testing problem: we decompose $\R^n$ as the following direct sums
+This Bonferroni correction requires to replace the individual levels $\alpha$ of each test by the decreased $\alpha /k$, where $k$ is the number of null hypotheses to be tested.
+If $k$ is large, this is a large decrease, and we expect a large deterioration of the power of each individual test.
+In the Gaussian linear model, we can do much better than this, thanks to the Fisher test.
+
+Let us continue with the null assumption~\eqref{eq:fisher-test-multiple-null-example} and put $\Theta_0 = \{ \theta \in \R^d : \theta_1 = \cdots = \theta_k = 0 \}$. 
+Let us that recall that $V = \spa(\bX) = \{ \bX u : u \in \R^d\}$ and introduce $W = \{ \bX u : u \in \Theta_0 \}$. 
+Note that $\theta \in \Theta_0$ means that $\bA \theta = 0$ with $\bA = [\bI_k \bO_{k, d-k}]$ corresponding to the horizontal concatenation of the identity matrix on $\R^k$ and a $k \times (d-k)$ zero matrix.
+More generally, we can consider a multiple testing problem with null hypothesis
+\begin{equation}
+	\label{eq:fisher-null-hypothesis}
+	H_0 : \theta \in \Theta_0 \quad \text{with} \quad \Theta_0 = \ker(\bA),
+\end{equation}
+where $\bA$ is a $k \times d$ matrix of rank $k$.
+The idea of the Fisher test is to use the fact that $\theta \in \Theta_0$ means that $\bX \theta$ lives in a linear subset $W \subset V$, of dimension $d - k < d$, and to detect statistically this fact.
+
+The Fisher test uses a geometric solution to this testing problem: we decompose $\R^n$ as the following direct sums
 \begin{equation*}
-	\R^n = V^\perp \oplus V = V^\perp \oplus W \oplus W'
+	\R^n = V^\perp \oplus V = V^\perp \oplus W \oplus W',
 \end{equation*}
-where we note that $\dim(V^\perp) = n - d$, $\dim(W) = d - k$ and $\dim(W') = k$, with $W = \{ \bX \theta : \theta \in \Theta_0 \}$ is a subset of $V$.
-Consider now the projections $\proj_V(\by)$ and $\proj_W(\by)$ of $\by$ onto $V$ and its subspace $W$.
-Pythagora's theorem entails that $\norm{\by - \proj_W(\by)}^2 = \norm{\by - \proj_V(\by)}^2 + \norm{\proj_V(\by) - \proj_W(\by)}^2$ since $\by - \proj_V(\by) \perp \proj_V(\by) - \proj_W(\by) \in V$, so that 
+where we note that $\dim(V^\perp) = n - d$, $\dim(W) = d - k$ and $\dim(W') = k$, where $W = \{ \bX \theta : \theta \in \Theta_0 \} \subset V$.
+Consider now the projections $\proj_V(\by)$ and $\proj_W(\by)$ of $\by$ onto $V$ and its subspace~$W$.
+Pythagora's theorem entails that%
+\begin{marginfigure}%
+\begin{tikzpicture}[scale=1]%
+\draw [dashed, thick, color=gray!80] (2, 2) -- ++(-2, -1.2) -- ++(4.5, -1);%
+\fill [color=gray!10] (0, 0.8) -- ++(4.8, 2.88) -- ++(0, -3.95);%
+\draw (4.2, 0.2) node[right]{$V$};%
+\draw (3, 3) node[right] {$\by$};%
+\draw (3, 3) node {$\bullet$};%
+\draw (3, 3) -- (3, 1);%
+\draw (3, 1) node[right]{$\bX \wh \theta_n$};%
+\draw (3, 1) -- ++(-0.9, 0.2);%
+\draw (2.1, 1.2) node[left] {$\bX u$};
+\draw (2.1, 1.2) node {$\bullet$};
+\draw (3, 1) node {$\bullet$};%
+\draw (3, 1.2) -- ++(-0.18, 0.04) -- ++(0, -0.2);%
+\end{tikzpicture}%
+\caption{Geometric explanation of the normal Equation~\eqref{eq:least-squares-normal-equation} where $V = \spa(\bX)$}
+\end{marginfigure}%
+\todo{FAIRE FIGURE}
+\begin{equation*}
+	\norm{\by - \proj_W(\by)}^2 = \norm{\by - \proj_V(\by)}^2 + \norm{\proj_V(\by) - \proj_W(\by)}^2
+\end{equation*}
+since $\by - \proj_V(\by) \perp \proj_V(\by) - \proj_W(\by) \in V$, so that 
 \begin{equation*}
 	\norm{\proj_V(\by) - \proj_W(\by)}^2 = \norm{\by - \proj_W(\by)}^2 - \norm{\by - \proj_V(\by)}^2.
 \end{equation*}
-Note that $\proj_V(\by) = \bX \wh \theta$ where $\wh \theta$ is the ordinary least squares estimator while $\proj_W(\by) = \bX \tilde \theta$ where $\tilde \theta$ is the least squares estimator computed under $H_0$, namely $\tilde \theta = \argmin_{\theta \in \Theta_0} \norm{\by - \bX \theta}^2$.
-This is where the trick of the test comes in the picture: the quantity $\proj_V(\by) - \proj_W(\by)$ behaves very differently whenever $H_0$ holds or not. Indeed, \emph{under $H_0$, namel when $\bX \theta \in W$, we have}
-\begin{equation*}
-	\proj_V(\by) - \proj_W(\by) = \proj_{W'} (\by) = \proj_{W'}(\bX \theta) + \proj_{W'}(\beps) = \proj_{W'}(\beps)
-\end{equation*}
+Recall that $\proj_V(\by) = \bX \wh \theta_n$ where $\wh \theta_n$ is the least squares estimator while $\proj_W(\by) = \bX \wt \theta_n$ where $\wt \theta_n$ is the least squares estimator computed under $H_0$, namely $\wt \theta_n = \argmin_{\theta \in \Theta_0} \norm{\by - \bX \theta}^2$.
+This is where the trick of the test comes into the picture: the quantity $\proj_V(\by) - \proj_W(\by)$ behaves very differently whenever $H_0$ holds or not. 
+Indeed, \emph{under $H_0$}, namely when $\bX \theta \in W$, we have
+\begin{align*}
+	\proj_V(\by) - \proj_W(\by) = \proj_{W'} (\by) &= \proj_{W'}(\bX \theta) + \proj_{W'}(\beps) \\
+	&= \proj_{W'}(\beps),
+\end{align*}
 since in this case $\bX \theta \in W \perp W'$, while $\proj_{W'}(\bX \theta) \neq 0$ when $\theta \notin \Theta_0$.
 So, under $H_0$, we have that $(\proj_V(\by) - \proj_W(\by)) / \sigma = \proj_{W'}(\beps / \sigma)$ while 
- $(\by - \proj_V(\by)) / \sigma = \proj_{V^\perp}(\beps / \sigma)$ and therefore since $W' \subset V$ we have $V^\perp \perp W'$, so again, under $H_0$ we have
- \begin{equation*}
- 	\frac{\norm{\proj_V(\by) - \proj_W(\by)}^2 / k}{\norm{\by - \proj_V(\by)}^2 / (n - d)} =
- 	\frac{\norm{\proj_{W'}(\beps / \sigma)}^2 / k}{\norm{\proj_{V^\perp}(\beps / \sigma)}^2 / (n-d)} \sim \fis(k, n-d),
- \end{equation*}
- since the Cochran Theroem~?? gives that both numerators and denominators are independent and distributed as $\chisq(k)$ for the numerator and $\chisq(n - d)$ for the denominator, and by the deifintion of the $\fis$ distribution.
- This can be rewritten, under $H_0$, as 
- \begin{equation*}
- 	\frac{\big(\norm{\by - \bX \tilde \theta}^2 - \norm{\by - \bX \tilde \theta}^2\big) / k}
- 	{\norm{\by - \bX \wh \theta}^2 / (n - d)} = \frac{\norm{\bX (\wh \theta - \tilde \theta)}^2}{k \wh \sigma^2} \sim \fis(k, n-d).
- \end{equation*}
- Note that all of this was done so that the ancillary statistic does not depend on the unknown $\sigma^2$, that cancels out thanks for the ratio.
-We can conclude now that the Fisher test for the hypothesis ???? with rejection region
+$(\by - \proj_V(\by)) / \sigma = \proj_{V^\perp}(\beps / \sigma)$. 
+Therefore, since $V^\perp \perp W'$, Theorem~\ref{thm:cochran} together with the definition~\eqref{eq:fisher-definition} of the Fisher distribution proves that
+\begin{align*}
+	\frac{\norm{\proj_V(\by) - \proj_W(\by)}^2 / k}{\norm{\by - \proj_V(\by)}^2 / (n - d)} 
+	&= \frac{\norm{\proj_{W'}(\beps / \sigma)}^2 / k}{\norm{\proj_{V^\perp}(\beps / \sigma)}^2 / (n-d)} \\
+	&\sim \fis(k, n-d)
+\end{align*}
+under the $H_0$ hypothesis.%
+\sidenote{Theorem~\ref{thm:cochran} tells us that under $H_0$, we have that $\norm{\proj_{W'}(\beps / \sigma)}^2 \sim \chisq(k)$, that $\norm{\proj_{V^\perp}(\beps / \sigma)}^2 \sim \chisq(n - d)$ and that both are independent.}
+This can be rewritten, under $H_0$, as 
+\begin{align*}
+	\frac{\big(\norm{\by - \bX \wt \theta_n}^2 - \norm{\by - \bX \wh \theta_n}^2\big) / k}
+	{\norm{\by - \bX \wh \theta_n}^2 / (n - d)} 
+	&= \frac{\norm{\bX (\wh \theta_n - \wt \theta_n)}^2}{k \wh \sigma^2} \\
+	&\sim \fis(k, n-d).
+\end{align*}
+Once again, the ratio structure of the ancillary statistic cancels out the unknown $\sigma^2$.
+We can conclude now that the Fisher test with rejection region
 \begin{equation*}
-	R = \bigg\{  \frac{\norm{\bX (\wh \theta - \tilde \theta)}^2}{k \wh \sigma^2}  \geq q_{\fis(k, n-d)}(1 - \alpha)  \bigg\}
+	R_\alpha = \bigg\{  \frac{\norm{\bX (\wh \theta_n - \wt \theta_n)}^2}{k \wh \sigma^2}  \geq q_{\fis(k, n-d)}(1 - \alpha)  \bigg\}
 \end{equation*}
-has level $\alpha$, namely that $\sup_{\theta \in \Theta_0} \P_\theta[R] = \alpha$.
-This test is pretty intuitive and can be understood as follows: if $\theta \in \Theta_0$ then both estimators $\wh \theta$ and $\tilde \theta$ should be close, and $\bX (\wh \theta - \tilde \theta)$ should be, consequently, ``small''. The small miracle in the Fisher test is that, in the Gaussian linear model, we can perfectly quantify how small.
+has level $\alpha$ for the null hypothesis~\eqref{eq:fisher-null-hypothesis}, namely that $\sup_{\theta \in \Theta_0} \P_\theta[R_\alpha] = \alpha$.
+This test is pretty intuitive and can be understood as follows: if $\theta \in \Theta_0$ then both estimators $\wh \theta_n$ and $\wt \theta_n$ should be close, and $\bX (\wh \theta_n - \wt \theta_n)$ should be, consequently, ``small'', the small miracle being that, in the Gaussian linear model, we can perfectly quantify how small.
+
+\todo{Mettre comme exemple le cas ou $\bone \in \spa(\bX)$ et on teste que tous les coeffs sont zero. commencer par le cas tout le monde est 0}
+
+
+\subsection{Analysis of variance} % (fold)
+\label{sub:analysis_of_variance}
+
+\todo{insert things from the exam}
+% subsection analysis_of_variance (end)
 
 \subsection{Examples and extra things} % (fold)
 
-\begin{example}
-	Consider $Y_1, \ldots, Y_n$ iid $\nor(\mu, \sigma^2)$. This is a linear model by putting $\by = \mu \bone + \beps$ where $\beps \sim \nor(0, \sigma^2 \bI_n)$.
-	In this case $\wh \mu = \bar Y_n$ (since $(\bone^\top \bone)^{-1} \bone^\top \by = n^{-1} \sum_{i=1}^n Y_i$ and $\wh \sigma^2 = \frac{1}{n-1} \norm{\by - \bar Y_n \bone}^2 =  \frac{1}{n-1} \sum_{i=1}^n (Y_i - \bar Y_n)^2$ and we know from Theorem~? that $\wh \mu$ and $\wh \sigma^2$ are independent and such that $\sqrt n (\wh \mu - \mu) / \sigma \sim \nor(0, 1)$ and $(n-1) \wh \sigma^2/\sigma^2 \sim \chisq(n-1)$ so that by definition of the $\stu(n-1)$ distribution we have
-	\begin{equation*}
-		\sqrt{\frac{n}{\wh \sigma^2}} (\wh \mu - \mu) \sim \stu(n-1)
-	\end{equation*}
-	so that we can build, using this ancillary statistic a confidence interval and tests for $\mu$ when $\sigma^2$ is unknown.
-\end{example}
 
-\begin{example}
-	The \emph{simple regression} model if $Y_i = a x_i + b + \eps_i$ were $a, b \in \R$, $x_1, \ldots, x_n \in \R$ and $\eps_i \sim \nor(0, \sigma^2)$ are iid. This can be written as a linear model with
-	\begin{equation*}
-		\by = 
-		\begin{bmatrix}
-			1 & x_1 \\
-			\vdots & \vdots \\
-			1 & x_n
-		\end{bmatrix}
-		\begin{bmatrix}
-			a \\
-			b
-		\end{bmatrix}
-		+ \beps
-	\end{equation*}
-	with $d=2$, we can compute explicitly $\wh \theta$ and $\wh \sigma^2$ and obtain their distributions. 
-\end{example}
 
 \paragraph{Residuals and leverages.}
+
+
+\todo{parler du $R^2$ ici ... cf slides agathe en supposant $\bone \in \spa(\bX)$}
 
 We know that residual vector $\wh \beps = \by - \wh \by = (\bI - \bH) \by$ is such that $\E[\wh \beps] = 0$ and $\var[\beps] = \sigma^2 (\bI - \bH)$, so that
 \begin{equation*}
@@ -1863,14 +1935,15 @@ Let us wrap us what are the important things we learned in this Section:
 \section{Proofs} % (fold)
 \label{sec:chap04_proofs}
 
-\paragraph{Proof of Theorem~\ref{thm:least-squares-existence}.} % (fold)
+\subsection{Proof of Theorem~\ref{thm:least-squares-existence}} % (fold)
 
 
 Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
 The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
 
 
-\paragraph{Proof of Theorem~\ref{thm:cochran}} % (fold)
+\subsection{Proof of Theorem~\ref{thm:cochran}} % (fold)
+
 
 We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
 \begin{equation*}
