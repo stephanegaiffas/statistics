@@ -16,6 +16,8 @@
 
 \usepackage{bm}
 
+% txfonts/pxfonts
+
 % Load packages for testing
 \usepackage{blindtext}
 %\usepackage{showframe} % Uncomment to show boxes around the text area, margin, header and footer
@@ -137,6 +139,7 @@
 \DeclareMathOperator{\sigmoid}{sigmoid}
 \DeclareMathOperator{\leb}{Lebesgue}
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
 
 \DeclareMathOperator*{\spa}{span}
 \DeclareMathOperator{\proj}{proj}
@@ -2033,13 +2036,73 @@ Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimens
 We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
 
 
-
 \input{chap05_bayesian_statistics}
 
 
 \setchapterpreamble[u]{\margintoc}
 \chapter{Maximum likelihood estimation, application to exponential models}
 \label{chap:maximum_likelihood_estimation}
+
+
+Maximum likelihood estimation is a fundamental and very general approach for inference of model parameters.
+It goes way beyond the parciular cases considered in htis Chapter.
+
+In this chapter, we consider a statistical experiment with data $X : \Omega \go \cX$ and model $\{ P_\theta : \theta \in \Theta \}$ dominated by a $\sigma$-finite measure $\mu$ on $\cX$, so that we can define the family of densities $f_\theta(x) = d P_\theta / d \mu (x)$ on $\cX$.
+\begin{definition}
+	The \emph{likelihood} function $L : \Theta \go \R^+$ is defined as $L(\theta) = L(\theta; X) = f_\theta(X)$.
+	We also introduce the \emph{log-likelihood} $\ell : \Theta \go \R$ (when it is well-defined) as $\ell(\theta; X) = \log f_\theta(X)$.
+\end{definition}
+
+The likelihood and log-likelihood are random function since they depend on the data $X$.
+We want to infer $\theta$, namely we want to find $\theta_0 \in \Theta$ such that $X \sim P_{\theta_0}$.
+Given a data $X$, the likelihood $L(\theta; X)$ is the ``probability'' to observe $X$ whenever the parameter is $\theta$. In order to find $\theta_0$, it is therefore natural to look for $\theta$ that maximizes $\theta \mapsto L(\theta; X)$ (or equivalently $\theta \mapsto \ell(\theta; X)$, since such a $\theta$ would maximize the probability of observing $X$ (that we do observe).
+
+\begin{definition}
+	We say that $\wh \theta \in \Theta$ is a \emph{maximum likelihood estimator} if $L(\wh \theta; X) = \sup_{\theta \in \Theta} L(\theta; X)$, or equivalently $\wh \theta \in \argmax_{\theta \in \Theta} L(\theta; X)$.
+\end{definition}
+
+Such a $\wh \theta$, if it exists, depends on $X$ and on the choice of the model $\{ f_\theta : \theta \in \Theta \}$.
+
+If $X = (X_1, \ldots, X_n)$ with $X_i$ iid and density $f_\theta$ then
+\begin{equation*}
+	L(\theta; X) = L(\theta; X_1, \ldots, X_n) = \prod_{i=1}^n f_\theta(X_i)
+\end{equation*}
+and
+\begin{equation*}
+	\ell(\theta; X) = \ell(\theta; X_1, \ldots, X_n) = \sum_{i=1}^n \log f_\theta(X_i).
+\end{equation*}
+In this case we say that $L$ and $\ell$ are the likelihood and log-likelihood of the $n$-sampled experiment.
+
+The existence and uniqueness of the maximum likehodd estimator is not granted in general (even on non-pathgological examples....)
+
+\section{A theoretical motivation} % (fold)
+\label{sec:a_theoretical_motivation}
+
+Assume that $X_1, \ldots, X_n$ are iid with distribution $P_{\theta_0} = f_{\theta_0} \cdot \mu$.
+Under the assumption that $\E_{\theta_0} | \log f_{\theta}(X_1) | < +\infty$ for any $\theta \in \Theta$
+we have that
+\begin{align*}
+	\frac 1n \ell(\theta_0) - \frac 1n \ell(\theta) &= \frac 1n \sum_{i=1}^n \Big\{ \log f_{\theta_0}(X_i) - \log f_{\theta}(X_i) \Big \} \\
+	& \gopro \E_{\theta_0} \big[ \log f_{\theta_0}(X_1) - \log f_{\theta}(X_1) \big] \\
+	&= \int{\cX} \log \Big( \frac{f_{\theta_0}(x)}{f_{\theta}(x)} \Big) f_{\theta_0}(x) \mu(dx)
+\end{align*}
+where the convergence in probability holds in $P_{\theta_0}$-probability.
+The quantity which appears as a limit is a well-known and fundamental quantity called tnhe relative entropy denoted $h(P_{\theta_0}, P_\theta) = \int{\cX} \log \Big( \frac{f_{\theta_0}(x)}{f_{\theta}(x)} \Big) f_{\theta_0}(x) \mu(dx)$
+
+\begin{definition}
+	Let $P$ and $Q$ be two probability measures on a measurable space $(\Omega, \cA)$. 
+	The quantity
+	\begin{equation*}
+		h(P, Q) = 
+		\begin{cases}
+		\E_P \Big[ \log \Big( \frac{dP}{dQ} \Big) \Big] = \int \log \Big( \frac{dP}{dQ}(\omega) \Big)  P(d \omega) &\text{ if } P \ll Q \\
+		+ \infty & \text{ otherwise }
+		\end{cases}
+	\end{equation*}
+	is called the relative entropy between $P$ and $Q$.
+\end{definition}
+Thie quantity $h(P, Q)$ is also called the \emph{Kullback-Liebler divergence} or the \emph{information divergence}.
+Let us give some properties about $h(P, Q)$
 
 
 %----------------------------------------------------------------------------------------
