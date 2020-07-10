@@ -118,6 +118,8 @@
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\med}{med}
 \DeclareMathOperator{\pen}{pen}
+\DeclareMathOperator{\inte}{int}
+\DeclareMathOperator{\dom}{dom}
 
 
 \DeclareMathOperator{\ber}{Bernoulli}
@@ -2049,8 +2051,9 @@ It goes way beyond the parciular cases considered in htis Chapter.
 
 In this chapter, we consider a statistical experiment with data $X : \Omega \go \cX$ and model $\{ P_\theta : \theta \in \Theta \}$ dominated by a $\sigma$-finite measure $\mu$ on $\cX$, so that we can define the family of densities $f_\theta(x) = d P_\theta / d \mu (x)$ on $\cX$.
 \begin{definition}
-	The \emph{likelihood} function $L : \Theta \go \R^+$ is defined as $L(\theta) = L(\theta; X) = f_\theta(X)$.
-	We also introduce the \emph{log-likelihood} $\ell : \Theta \go \R$ (when it is well-defined) as $\ell(\theta; X) = \log f_\theta(X)$.
+	The \emph{likelihood} function $L : \Theta \go \R^+$ is defined as 
+	$L(\theta) = L(\theta; X) = f_\theta(X)$.
+	We also introduce the \emph{log-likelihood} $\ell : \Theta \go \R$ as $\ell(\theta; X) = \log f_\theta(X)$.
 \end{definition}
 
 The likelihood and log-likelihood are random function since they depend on the data $X$.
@@ -2102,8 +2105,133 @@ The quantity which appears as a limit is a well-known and fundamental quantity c
 	is called the relative entropy between $P$ and $Q$.
 \end{definition}
 Thie quantity $h(P, Q)$ is also called the \emph{Kullback-Liebler divergence} or the \emph{information divergence}.
-Let us give some properties about $h(P, Q)$
 
+Let us give some properties about $h(P, Q)$
+First, if $P \ll Q$ then $h(P, Q) = \E_P[\log \frac{dP}{dQ}] = \E_Q[\frac{dP}{dQ} \log \frac{dP}{dQ}]$.
+It is always well-defined, eventually it is $+\infty$ since $x \log \geq -e^{-1}$ on $(0, +\infty)$.
+If $P \ll Q$ then $h(P, Q) = \E_Q[\frac{dP}{dQ} \log \frac{dP}{dQ}] \geq \E_Q[ \frac{dP}{dQ}] \log \E_Q[ \frac{dP}{dQ}] = 0$ using Jensen's inequality, and note also that $h(P, Q) = 0 \Leftrightarrow P = Q$ since $\varphi(x) = x \log x$ is strictly convex.
+
+Since $\frac 1n (\ell(\theta_0) - \ell(\theta) \gopro h(P_{\theta_0}, P_\theta) \geq 0$ and 
+$h(P_{\theta_0}, P_\theta) = 0$ if and only if $P_{\theta_0} = P_{\theta}$, namely if and only if $\theta = \theta_0$ whenever the model is identifiable.
+This motivates the use of the maximum likelihood estimator, since BLABLA
+
+The maximum likelihood estimator is a very general principle that can be used for virtually any statistical model. 
+The theoretical study of this estimation procedure requires smoothness assumptions on the model.
+In this book, we will study the MLE only in the specific familly of \emph{exponential models}, since these models contain most parametric models of interest in practice, since their studyis interesting by itself and since in this case the MLE is easier to study and can be connected to another estimation approach called the \emph{method of moments}.
+But keep in mind that MLE goes way beyond the particular case considered here.
+Also, exponential models are the basis of the generalized lienar models that we will study int he next chapter.
+
+\begin{example}
+	Let us consider $X \sim \gam(a, \lambda)$ namely the likelihood function
+	\begin{equation*}
+		L(a, \lambda) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x} = \exp( \theta^\top T(x) - g(\theta))
+	\end{equation*}
+	with $\theta = [a - 1 \lambda]^\top$ and $T(x) = [\log x x]^\top$ and $g(\theta) = \log \Gamma(a) - a \log \lambda$.
+	Note that the likelihood function of this model can be written as the exponential of the inner product $\theta^\top T(x)$, which is an instance of a so-called exponential model, for which we can perform a general study. Note also that most distributions can be written as such (Poisson, Exponential, Binomial, Gaussian, etc.), using eventually a reparametrization since sa the one that we did for the Gamma distribution.
+\end{example}
+
+\section{Exponential models} % (fold)
+\label{sec:exponential_models}
+
+Let us first describe the so-called \emph{canonical exponotial model}.
+
+\begin{definition}
+	Let $\mu$ be a $\sigma$-finite measure on a measurable space $\cX$ and $T : \cX \go \R^d$ a measurable function and define
+	\begin{equation*}
+		\Theta_{\dom} = \Big \{ \theta \in \R^d : Z(\theta) = \int_{\cX} e^{\inr{\theta, T(x)}} \mu(dx) < +\infty \Big\}
+	\end{equation*}
+	and define $\Theta = \inte(\Theta_{\dom})$, the interior of $\Theta_{\dom}$.
+	We introduce the density
+	\begin{equation*}
+		f_\theta(x) = e^{ \inr{\theta, T(x)} - \log Z(\theta)}
+	\end{equation*}
+	with respect to $\mu$ and define $P_\theta = f_\theta \cdot \mu$. The familly $\{ P_\theta : \in \Theta \}$ is called a \emph{canonical exponential model} and the function $\theta \mapsto Z(\theta$ is called the \emph{partition function} of the model defined on $\Theta_{\dom}$. Also, we call $T$ the \emph{sufficient statistic} of the model.
+\end{definition}
+
+We consider $\{ P_\theta \in \Theta \}$ instead of $\{ P_\theta \in \Theta_{\dom} \}$ since we will perform differential calculus, use the inversion theorem, etc, so we need an open domain on which $\theta$ lives.
+
+
+Note that if $\theta, \theta' \in \Theta_{\dom}$ and $\alpha \in [0, 1]$ we have
+\marginnote{This uses the H\"older inequality RAPPELER LA FORMULATION UTILISEE ICI}
+\begin{align*}
+	Z(\alpha \theta + (1 - \alpha) \theta') &= \int_{\cX} 
+	\big( e^{\inr{\theta, T(x)}} \big)^\alpha 
+	\big( e^{\inr{\theta', T(x)}} \big)^{1 - \alpha} \mu(dx) \\
+	&\leq \Big( \int_{\cX} e^{\inr{\theta, T(x)}} \mu(dx) \Big)^{\alpha} \\
+	& \quad \times \Big(\int_{\cX} e^{\inr{\theta', T(x)}} \mu(dx) \Big)^{1 - \alpha} < +\infty
+\end{align*}
+which proves that $\alpha \theta + (1 - \alpha) \theta' \in \Theta_{\dom}$ and also that $\log Z$ is convex since we have
+\begin{equation*}
+	\log Z(\alpha \theta + (1 - \alpha) \theta') \leq \alpha \log Z(\theta) + (1 - \alpha) \log Z(\theta').
+\end{equation*}
+This proves the next proposition.
+\begin{proposition}
+		The set $\Theta_{\dom}$ is convex (if it is not empty) and the function $\Theta_{\dom} \go \R$ defined by $\Theta \mapsto \log Z(\theta)$ is convex.
+\end{proposition}
+
+\begin{definition}
+	We say that a canonical exponential model is minimal if $T(x)$ does not belong to any hyperplane $H \subset \R^d$ $\mu$-almost surely, namely if $\mu[\{ x \in \cX : T(x) \in H \}] < 1$ for any hyperplane $H$.
+\end{definition}
+
+Let us consider $\theta \neq \theta'$ such that $P_\theta = P_{\theta'}$. Then, $d P_\theta / d \mu =d P_{\theta'} / d \mu $ and $e^{\inr{\theta - \theta', T(x)} - \log (Z(\theta) / Z(\theta'))} = 1$ $\mu$-almost surely, so that $\inr{\theta - \theta', T(x)} = \log (Z(\theta) / Z(\theta'))$ $\mu$-almost surely, so that the model is not minimal according to definitoin???
+\begin{proposition}
+	If a canonical exponential model is minimal, then it is identifiable.
+\end{proposition}
+From now on, we suppose that the model is minimal in the sense of ?????
+It is a narutal assumotion : it means that $T(x)$ has no linear dependence almost surely, namely each coordinate of the sufficient statistic is not redundant with the others.
+Let us recall also that $\Theta = \inte(\Theta_{\dom}) \neq \emptyset$.
+
+\begin{theorem}
+	Consider a canonical exponential model. Then the partition function $\theta \mapsto \log Z(\theta$ is $C^\infty$ on $\Theta$ and we have $\E_\theta[ |T_j(X)|^k ] < +\infty$ for any $j=1, \ldots, d$ and any $k in \N$ (all moments of $T(X)$ with $X \sim P_\theta$ are finite). Furthermore, the following relations hold:
+	\begin{equation*}
+		\grad \log Z(\theta) = \E_\theta[T(X)] \quad \text{and} \quad \grad^2 \log Z(\theta) = \var_\theta[T(X)].
+	\end{equation*}
+\end{theorem}
+
+The proof of Theorem~??? is given in Section??? below. Let us mention here a computation 
+\begin{align*}
+	\grad \log Z(\theta) &= \grad \log \E_{X \sim \mu} [e^{\inr{\theta, T(X)}}] \\
+	&= \frac{\E_{X \sim \mu} [T(X) e^{\inr{\theta, T(X)}}]}{\E_{X \sim \mu} [e^{\inr{\theta, T(X)}}]} \\
+	&= \E_{\theta} [T(X)].
+\end{align*}
+
+Corollaire : If $\grad^2 \log Z(\theta) \succ 0$ for all $\theta \in \Theta$ is equivalent to the fact htat the model is minimal.
+This obviously somes from the fact that for any $u \in \R^d$ we have $u^\top \grad^2 \log Z(\theta)  u = u^\top \var_\theta[T(X)] u = \var_\theta[u^\top T(X))$ so that $\grad^2 \log Z(\theta)$ is not positive definite if and only if $u^\top T(x)$ $\mu$ almost surely.
+
+Note that we recover here the fact that $\log Z(\theta)$ is strictly convex when the model is minimal, since $\grad^2 \log Z(\theta) \succ 0$ for any $\theta \in \Theta$.
+
+A consequence of this is that the differential of $S(\theta) = \grad \log Z(\theta)$ (given by $\grad^2 \log Z(\theta)$) is invertible for any $\theta \in \Theta$.
+
+The following computation is also insightful:
+\begin{align*}
+	h(P_\theta, P_{\theta'}) &= \E_{X \sim P_\theta} \Big[ \log \frac{d P_\theta}{d P_{\theta'}}(X) \Big] \\
+	&= E_{X \sim P_\theta}\Big[ \inr{\theta - \theta', T(X)} - \log \frac{d P_\theta}{d P_{\theta'}}(X)  \Big] \\
+	&= \log Z(\theta') - \log Z(\theta) -  \inr{\theta - \theta', \grad \log Z(\theta)}
+\end{align*}
+whicn means that $h(P_\theta, P_{\theta'})$ is equivalent to a ``linearlization'' of $\grad \log Z(\theta)$ and therefore roughly have that
+\begin{equation*}
+	h(P_\theta, P_{\theta'}) \approx \frac 12 (\theta - \theta')^\top \grad^2 \log Z(\theta) (\theta - \theta')
+\end{equation*}
+for $\theta \approx \theta'$. This makes a connection between the local curvature of the model  $\theta$ and its identifiability.
+
+Another proposition goes as follows
+
+\begin{proposition}
+	The function $\theta \mapsto \log Z(\theta)$ is injective on $\Theta$ if and only if the model is identifiable.
+\end{proposition}
+
+The proof is as follow:
+we have that $h(P_\theta, P_{\theta'}) + h(P_{\theta'}, P_{\theta}) = \inr{\grad \log Z(\theta)  - \grad \log Z(\theta'), \theta - \theta'}$ (which is $\geq 0$ by convexity).
+If $ \log Z(\theta') =  \log Z(\theta)$ and $\theta \neq \theta'$ then $h(P_\theta, P_{\theta'}) = h(P_{\theta'} = 0$ so that $P_\theta = P_{\theta'}$ and not identifiable. This proves $\Rightarrow$. The other direction $\Leftarrow$, namely $P_\theta = P_{\theta'}$ for $\theta \neq \theta'$ gives $\E_\theta[T(X)] = \E_{\theta'}[T(X)]$ and therefore $\log Z(\theta') =  \log Z(\theta)$.
+
+We proved several properties about the function $S : \Theta \go \R^d$ given by $S(\theta) = \grad \log Z(\theta)$.
+\begin{itemize}
+	\item $S$ is injective on $\Theta$;
+	\item $S$ is $C^\infty$ on $\Theta$;
+	\item The differential of $S$ is invertible on $\Theta$.
+\end{itemize}
+
+% section exponential_models (end)
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
