@@ -395,41 +395,41 @@ The tentative agenda for the course is as follows:
 \label{chap:linear_regression}
 
 We observe iid pairs $(X_1, Y_1), \ldots, (X_n, Y_n)$ where $X_i \in \R^d$ and $Y_i \in \R$.
-We want to \emph{predict} $Y_i$ from $X_i$.
-Actually, we want to study the conditional distribution $Y_1 | X_1$, namely we want to \emph{regress} $Y_i$ on $X_i$.
-We know that the closest $X_1$-measurable function from $Y_1$ is the conditional expectation $\E (Y | X) = f(X)$  in $L^2$, but we do not know the joint distrivbution of $(X_1, Y_1)$
-So we want to use the observations $(X_i, Y_i)$ in order to build some approximation of $f$.
+We want to learn to \emph{predict} $Y_i$ from $X_i$, namely we want to \emph{regress} $Y_i$ on $X_i$.
+We know that the closest $X_1$-measurable function which is the closest from $Y_1$ in $L^2$ is the conditional expectation $\E [Y_1 | X_1] = f(X_1)$ for some measurable function $f$, but we do not know the joint distribution of $(X_1, Y_1)$, so we don't know $f$.
+Therefore, we want to use the observations $(X_i, Y_i)$ for $i=1, \ldots, n$ in order to build some approximation of $f$.
 
-On the other hand, wat kind of functions could we consider ?
-As a start, we should consider the simplest non-constant function $\R^d \go \R$ we can think of, which is naturally a \emph{linear} function $f(x) = x^\top \theta + c$.
+What kind of functions should we consider ?
+We can consider the simplest non-constant function $\R^d \go \R$ that we can think of, which is naturally a \emph{linear} function $x \mapsto x^\top \theta + c$, hence the name \emph{linear regression model}.
 
 \begin{kaobox}[frametitle=Features engineering]
-	Considering only linear function is of course very limiting. But let us stress that, in practice, we can do whatever we want with the data $(X_i, Y_i)$. A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings such as a polynomial mapping, pairwise products leading to $d(d-1)/2$ extra coordinates, etc. The construction of such a \emph{features mapping} is called \emph{feature engineering} in statistical and machine learning, and is more an art than a science. Note that many industrial large scale problems (such as web-display advertisment) are handled using such linear methods, but on highly tested and engineered features. We won't discuss this in this chapter, and will assume that $X_i$ are well crafted features vectors on which we want to train a linear method.	
+	Considering only linear functions is of course very limiting. But let us stress that, in practice, we can do whatever we want with the data $(X_1, Y_1), \ldots, (X_n, Y_n)$. 
+	A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings, such as a polynomial mapping, pairwise products leading to $d(d-1)/2$ extra coordinates, etc.
+	It is uncommon (and suspicious) to work directly with the raw \emph{features} vectors $X_1, \ldots, X_n$: a lot of effort is usually put on features engineering.
+	The construction of such a \emph{features mapping}%
+	\marginnote[*-2]{The problem considered here is also known as an instance of \emph{supervised learning} with vectors of \emph{features} $X_i \in \R^d$ and \emph{labels} $Y_i \in \R$.}
+	is called \emph{feature engineering} in statistics and machine learning, and is more an art than a science. 
+	Many industrial large scale problems%
+	\marginnote{Large scale means that both $n$ and $d$ are large, when $n$ is large we are considering \emph{big data} while when $d$ is large we work with \emph{high-dimensional} features.}
+	(such as web-display advertisement) are handled using simple linear models, but on highly tested and engineered features. We won't discuss this in this chapter, and will assume that $X_i$ are well-crafted features of vectors on which we want to train a linear model.	
 	This makes the model linear we respect to $\phi(X_i)$ but certainly not with respect to $X_i$.
-	We forget about it and work on $X_i$ assuming that...
+	From now on, we will forget about it, and study the linear model which uses $X_i$ as input.
 \end{kaobox}
 
-Also, to simplify notations we will forget about the \emph{intercept}, also called \emph{population bias} $b \in \R$ since we can, without loss of generality simply replace $\theta$ by $[1 \; \theta^\top]^\top$ and $X_i$ by $[1 \; X_i^\top]^\top$ (by $d$ by $d=1$).
-
-We assume that $\E(Y_i | X_i)$ can reasonably well approximated by $\theta^\top X_i$ for some $\theta \in \R^d$ to be trained and 
-
-We therefore assume that we can write $Y_i = \theta^\top X_i + \eps_i$ where $\eps_i = Y_i - \E(Y_i | X_i)$ and $\E(\eps_i | X_i) = 0$.
-
-\todo{dire que c'est une definition ce modele lineaire et qu'est ce que l'hypothse}
-
-Well-specified linear model ????
-We say that iid real random variables $\eps_1, \ldots, \eps_n$ is the \emph{noise} of the linear model $Y_i = X_i^\top \theta + \eps_i$.
-
-Dire labels et features
+\emph{Training} a linear model means \emph{learning} the \emph{model weights} $\theta \in \R^d$ and the \emph{intercept} or \emph{population bias} $c \in \R$.  
+To simplify notations we will forget about the intercept from now on, since without loss of generality we can replace $\theta$ by $[1 \; \theta^\top]^\top$ and $X_i$ by $[1 \; X_i^\top]^\top$ (and $d$ by $d +1$).
 
 \section{Ordinary least squares estimator} % (fold)
 \label{sec:least_squares_estimator}
 
-In this section, we consider the linear model
+\todo{$\theta$ ou $\theta_0$ ?}
+
+A linear model assumes that
 \begin{equation*}
-	Y_i = X_i^\top \theta_0 + \eps_i
+	Y_i = X_i^\top \theta  + \eps_i
 \end{equation*}
-for $i=1, \ldots, n$, where the noise $\eps_i$ satisfies $\E[\eps_i | X_i] = 0$ and where the data $(X_1, Y_1), \ldots, (X_n, Y_n)$ is iid. 
+for $i=1, \ldots, n$, where $\theta \in \R^d$ must be trained using the data $(X_1, Y_1), \ldots, (X_n, Y_n)$ and where the random variables $\eps_i$ are called \emph{noise}, and are assumed to satisfy $\E[\eps_i | X_i] = 0$.
+Also, we will assume from now on that $(X_1, Y_1), \ldots, (X_n, Y_n)$ is iid.
 Let us also consider an independent pair $(X, Y)$ with the same distribution.
 We want to answer to the question:
 how can we \emph{estimate} or \emph{train} $\theta_0$?
@@ -596,9 +596,25 @@ This proves that the estimator
 	\wh \sigma^2 := \frac{1}{n - d} \norm{\by - \wh \by}^2 
 	= \frac{1}{n - d} \norm{\by - \bX \wh \theta_n}^2
 \end{equation*}
-is an \emph{unbiased} estimator of $\sigma^2$.
+is an \emph{unbiased} estimator of $\sigma^2$ known as the least-squares estimator of the variance.
 
-Now, if we want to go further about these estimators, we need some extra structure, in particular if we want to study the distributions of $\wh \theta_n$ and $\wh \sigma^2$. 
+A quantity often used to quantity the \emph{goodness-of-fit} of a linear model is the $R^2$, also known as the \emph{coefficient of determination}.
+Assuming that $\bone \in \spa(\bX)$, we have by definition of $\wh \theta_n$ that $\by - \bX \wh \theta_n \perp \bX \wh \theta_n - \bar Y_n \bone$,%
+\sidenote{Where $\bar Y_n = n^{-1} \sum_{i=1}^n Y_i$ and $\bone \in \R^n$ is the vector with all entries equal to $1$}
+so that
+\begin{equation*}
+	\norm{\by - \bar Y_n \bone}^2 = \norm{\by - \bX \wh \theta_n}^2 
+	+ \norm{\bX \wh \theta_n - \bar Y_n \bone}^2
+\end{equation*}
+and
+\begin{equation*}
+	0 \leq R^2 := \frac{\norm{\bX \wh \theta_n - \bar Y_n \bone}^2}{\norm{\by - \bar Y_n \bone}^2} = 1 - \frac{\norm{\by - \bX \wh \theta_n}^2 }{\norm{\by - \bar Y_n \bone}^2} \leq 1,
+\end{equation*}
+which corresponds to the proportion of the (empirical) variance of $\by$ that is ``explained'' by the least-squares fit.
+When $R^2$ is close to $1$, then the linear model fits almost perfectly.%
+\sidenote{This is not necessarily good news, because of the problem of overfitting, that will be discussed later.}
+
+Now, if we want to go further, we need some extra structure, in particular if we want to study the distributions of $\wh \theta_n$ and $\wh \sigma^2$. 
 To do so, we assume in the next section that the noise vector $\beps$ is Gaussian.
 
 \section{Gaussian linear model} % (fold)
@@ -1056,10 +1072,10 @@ First, we can write
 where $V_{\text{intra}}$ is the so-called \emph{intra-class variance}%
 \sidenote{A \emph{class} corresponds here to a sample $i$}
 which corresponds to the average of the weighted%
-\sidenote{weighted by the sample proportions $n_i / n$}
+\sidenote{weighted by the sample proportions $n_i / n$ for $i=1, \ldots, k$}
  variances $\frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - X_{i, \bullet})^2$ of each sample  $i=1, \ldots, k$ and second, we have
 \begin{equation*}
-  \| X_E - X_F \|^2 = \sum_{i=1}^k n_i (\bar X_{i, \bullet} - \bar X)^2 = n V_{\text{inter}},
+  \| X_E - X_F \|^2 = \sum_{i=1}^k n_i (\bar X_{i, \bullet} - \bar X)^2 =: n V_{\text{inter}},
 \end{equation*}
 where $V_{\text{inter}}$ is the \emph{inter-class variance} which corresponds to the weighted variance of the averages of each sample.
 This explains the name ANOVA (ANalysis Of VAriance), since the Fisher test uses here the test statistic
@@ -1069,30 +1085,25 @@ This explains the name ANOVA (ANalysis Of VAriance), since the Fisher test uses 
 which is the ratio between the inter and intra-class variances $V_{\text{inter}}$ and $V_\text{intra}$.
 
 
-\subsection{Examples and extra things} % (fold)
+\subsection{Leverages} % (fold)
 
-
-\paragraph{Residuals and leverages.}
-
-
-\todo{Talk about $R^2$ here, check slides from Agathe supposing $\bone \in \spa(\bX)$}
-
-\todo{Talk bout studentized residuals ?}
-
-
-We know that residual vector $\wh \beps = \by - \wh \by = (\bI - \bH) \by$ is such that $\E[\wh \beps] = 0$ and $\var[\beps] = \sigma^2 (\bI - \bH)$, so that
+Let us go back now to the general linear model.
+We know that the residual vector $\wh \beps = \by - \wh \by = (\bI - \bH) \by$ is such that $\E[\wh \beps] = 0$ and $\var[\beps] = \sigma^2 (\bI - \bH)$, so that
 \begin{equation*}
-	\wh \beps_i \sim \nor(0, \sigma^2 (1 - h_{i,i})) \quad \text{where} \quad h_{i, i} = \bH_{i, i} = X_i^\top (\bX^\top \bX)^{-1} X_i.
+	\wh \beps_i \sim \nor(0, \sigma^2 (1 - h_{i,i})) \text{ where } h_{i, i} = \bH_{i, i} = X_i^\top (\bX^\top \bX)^{-1} X_i.
 \end{equation*}
-We know that $h_{i, i} \in [0, 1]$ since ??
-We call $h_{i, i}$ the \emph{leverage} of sample $i$. We say that $i$ has small leverage whenever $h_{i, i}$ is close to zero while we say that is as a large leverage when $h_{i, i}$ is close to $1$, since in this case the contribution of sample $i$ to the linear model is important, since $\wh \eps_i \approx 0$.
+We know that $h_{i, i} \in [0, 1]$ since $\bH$ is an orthonormal projection matrix.%
+\sidenote{Using $\bH^2 = \bH$ and $\bH^\top \bH$ we get $h_{i, i} = (\bH^2)_{i, i} = h_{i, i}^2 + \sum_{i' \neq i} h_{i, i'}^2$ so that $h_{i, i} (1 - h_{i, i}) \geq 0$.}
+We call $h_{i, i}$ the \emph{leverage score} of sample $i$. We say that $i$ has small leverage whenever $h_{i, i}$ is close to zero while we say that is as a large leverage when $h_{i, i}$ is close to $1$, since in this case the contribution of sample $i$ to the linear model is important, since $\wh \beps_i \approx 0$.
 Also, we note that 
 \begin{equation*}
 	h_{i, i} = \frac{\partial \wh Y_i}{\partial Y_i}
 \end{equation*}
-since $\wh \bY = \bH \bY$, namely $\wh Y_i = \sum_{j=1}^d \bH_{i, j} Y_j$.
+since $\wh \by = \bH \by$, namely $\wh Y_i = \sum_{j=1}^d \bH_{i, j} Y_j$.
 So, the leverage $h_{i, i}$ can be understood as a quantity that measures the ``self-sensitivity'' to its prediction, namely the influence of $Y_i$ on the computation of $\wh Y_i$.
 We will see also in the next Chapter that the leverage score is a very important concept as it is deeply connected to the \emph{theoretical performance} of the least-squares estimation procedure.
+\todo{Insert studentized residuals ?}
+
 
 \section{Least squares are minimax optimal} % (fold)
 \label{sec:optimality_of_the_least_squares}
