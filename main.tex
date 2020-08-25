@@ -383,11 +383,11 @@ The tentative agenda for the course is as follows:
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-% \input{chap02_statistical_models}
+\input{chap02_statistical_models}
 
-% \input{chap03_statistical_inference}
+\input{chap03_statistical_inference}
 
-% \input{chap04_linear_regression}
+\input{chap04_linear_regression}
 
 
 \setchapterpreamble[u]{\margintoc}
@@ -784,7 +784,7 @@ and consider instead the ellipsoid
 which is by construction a confidence set at level $1 - \alpha$.
 Note the cute trick involved in~\eqref{eq:fisher-ellipsoid-construction}: the ratio structure allows to cancel out $\sigma^2$, leading to a statistic that does not depend on $\sigma^2$, with a \emph{known} distribution.
 
-\todo{Y'a quand meme un probleme avec la notation $\theta_0$. Pourquoi pas $\sigma_0^2$ et en dessous y'en a plus. Faut decider quelque chose}
+% \todo{Y'a quand meme un probleme avec la notation $\theta_0$. Pourquoi pas $\sigma_0^2$ et en dessous y'en a plus. Faut decider quelque chose}
 
 \paragraph{Confidence intervals.}
 
@@ -1085,7 +1085,8 @@ This explains the name ANOVA (ANalysis Of VAriance), since the Fisher test uses 
 which is the ratio between the inter and intra-class variances $V_{\text{inter}}$ and $V_\text{intra}$.
 
 
-\subsection{Leverages} % (fold)
+\section{Leverages} % (fold)
+\label{sec:leverages}
 
 Let us go back now to the general linear model.
 We know that the residual vector $\wh \beps = \by - \wh \by = (\bI - \bH) \by$ is such that $\E[\wh \beps] = 0$ and $\var[\beps] = \sigma^2 (\bI - \bH)$, so that
@@ -1108,110 +1109,254 @@ We will see also in the next Chapter that the leverage score is a very important
 \section{Least squares are minimax optimal} % (fold)
 \label{sec:optimality_of_the_least_squares}
 
-While the contents of the previous section is quite classical and well-understood theory the contents of this Section is not.
-It comes from very result (yet simple enough to be exposed here) from a previous PhD Student of mine ????
 
-Let us come back to the more general case where $(X_1, Y_1), \ldots, (X_n, Y_n)$ are iid with same distribution as $(X, Y)$, with $X \in \R^d$, $Y \in \R$ and $\E \norm{X}^2 < +\infty$ and $\E(Y^2) < +\infty$and a non-degenerate distribution $\P_X$, as explained in Theorem~\ref{thm:least-squares-existence}.
-We consider again the linear model (not Gaussian, the results stated here are way more general than that).
-Given $\sigma^2$ and $\P_X$, we consider the following classes of distribution on $(X, Y)$:
-\begin{equation*}
-	\cC(\P_X, \sigma^2) = \{ P_{X, Y} : X \sim P_X, Y = X^\top \theta^* + \eps \text{ for some } \theta^* \in \R^d \text{ and } \E(\eps | X) = 0, \E(\eps^2 | X) \leq \sigma^2 \text{ almost surely }\}
-\end{equation*}
-and the class
-\begin{equation*}
-	\cG(P_X, \sigma^2) = \{ P_{X, Y} : X \sim P_X, Y = X^\top \theta^*, \eps | X \sim \nor(0, \sigma^2) \}.
-\end{equation*}
-The first class is a general class of joint distribution on $(X, Y)$ with fixed marginal distribution $P_X$ and such that $Y$ is a linear function of $X$ plus a noise $\eps$ which is conditionally centered and with finite variance. The set $\cG(P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$ is the same as $\cC(\P_X, \sigma^2)$, but where we assume that noise to be centered Gaussian.
-\todo{sidenote sur le fait que pour caracteriser la loi jointe on peut caracteriser une marginale et la loi conditionnelle}
+While the previous contents is quite classical and well-known, the results provided in this Section is surprisingly recent and coming from the PhD manuscript of J. Mourtada, see~\sidecite{mourtadaphd,mourtada_leastsquares}.
 
-We consider the quadratic risk \todo{differs from the one in ??? here it is  predition blabla} given by
+Let us come back to the general case where $(X_1, Y_1), \ldots, (X_n, Y_n)$ are iid with same distribution as $(X, Y)$, with $X \in \R^d$ and $Y \in \R$ such that $\E \norm{X}^2 < +\infty$ and $\E[Y^2] < +\infty$. 
+Also, we assume that $\P_X$ is non-degenerate, as explained in Theorem~\ref{thm:least-squares-existence}.
+We consider again the linear model (not Gaussian, the results stated here are much more general than that).
+Given $\sigma^2$ and $\P_X$, we consider the following classes of distribution $\P_{X, Y}$ on $(X, Y)$.
+
+\begin{definition}
+	We consider the set $\cC(\P_X, \sigma^2)$ of joint distribution $\P_{X, Y}$ such that $X \sim \P_X$ and
+	\begin{equation*}
+		Y = X^\top \theta^\star + \eps
+	\end{equation*}
+	for some $ \theta^\star \in \R^d$, where $\eps$ satisfies $\E[\eps | X] = 0$ and $\E[\eps^2 | X] \leq \sigma^2$ almost surely. We consider also the set $\cG(\P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$ where we assume additionally that $\eps | X \sim \nor(0, \sigma^2)$.
+\end{definition}
+The set $\cC(\P_X, \sigma^2)$ is a general set of joint distribution on $(X, Y)$ with fixed marginal distribution $\P_X$ and such that $Y$ is a linear function of $X$ plus a noise $\eps$ which is conditionally centered and with finite variance. 
+The set $\cG(\P_X, \sigma^2)$ is the same as $\cC(\P_X, \sigma^2)$, but where we assume that $\eps$ is centered Gaussian and independent of $X$.
+
+We consider the quadratic risk
 \begin{equation*}
-	R(\theta) = \E [ (Y - X^\top \theta)^2].
+	R(\theta) := \E [ (Y - X^\top \theta)^2] = \int (y - x^\top \theta)^2 \P_{X, Y}(dx, dy).
 \end{equation*}
-If $P_X$ is non degenerate and is $\Sigma = \E[ X X^\top] \succ 0$ then it is easy to see that
+If $\P_X$ is non degenerate and if $\Sigma = \E[ X X^\top] \succ 0$, it is easy to see that
 \begin{equation*}
-	\theta^* = \argmin_{\theta \in \R^d} R(\theta) = \Sigma^{-1} \E(Y X).
+	\theta^\star = \argmin_{\theta \in \R^d} R(\theta) = \Sigma^{-1} \E[Y X].
 \end{equation*}
-Our aim here is to find a function $\wh \theta$ of $(X_1, Y_1), \ldots, (X_n, Y_n)$ such that the \emph{excess risk}
+Our aim here is to find an estimator%
+\sidenote{Namely, a measurable function of $(X_1, Y_1), \ldots, (X_n, Y_n)$.}
+$\wh \theta$ of $\theta$  such that the \emph{excess risk}
 \begin{equation*}
-	\cE(\wh \theta) := R(\wh \theta) - R(\theta^*)
+	\cE(\wh \theta) := R(\wh \theta) - R(\theta^\star)
 \end{equation*}
 is \emph{minimal}.
-Let us first remark that if $(X, Y) \sim P$ with $P \in \cC(P_X, \sigma^2)$ then
+Note that if $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$, then
 \begin{align*}
-	\cE(\theta) &= \E [ (Y - X^\top  \theta)^2 - (Y - X^\top \theta^*)^2] \\
-	&= \E [ (\theta^* - \theta)^\top X (2 Y - X^\top (\theta + \theta^*))] \\
-	&= \E [ (\theta^* - \theta)^\top X (X^\top (\theta + \theta^*) + 2 \eps)] \\
-	&= \E [ (\theta^* - \theta)^\top X X^\top (\theta + \theta^*)] = \norm{\theta^* - \theta}_\Sigma^2
-\end{align*}
-where we used $Y = X^\top \theta^* + \eps$ and $\E(\eps | X) = 0$ and where $\norm{x}_\Sigma^2 = x^\top \Sigma x$ is a norm since we assumed $\Sigma \succ 0$.
-Whenever $(X, Y) \sim P$ with $P \in \cC(P_X, \sigma^2)$ we will therefore write
+	\cE(\theta) &= \E [ (Y - X^\top \theta)^2 - (Y - X^\top \theta^\star)^2] \\
+	&= \E [ (\theta^\star - \theta)^\top X (2 Y - X^\top (\theta + \theta^\star))] \\
+	&= \E [ (\theta^\star - \theta)^\top X (X^\top (\theta + \theta^\star) + 2 \eps)] \\
+	&= \E [ (\theta^\star - \theta)^\top X X^\top (\theta + \theta^\star)] \\
+	&= \norm{\theta^\star - \theta}_\Sigma^2,
+\end{align*}%
+\marginnote[*-5]{We use here the fact that $Y = X^\top \theta^\star + \eps$ and that $\E[\eps | X] = 0$ almost surely.}%
+where we introduce $\norm{x}_\Sigma^2 = x^\top \Sigma x$, which is a norm since $\Sigma \succ 0$ ($\P_X$ is non-degenerate).
+Whenever $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$ we will therefore write
 \begin{equation*}
-	\cE_P(\theta) = R(\theta) - R(\theta^*) = \norm{\theta^* - \theta}_\Sigma^2
+	\cE_P(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta^\star - \theta}_\Sigma^2
 \end{equation*}
-and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$ measurable we can consider, since $(X, Y)$ is an independent copy from the data with the same distribution, we can compute
+and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$, we can consider, since $(X, Y)$ is an independent copy with the same distribution,
 \begin{equation*}
 	\E [ \cE_P(\wh \theta) ]
 \end{equation*}
-where this expectation is with respect to $P^n$, for the randomness coming from the data. We can now consider the \emph{minimax risk} for a set $\cP$ of distributions:
+where this expectation is with respect to $P^{\otimes n}$, for the randomness coming from the data. 
+We can consider now the \emph{minimax risk} for a set $\cP$ of distributions:
 \begin{equation*}
 	\inf_{\wh \theta} \sup_{P \in \cP} \E \cE_P(\wh \theta).
 \end{equation*}
 The infimum is taken over any possible estimator, namely any statistic of the data, while the sup is over all distribution in $\cP$. Hence the name minimax, since we look the worst-case excess risk over the considered set $\cP$, but we consider the best possible estimator (with the inf).
-Since $\cG \subset \cC$ we expect the minimax risk of the former to be smaller than the one of the latter.
+Since $\cG(\P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$, the minimax risk of the former is smaller than the one of the latter.
 
 Some remarks and extra notation is required before we can state the main result of the section.
 \begin{itemize}
-	\item First, the linear model is \emph{well-specified} here since $Y = X^\top \theta^* + \eps$ with $\E[\eps | X] = 0$, so that there is no approximation term of $\E(Y | X)$ by $X^\top \theta^*$.
-This can be done, see for instance ????
-\item For the class $\cP = \cC(P_X, \sigma^2)$ we expect a \emph{minimax estimator} $\wh \theta$ that achieves the minimax risk to depend both on $P_X$ and $\sigma^2$. But quite surprisingly, we will see that it won't depend on this knowledge.
+	\item The linear model is \emph{well-specified} here, since we assume that $Y = X^\top \theta^\star + \eps$ almost surely with $\E[\eps | X] = 0$, so that there is no approximation term of $\E[Y | X]$ by $X^\top \theta^\star$.
+	\item For the class $\cP = \cC(\P_X, \sigma^2)$, we expect a \emph{minimax estimator}%
+	\marginnote{A minimax estimator is an estimator achieving the minimax risk.}
+	 $\wh \theta$ to depend both on $\P_X$ and $\sigma^2$. Quite surprisingly, we will see that it is not the case.
 \end{itemize}
-Let us introduce $\wh \bSigma = \frac 1n \sum_{i=1}^n X_i X_i^\top = \bX^\top \bX / n$ and define the ``whitened'' random vectors $\tilde X_i = \bSigma^{-1/2} X_i$ (so that $\var(\tilde X_i) = \bI_d$) and define
+Let us introduce
 \begin{equation*}
-	\tilde \bSigma = \frac 1n \sum_{i=1}^n \tilde X_i \tilde X_i^\top = \bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2}.
+	\wh \bSigma = \frac 1n \sum_{i=1}^n X_i X_i^\top = \frac 1n \bX^\top \bX
+\end{equation*}
+ and let us introduce also the ``whitened'' random vectors $\wt X_i = \bSigma^{-1/2} X_i$ (so that $\var[\wt X_i] = \bI_d$) and define
+\begin{equation*}
+	\wt \bSigma = \frac 1n \sum_{i=1}^n \wt X_i \wt X_i^\top = \bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2}.
 \end{equation*}
 The following theorem holds.
-\begin{theorem}[Mourtada~(2019)]
-	Assume that $P_X$ is non-degenerate and $n \geq d$ and $\sigma^2 > 0$. Then
+\begin{theorem}
+	\label{thm:least-squares-minimax}
+	Assume that $\P_X$ is non-degenerate, that $n \geq d$ and that $\sigma^2 > 0$. 
+	Then
 	\begin{equation}
-		\inf_{\wh \theta} \sup_{P \in \cC(P_X, \sigma^2)} \E \cE_P(\wh \theta) = \inf_{\wh \theta} \sup_{P \in \cG(P_X, \sigma^2)} \E \cE_P(\wh \theta) = \frac{\sigma^2}{n} \E \tr(\tilde \bSigma ^{-1}).
+		\label{eq:least-squares-minimax}
+		\begin{split}
+			\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] 
+			&= \inf_{\wh \theta} \sup_{P \in \cG(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] \\
+			&= \frac{\sigma^2}{n} \E [\tr(\wt \bSigma ^{-1})].
+		\end{split}
 	\end{equation}
-	Furthermore, the infimum in the minimax risk is achieved by the ordinary least squares estimator.
+	Furthermore, the infimum in the minimax risk is achieved by the ordinary least squares estimator~\eqref{eq:least-squares-estimator}.
 \end{theorem}
+
+The proof of Theorem~\ref{thm:least-squares-minimax} is done in two steps.
+The first step, which proves that the ordinary least squares estimator satisfies the upper bound in~\eqref{eq:least-squares-minimax}, is given in Section~\ref{sec:chap04_proofs} below.
+Since the proof of the lower bound requires extra tools from Bayesian statistics, it will be provided in Section~\ref{sec:chap05_proofs} of Chapter~\ref{chap:bayesian_statistics}.
+
 This theorem deserves several remarks.
 \begin{itemize}
-	\item The theorem proves that the least-squares estimator is, in fairly general setting, \emph{minimax optimal}: it cannot be improved by another estimator, uniformly over the class of distributions $\cC(P_X, \sigma^2)$.
-	\item The Gaussian noise, namely the class $\cG(P_X, \sigma^2)$ ``saturates'' the minimax risk, and corresponds to the \emph{least favorable} distribution in the minimax sense.
-	\item The minimax risk is invariant by a linear transformation of the features vectors: it is unchanged if one replaces $X_i$ by $X_i' = \bA X_i$ for some deterministic invertible matrix $\bA$. Indeed we have in this case $\wh \bSigma' = \frac 1n \sum_{i=1}^n X_i' X_i'^\top = \bA \wh \bSigma \bA^\top$ so that $(\wh \bSigma')^{-1} \Sigma' = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \bA^{-1} \bA \Sigma \bA^\top = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \Sigma \bA^\top$ which proves that $(\wh \bSigma')^{-1} \Sigma'$ and $(\wh \bSigma)^{-1} \Sigma$ are congruent matrices, so that they share the same trace, namely $\tr((\wh \bSigma')^{-1} \Sigma') = \tr((\wh \bSigma)^{-1} \Sigma)$, and the minimax risk is indeed invariant when replacing $X_i$ by $\bA X_i$. This is of course expected, since the supremum is over linear functoin, so invariance with respect to a invertible linear transformation is expected.
+	\item The theorem proves that the least-squares estimator is, in a fairly general setting, \emph{minimax optimal}: it cannot be improved by another estimator, uniformly over the set of distributions $\cC(\P_X, \sigma^2)$.
+	\item The Gaussian noise, namely the class $\cG(\P_X, \sigma^2)$ ``saturates'' the minimax risk, and corresponds to the \emph{least favorable} distribution in the minimax sense.
+	\item The minimax risk is invariant by a linear transformation of the features vectors: it is unchanged if one replaces $X_i$ by $X_i' = \bA X_i$ for some deterministic invertible matrix $\bA$. Indeed we have in this case $\wh \bSigma' = \frac 1n \sum_{i=1}^n X_i' X_i'^\top = \bA \wh \bSigma \bA^\top$ so that $(\wh \bSigma')^{-1} \bSigma' = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \bSigma \bA^\top$ which proves that $(\wh \bSigma')^{-1} \bSigma'$ and $(\wh \bSigma)^{-1} \bSigma$ are congruent matrices, so that they share the same trace, namely $\tr((\wh \bSigma')^{-1} \bSigma') = \tr((\wh \bSigma)^{-1} \bSigma)$, and the minimax risk is indeed invariant when replacing $X_i$ by $\bA X_i$. This is of course expected, since the supremum is over linear functions.
 \end{itemize}
-Since $\bA \mapsto \tr( \bA^{-1})$ is a \emph{convex} function on the set of positive definite matrices, we known from Jensen's inequality that
+Since $\bA \mapsto \tr( \bA^{-1})$ is a \emph{convex} function on the cone of positive definite matrices, we know from Jensen's inequality that
 \begin{equation*}
-	\E [\tr( \tilde \bSigma^{-1})] \geq \tr (\E [\tilde \bSigma)] )^{-1}
+	\E [\tr({\wt \bSigma}^{-1}) ] \geq \tr (\E [\wt \bSigma]^{-1} ),
 \end{equation*}
-but $\E[ \tilde \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma^{-1}] \bSigma^{-1/2} = \bI_d$ so $\E [\tr( \tilde \bSigma^{-1})] \geq d$ and consequently the minimax risk is larger than $\sigma^2 d / n$.
-
-The proof of the convexity of $\bA \mapsto \tr[ (\bA)^{-1} ]$ can be easily deduced from the following Taylor expansion. Take $\bA \succ 0$ and $\bB$ a symmetrical matrix.
-We have
+but $\E[\wt \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma^{-1}] \bSigma^{-1/2} = \bI_d$, so the lower bound 
+\begin{equation*}
+	\E [\tr( \wt \bSigma^{-1})] \geq d
+\end{equation*}
+holds, and consequently the minimax risk satisfies
 \begin{equation}
-	(\bA + t \bB)^{-1} = (\bA (\bI + t \bA^{-1} \bB)^{-1} = \bA^{-1} - t \bA^{-1} \bB \bA^{-1} + t^2 (\bA^{-1} \bB)^2 \bA^{-1} + \ldots
+	\label{eq:first-explicit-minimax-lower-bound}
+	\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] 
+	= \frac{\sigma^2}{n} \E [\tr(\wt \bSigma ^{-1})] \geq \sigma^2 \frac dn.
 \end{equation}
+The proof of the convexity of $\bA \mapsto \tr(\bA)^{-1})$ can be easily deduced from the following Taylor expansion. 
+Take $\bA \succ 0$ and $\bB$ a symmetrical matrix and $t > 0$ small.
+We have the expansion
+\begin{align*}
+	(\bA + t \bB)^{-1} &= (\bA (\bI + t \bA^{-1} \bB))^{-1} \\
+	&= \bA^{-1} - t \bA^{-1} \bB \bA^{-1} + t^2 (\bA^{-1} \bB)^2 \bA^{-1} + \cdots
+\end{align*}
 so that 
+\begin{align*}
+	\frac{\partial^2 \tr((\bA + t \bB)^{-1})}{\partial t^2} 
+	&= 2 \tr( (\bA^{-1} \bB)^2 \bA^{-1} ) \\
+	&= 2 \tr( \bA^{-1} \bB \bA^{-1} \bB \bA^{-1} ) \\
+	&= 2 \tr( \bC \bA^{-1} \bC^\top)
+\end{align*}
+where $\bC = \bA^{-1} \bB$. But since $\bA^{-1} \succ 0$ we have $\bC \bA^{-1} \bC^\top \succ 0$ which proves that the second derivative is non-negative.
+
+
+We can also provide another expression for $\E [\tr (\wt \bSigma^{-1})]$ using the leverage scores we discussed in Section~\ref{sec:leverages}.
+Let us recall at this point that since $\P_X$ is non-degenerate, and if $X_1, \ldots X_{n+1}$ are iid and distributed as $\P_X$, we have $\sum_{i=1}^{n+1} X_i X_i^\top \succ 0$.
+\begin{theorem}
+	\label{thm:minimax-leverage}
+	Under the same assumptions as that of Theorem~\ref{thm:least-squares-minimax}, the minimax risk can be written as
+	\begin{equation*}
+		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
+	\end{equation*}
+	where $\ell_{n+1}$ is the leverage of one data point among $n+1$ given by
+	\begin{equation*}
+		\wh \ell_{n+1} = X_{n+1}^\top \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{n+1},
+	\end{equation*}
+	where $X_1, \ldots, X_n, X_{n+1}$ are iid with distribution $\P_X$.
+\end{theorem}
+
+The proof of Theorem~\ref{thm:minimax-leverage} is given in Section~\ref{sec:chap04_proofs} below.
+Let us recall that $\wh \ell_{n+1} = \partial \wh Y_{n+1} / \partial Y_{n+1}$ where $\wh Y_{n+1} = X_{n+1}^\top \wh \theta_{n+1}$ where $\wh \theta_{n+1}$ is the ordinary least squares estimator computed on the $n+1$ samples $(X_1, Y_1), \ldots, (X_{n+1}, Y_{n+1})$. 
+This theorem entails that the minimax risk, which measures the complexity of the estimation problem,  is completely determined by the leverage score. 
+Even more than that, it is the expected value of a convex function of $\wh \ell_{n+1}$, so that the minimax risk is small when $\wh \ell_{n+1}$ is small, and gets larger with a large $\wh \ell_{n+1}$, which is natural since in such a case, the regression problem is more difficult. 
+
+A corollary of Theorem~\ref{thm:minimax-leverage} is an improved lower bound compared to the previous $\sigma^2 d / n$.
+
+\begin{corollary}
+	\label{cor:proof-lower-bound-leverage}
+	Under the same assumptions as that of Theorem~\ref{thm:least-squares-minimax}, we have that the minimax risk satisfies
+	\begin{equation*}
+		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \sigma^2 \frac{d}{n - d + 1}.
+	\end{equation*}
+\end{corollary}
+The proof can be found in Section~\ref{sec:chap04_proofs}.
+The lower bound $\sigma^2 d / (n - d + 1)$ is very sharp since it can be seen that
 \begin{equation*}
-	\frac{\partial^2 \tr((\bA + t \bB)^{-1})}{partial t^2} = 2 \tr( (\bA^{-1} \bB)^2 \bA^{-1} ) 
-	= 2 \tr( \bA^{-1} \bB \bA^{-1} \bB \bA^{-1} ) = = 2 \tr( \bC \bA^{-1} \bC^\top )
+	\E [\cE_P(\wh \theta_n)] = \sigma^2 \frac{d}{n - d - 1}
 \end{equation*}
-where $\bC = \bA^{-1} \bB$. But since $\bA^{-1} \succ 0$ we have $\bC \bA^{-1} \bC^\top \mgeq 0$ which proves that the second derivative is non-negative.
+whenever $\P_X = \nor(0, \bSigma)$, if $\wh \theta_n$ is the ordinary least squares estimator.
+This comes from the study of the Wishart distribution, which is the distribution of $\bX^\top \bX$ when $X \sim \nor(0, \bSigma)$.%
+\sidenote{We don't pursue further about Wishart distributions.}
+This result means that the Gaussian \emph{design} $\nor(0, \bSigma)$ is, almost, the most favorable design for linear regression, since for this distribution, the minimax risk is almost minimal (compare the denominators $n - d - 1$ and $n - d + 1$).%
+\sidenote{Finding the most favorable distribution is, up to our knowledge, an open problem. We conjecture that it is given by the uniform distribution on the unit sphere of $\R^d$.}
 
-Let us provide now the upper bound part from Theorem~??
-We will prove the lower bound later (in Section~???), since it will require some arguments from Bayesian statistics that we did not talked about yet.
+We were able to provide a lower bound for $\tr (\E [\wt \bSigma]^{-1} )$ that is explicit with respect to $d, n$ and $\sigma^2$.
+Now, it remains to provide a similarly explicit upper bound for this quantity.
+This requires extra assumptions on $\P_X$.
 
-\paragraph{Proof of the upper bound frm ???} % (fold)
+The first assumption is a ``quantified'' version of the non-degenerate assumption about $\P_X$, see Theorem~\ref{thm:least-squares-existence}. 
+Indeed, we assume that there is $\alpha \in (0, 1]$ and $C \geq 1$ such that
+\begin{equation}
+	\label{eq:quanti-nondegenerate}
+	\P[ |X^\top \theta | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
+\end{equation}
+for any $t > 0$ and any non-zero vector $\theta \in \R^d$. 
+This is equivalent to the assumption that $\P[ |\wt X^\top \theta | \geq t] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1} X$.
+This assumption ``quantifies'' the assumption $\P[X^\top \theta = 0] = 0$.
+The second assumption about $\P_X$ requires that
+\begin{equation}
+	\label{eq:features-fourth-moment}
+	\E [\norm{\bSigma^{-1/2} X}^4] \leq \kappa d^2.
+\end{equation}
+This is entailed%
+\sidenote{Indeed, we have $X^\top \theta = \wt X_j$ for the choice $\theta = \bSigma^{-1/2} e_j$, so that $\E[\wt X_j^4] \leq \E [\wt X_j^2]^2 = \kappa$, where we used $\E[\wt X \wt X^\top] = \bI_d$.
+This entails that $\E \norm{\wt X}^4 = \sum_{1 \leq j, k \leq d} \E[ \wt X_j^2 \wt X_k^2] \leq \sum_{j, k} \sqrt{\E[ \wt X_j^4] \E[\wt X_k^4]} \leq \kappa d^2$.}
+by the condition $\E[(X^\top \theta)^4]^{1/4} \leq \kappa \E[ (X^\top \theta)^2]^{1/2}$ for any $\theta \in \R^d$.%
+\begin{theorem}
+	Assume that $X$ satisfies~\eqref{eq:quanti-nondegenerate} and~\eqref{eq:features-fourth-moment} and put $C' = 3 C^4 e^{1 + 9 / \alpha}$. 
+	Then, if $n \geq \max(6 d / \alpha, 12 \log(12 / \alpha) / \alpha)$, we have
+	\begin{equation*}
+		\frac 1n \E \tr [ (\wt \bSigma)^{-1}] \leq \frac dn 
+		+ 8 C' \kappa \Big( \frac dn \Big)^2.
+	\end{equation*}
+	This entails, together with Theorem~\ref{thm:least-squares-minimax} and the lower bound~\eqref{eq:first-explicit-minimax-lower-bound}, that
+	\begin{equation*}
+		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] \leq \sigma^2 \frac dn 
+		\Big( 1 + 8 C' \kappa \Big( \frac dn \Big) \Big).
+	\end{equation*}
+\end{theorem}
+The proof of such an explicit upper bound is quite technical and somewhat beyond the scope of this book. It can be found in~\sidecite{mourtada_leastsquares}.
 
-This is actually mainly a computation with no particular tricks. Recall that $(X, Y)$ is such that $Y = X^\top \theta^* + \eps$ and that $\E(\eps | X) = 0$ and $\E(\eps^2 | X) \leq \sigma^2$.
+Let us wrap up some of the nice things that we learned in this Section.
+\begin{itemize}
+	\item Ordinary least-squares are minimax optimal for the well-specified linear regression model. This means that no other statistical procedure can perform (uniformly) better than this simple procedure.
+	\item The Gaussian design is almost the most favorable one in the minimax sense.
+	\item The minimax rate is exactly of order $\sigma^2 d / n$ under mild assumptions
+	 on $\P_X$.
+	\item The statistical complexity of the linear regression problem is, when measured by the minimax risk, fully explained by the distribution a leverage scores of one sample among $n+1$.
+\end{itemize}
+
+
+\section{Proofs} % (fold)
+\label{sec:chap04_proofs}
+
+\subsection{Proof of Theorem~\ref{thm:least-squares-existence}} % (fold)
+
+
+Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
+The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
+
+
+\subsection{Proof of Theorem~\ref{thm:cochran}} % (fold)
+
+
+We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
+\begin{equation*}
+	\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
+\end{equation*}
+since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
+This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
+Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
+We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
+
+
+\subsection{Proof of Theorem~\ref{thm:least-squares-minimax}:  the upper bound} % (fold)
+
+This is actually mainly a computation with no particular tricks. Recall that $(X, Y)$ is such that $Y = X^\top \theta^\star + \eps$ and that $\E(\eps | X) = 0$ and $\E(\eps^2 | X) \leq \sigma^2$.
 Consider $\wh \theta$ as the least squares estimator given by
 \begin{align*}
-	\wh \theta &= (\bX^\top \bX)^{-1} \bX^\top \by = (\bX^\top \bX)^{-1} \bX^\top (\bX \theta^* + \beps) \\
-		&= \theta^* + \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i
+	\wh \theta &= (\bX^\top \bX)^{-1} \bX^\top \by = (\bX^\top \bX)^{-1} \bX^\top (\bX \theta^\star + \beps) \\
+		&= \theta^\star + \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i
 \end{align*}
 so that recalling that $\inr{u, v}_{\bSigma} =u^\top \bSigma v$ and
  $\norm{u}_{\bSigma}^2 = \inr{u, u}_{\bSigma}$
@@ -1235,29 +1380,10 @@ since $\tr(x) = x$ for $x \in \R$, so that finally, using the cyclic invariance 
 \end{align*}
 which proves the upper bound.
 
-We can also provide another expression for $\E [\tr (\wt \bSigma^{-1})]$ using the leverage score we talked about in the previous Section~??
-Let us recall at this point that since $P_X$ is non-degenerate that if $X_1, \ldots X_{n+1}$ are iid and distributed as $P_X$, we ave that $\sum_{i=1}^{n+1} X_i X_i^\top \succ 0$.
-Indeed, the following theorem holds
-\begin{theorem}
-	\label{thm:minimax-leverage}
-	The minimax risk given in Theorem~? above can be written as
-	\begin{equation*}
-		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
-	\end{equation*}
-	where $\ell_{n+1}$ is the leverage of one data point among $n+1$ given by
-	\begin{equation*}
-		\wh \ell_{n+1} = X_{n+1}^\top \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{n+1}
-	\end{equation*}
-	where $X_1, \ldots, X_n, X_{n+1}$ are iid and with the same distribution as $X$.
-\end{theorem}
-Let us recall that $\wh \ell_{n+1} = \partial \wh Y_{n+1} / \partial Y_{n+1}$ where $Y_{n+1} = X_{n+1}^\top \wh \theta_{n+1}$ where $\wh \theta_{n+1}$ is the ordinary least squares estimator computed on the $n+1$ samples $(X_1, Y_1), \ldots, (X_{n+1}, Y_{n+1})$. 
-This theorem entails that the minimax risk, which measures the complexity of the estimation problem,  is completely determined by the leverage score. 
-Even more than that, it is the expected value of a convex functional of it, so that the minimax risk is small with a small leverage, and gets larger with large leverage, which is natural since in such a case, the statistcal problem is harder. 
 
-\paragraph{Proof of TheoremNNN} % (fold)
+\paragraph{Proof of Theorem~\ref{thm:minimax-leverage}} % (fold)
 
-
-Let $X_{n+1} \sim P_X$ be independent of $X_1, \ldots, X_n$.
+Let $X_{n+1} \sim \P_X$ be independent of $X_1, \ldots, X_n$.
 This proof uses a cute trick based on the Sherman-Morrison Lemma \todo{ortho}
 \begin{align*}
 	\frac 1n \E \tr( \wt \bSigma^{-1}) 
@@ -1294,18 +1420,12 @@ We can know finish the proof of THeorem~? using Lemma ? since now
 	&= \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
 \end{align*}
 which concludes the proof of THeorem???
-% paragraph proof_of_theoremnnn (end)
-% paragraph proof_of_the_upper_bound_frm_ (end)
 
-A corollary of Theorem~? is an improved lower bound than the first one we proved $\sigma^2 d / n$.
 
-\begin{corollary}
-	Under the same assumptions as THeorem we have that the miimax risk is lower bounded by
-	\begin{equation*}
-		\sigma^2 \frac{d}{n - d + 1}.
-	\end{equation*}
-\end{corollary}
+\section{Proof of Corollary~\ref{}} % (fold)
+\label{sec:proof_of_corollary_}
 
+% section proof_of_corollary_ (end)
 \begin{proof}
 	Theorem~? and Jensen's inequality since $x \mapsto x / (1-x)$ is convex on $[0, 1]$ gives
 	\begin{equation*}
@@ -1329,87 +1449,9 @@ A corollary of Theorem~? is an improved lower bound than the first one we proved
 	\end{equation*}
 \end{proof}
 
+\input{chap05_bayesian_statistics}
 
-The $\sigma^2 d / (n - d + 1)$ is very sharp since we know from ??? that whenever $P_X = \nor(0, \bSigma)$ then
-\begin{equation*}
-	\E \cE_P(\wh \theta) = \sigma^2 \frac{d}{n - d - 1}
-\end{equation*}
-if $\wh \theta$ is the ordinary least squares estimator. This can be understood also by using Theorem~? (le minimax) together with the use of some knowledge about the Wishart distributions \todo{le faire}.
-This means also that the Gaussian ``design'' $\nor(0, \bSigma)$ is almost the most favorable design for linear regression, since for this distribution, the minimax risk is almost minimal (compare denominator ???).
-\todo{conjecture that the most favorable is the uniform distribution on the unit sphere}
-
-\paragraph{Upper bound on the minimax risk.} 
-
-We were able to provide easily an explicit lower bound (with respect to $d, n$ and $\sigma^2$) for the minimax risk, it remains to provide a similarly explicit upper bound for this quantity.
-\todo{attention y'en a une qui est uniforme $d / n$ et l'autre qui ne l'est pas $d / (n - d + 1$}.
-
-In order to provide such an upper bound, we need some extra technical assumptions on $P_X$.
-
-The first assumption is somehow a quantified version of the non-degenerate assumption about $P_X$. 
-Indeed, we assume that there is $\alpha \in (0, 1]$ and $C \geq 1$ such that
-\begin{equation}
-	\label{eq:quanti-nondegenerate}
-	\P[ |\inr{X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
-\end{equation}
-for any $t > 0$ and non-zero vector $\theta \in \R^d$. Note that this assumption is equivalent to the assumption that $\P[ |\inr{\tilde X, \theta} | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1} X$. \todo{sidenote proof}
-This assumeption quantifies the assumption $\P(\inr{X, \theta} = 0) = 0$ BLABLA
-
-We need also another assumption that $P_X$ satifies
-\begin{equation*}
-	\E [\norm{\bSigma^{-1/2} X}^4] \leq \kappa d^2.
-\end{equation*}
-This is entailed by the $L^4$-$L^2$ condition $\E[\inr{\theta, X}^4]^{1/4} \leq \kappa \E[ \inr{\theta, X}^2]^{1/2}$ for any $\theta \in \R^d$.
-
-Indeed if $\theta = \bSigma^{-1/2} e_j$ then $\inr{\theta, X} = \wt X_j$ so that $\E[\wt X_j^4] \leq \E [\wt X_j^2]^2 = \kappa$ (since $\E[\wt X \wt X^\top] = \bI_d$) so that $\E \norm{\wt X}^4 = \E (\sum_j \wt X_j^2 )^2 = \sum_{1 \leq j, k \leq d} \E[ \wt X_j^2 \wt X_k^2] \leq \sum_{j, k} \sqrt{\E[ \wt X_j^4] \E[] \wt X_k^4]} \leq \kappa d^2$ by assumption. 
-
-\begin{theorem}
-	Grant assumptions ?a nd ? and put $C' = 3 C^4 e^{1 + 9 / \alpha}$. If $n \geq 6 \frac d \alpha \vee 12 \log(12 / \alpha) / \alpha$ then
-	\begin{equation*}
-		\frac 1n \E \tr [ (\wt \bSigma)^{-1}] \leq \frac dn + 8 C' \kappa \Big( \frac dn \Big)^2,
-	\end{equation*}
-	which entails together with ??? that
-	\begin{equation*}
-		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(P_X, \sigma^2)} \E \cE_P(\wh \theta) \leq \sigma^2 \frac dn 
-		\Big( 1 + 8 C' \kappa \Big( \frac dn \Big)
-	\end{equation*}
-\end{theorem}
-The proof of this theorem is quite technical and beyond the scope of this book. The interesting reader can read it in ????
-The technicity of the proof comes from a sharp control of $\E [\tr (\wt \bSigma)^{-1}]$ or more simply the smallest eigenvalue of $(\wt \bSigma)^{-1}$.
-
-Let us wrap us what are the important things we learned in this Section:
-\begin{itemize}
-	\item The least-squares procedure is minimax optimal for the well-specified linear regression model
-	\item The Gaussian design is almost the most favorable in the minimax sense
-	\item The minimax rate is of order $\sigma^2 d / n$
-	\item The statistical complexity of the problem of linear regression is, when measured by the minimax rate, fully explained by the distribution a leverage of a sample among $n+1$
-\end{itemize}
-
-
-\section{Proofs} % (fold)
-\label{sec:chap04_proofs}
-
-\subsection{Proof of Theorem~\ref{thm:least-squares-existence}} % (fold)
-
-
-Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
-The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
-
-
-\subsection{Proof of Theorem~\ref{thm:cochran}} % (fold)
-
-
-We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
-\begin{equation*}
-	\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
-\end{equation*}
-since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
-This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
-Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
-We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
-
-% \input{chap05_bayesian_statistics}
-
-% \input{chap06_mle_exponential_models}
+\input{chap06_mle_exponential_models}
 
 
 % section exponential_models (end)
