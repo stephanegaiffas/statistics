@@ -1118,22 +1118,22 @@ We consider again the linear model (not Gaussian, the results stated here are mu
 Given $\sigma^2$ and $\P_X$, we consider the following classes of distribution $\P_{X, Y}$ on $(X, Y)$.
 
 \begin{definition}
-	We consider the set $\cC(\P_X, \sigma^2)$ of joint distribution $\P_{X, Y}$ such that $X \sim \P_X$ and
+	We consider the set $\cC(\P_X, \sigma^2)$ of joint distributions $\P_{X, Y}$ such that $X \sim \P_X$ and
 	\begin{equation*}
 		Y = X^\top \theta^\star + \eps
 	\end{equation*}
 	for some $ \theta^\star \in \R^d$, where $\eps$ satisfies $\E[\eps | X] = 0$ and $\E[\eps^2 | X] \leq \sigma^2$ almost surely. We consider also the set $\cG(\P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$ where we assume additionally that $\eps | X \sim \nor(0, \sigma^2)$.
 \end{definition}
-The set $\cC(\P_X, \sigma^2)$ is a general set of joint distribution on $(X, Y)$ with fixed marginal distribution $\P_X$ and such that $Y$ is a linear function of $X$ plus a noise $\eps$ which is conditionally centered and with finite variance. 
+The set $\cC(\P_X, \sigma^2)$ is a general set of joint distributions on $(X, Y)$ with fixed marginal distribution $\P_X$ and such that $Y$ is a linear function of $X$ plus a noise $\eps$ which is conditionally centered and with finite variance. 
 The set $\cG(\P_X, \sigma^2)$ is the same as $\cC(\P_X, \sigma^2)$, but where we assume that $\eps$ is centered Gaussian and independent of $X$.
 
 We consider the quadratic risk
 \begin{equation*}
 	R(\theta) := \E [ (Y - X^\top \theta)^2] = \int (y - x^\top \theta)^2 \P_{X, Y}(dx, dy).
 \end{equation*}
-If $\P_X$ is non degenerate and if $\Sigma = \E[ X X^\top] \succ 0$, it is easy to see that
+If $\P_X$ is non degenerate then $\bSigma = \E[ X X^\top] \succ 0$, and it is easy to see that
 \begin{equation*}
-	\theta^\star = \argmin_{\theta \in \R^d} R(\theta) = \Sigma^{-1} \E[Y X].
+	\theta^\star = \argmin_{\theta \in \R^d} R(\theta) = \bSigma^{-1} \E[Y X].
 \end{equation*}
 Our aim here is to find an estimator%
 \sidenote{Namely, a measurable function of $(X_1, Y_1), \ldots, (X_n, Y_n)$.}
@@ -1148,13 +1148,13 @@ Note that if $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$, then
 	&= \E [ (\theta^\star - \theta)^\top X (2 Y - X^\top (\theta + \theta^\star))] \\
 	&= \E [ (\theta^\star - \theta)^\top X (X^\top (\theta + \theta^\star) + 2 \eps)] \\
 	&= \E [ (\theta^\star - \theta)^\top X X^\top (\theta + \theta^\star)] \\
-	&= \norm{\theta^\star - \theta}_\Sigma^2,
+	&= \norm{\theta^\star - \theta}_{\bSigma}^2,
 \end{align*}%
 \marginnote[*-5]{We use here the fact that $Y = X^\top \theta^\star + \eps$ and that $\E[\eps | X] = 0$ almost surely.}%
-where we introduce $\norm{x}_\Sigma^2 = x^\top \Sigma x$, which is a norm since $\Sigma \succ 0$ ($\P_X$ is non-degenerate).
+where we introduced $\norm{x}_{\bSigma}^2 = x^\top \bSigma x$, which is a norm since $\bSigma \succ 0$ ($\P_X$ is non-degenerate).
 Whenever $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$ we will therefore write
 \begin{equation*}
-	\cE_P(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta^\star - \theta}_\Sigma^2
+	\cE_P(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta^\star - \theta}_{\bSigma}^2
 \end{equation*}
 and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$, we can consider, since $(X, Y)$ is an independent copy with the same distribution,
 \begin{equation*}
@@ -1332,66 +1332,84 @@ Let us wrap up some of the nice things that we learned in this Section.
 
 \subsection{Proof of Theorem~\ref{thm:least-squares-existence}} % (fold)
 
-
-Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. Point~(1) $\leftrightarrow$ Point~(2) is obvious as well, since $0 = \E(X X^\top) u = 0$ entails $0 = u^\top \E(X X^\top) u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P(X^\top u = 0)$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
-The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$ (indeed $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.) We will show that $\spa(X_1, \ldots, X_d) \R^d$ almost surely by recurrence. We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$. For $k=1$ we do have $\dim V_1 = 1$ so it is OK. Assume that $\dim(V_{k-1}) = k-1$. We have that $X_k$ is indendent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. So, we have again by indepedence that $\P(X_k \in V_{k-1}) = \P(X_k \in V_{k-1} | X_1, \ldots, X_{k-1}) \leq \P(X_k \in H) = 0$ using Point~(2). So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely.
+Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. 
+Point~(1) $\Leftrightarrow$ Point~(2) is obvious as well, since $0 = \E[X X^\top] u = 0$ entails $0 = u^\top \E[X X^\top] u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. 
+Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P[X^\top u = 0]$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
+The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. 
+We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$.%
+\sidenote{Indeed, $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.}
+We will show that $\spa(X_1, \ldots, X_d) = \R^d$ almost surely by recurrence. 
+We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$.
+For $k=1$ we do have $\dim V_1 = 1$ so it is OK.
+Now, assume that $\dim(V_{k-1}) = k-1$. 
+We have that $X_k$ is independent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. 
+So, we have again by independence that $\P[X_k \in V_{k-1}] = \P[X_k \in V_{k-1} | X_1, \ldots, X_{k-1}] \leq \P[X_k \in H] = 0$ using Point~(2). 
+So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely. $\hfill \square$
 
 
 \subsection{Proof of Theorem~\ref{thm:cochran}} % (fold)
 
 
-We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussianv ector (as lienar transformation of a gaussian vector) and that $Z_j \sim \nor(0, \bP_j)$. Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear space of dimension $n_j < n$ BLABLA. Now, we habe
+We have $\var[Z_j] = \bP_j \bP_j^\top = \bP_j$ since $\bP_j$ is an orthogonal projection matrix and $Z_j = \bP_j Z$, which entails that $Z_j$ is a Gaussian vector%
+\sidenote{as a linear transformation of a Gaussian vector}%
+and that $Z_j \sim \nor(0, \bP_j)$.
+Note that $Z_j$ has no density with respect to the Lebesgue measure, it is a random vector on $\R^n$ which belongs to linear subspace of dimension $n_j < n$. 
+Now, we have
 \begin{equation*}
-	\cov(Z_j, Z_{j'}) = \cov(\bP_j Z, \bP_{j'} Z) = \bP_j \bP_{j'}^\top = \bO
+	\cov[Z_j, Z_{j'}] = \cov[\bP_j Z, \bP_{j'} Z] = \bP_j \bP_{j'}^\top = \bO
 \end{equation*}
-since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, since the covariance matrix is block diagonal \todo{faudrait l'epxliquer qq part}.
+\marginnote[*-2]{The matrix $\bO$ stands for the matrix with all entries equal to $0$.}%
+since $V_j \perp V_{j'}$, so that $Z_j$ and $Z_{j'}$ are independent random vectors, because 
+$[Z_j^\top Z_{j'}^\top]^\top$ is a Gaussian vector with a block diagonal covariance matrix.
 This proves that the $Z_1, \ldots, Z_k$ are independent random vectors.
-Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose \todo{why ?} it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$.
-We know from ??? that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$ so that $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$) so that $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$ so that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$. This concludes the proof of the theorem.
+Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimension $n_j$, we can decompose it as $\bP_j = \bQ \bD_{n_j} \bQ^\top$ where $\bD_{n_j} = \diag[1, \ldots, 1, 0, \ldots, 0]$ is the diagonal matrix with first $n_j$ diagonal elements equal to $1$ and all others equal to $0$ and where $\bQ$ is an orthonormal matrix.
+We know that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$, so $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$), so that finally, we have $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$.
+This proves that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$.
+$\hfill \square$
 
 
 \subsection{Proof of Theorem~\ref{thm:least-squares-minimax}:  the upper bound} % (fold)
 
-This is actually mainly a computation with no particular tricks. Recall that $(X, Y)$ is such that $Y = X^\top \theta^\star + \eps$ and that $\E(\eps | X) = 0$ and $\E(\eps^2 | X) \leq \sigma^2$.
-Consider $\wh \theta$ as the least squares estimator given by
+This is actually mainly a computation with no particular tricks. 
+Recall that $(X, Y)$ is such that $Y = X^\top \theta^\star + \eps$ with $\E[\eps | X] = 0$ and $\E[\eps^2 | X] \leq \sigma^2$.
+Thanks to Theorem~\ref{thm:least-squares-existence}, we know that the ordinary least squares estimator $\wh \theta$ satisfies
 \begin{align*}
 	\wh \theta &= (\bX^\top \bX)^{-1} \bX^\top \by = (\bX^\top \bX)^{-1} \bX^\top (\bX \theta^\star + \beps) \\
 		&= \theta^\star + \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i
 \end{align*}
-so that recalling that $\inr{u, v}_{\bSigma} =u^\top \bSigma v$ and
- $\norm{u}_{\bSigma}^2 = \inr{u, u}_{\bSigma}$
+so that recalling $\inr{u, v}_{\bSigma} =u^\top \bSigma v$ and $\norm{u}_{\bSigma}^2 = \inr{u, u}_{\bSigma}$ we have
 \begin{align*}
-	\E \cE(\wh \theta) &= \E \Big\| \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i \Big \|_{\bSigma}^2
+	\E [\cE(\wh \theta)] &= \E \Big\| \wh \bSigma^{-1} \frac{1}{n} \sum_{i=1}^n \eps_i X_i \Big \|_{\bSigma}^2
 	 = \frac{1}{n^2} \sum_{1 \leq i, i' \leq n} \E \langle \wh \bSigma^{-1} \eps_i X_i, \wh \bSigma^{-1} \eps_{i'} X_{i'} \rangle \\
 	 &= \frac{1}{n^2} \sum_{1 \leq i, i' \leq n} \E \Big[ \E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] \langle \wh \bSigma^{-1}  X_i, \wh \bSigma^{-1} X_{i'} \rangle \Big].
 \end{align*}
 But we have $\E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] = 0$ whenever $i \neq i'$ and $\E [ \eps_i \eps_{i'} | X_1, \ldots, X_n] \leq \sigma^2$ whenever $i=i'$. So, we obtain
 \begin{align*}
-	\E \cE(\wh \theta) &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \norm{\wh \bSigma^{-1} X_i}_{\bSigma}^2 
+	\E [\cE(\wh \theta)] &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \norm{\wh \bSigma^{-1} X_i}_{\bSigma}^2 
 	= \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ (\wh \bSigma^{-1} X_i)^\top \bSigma \wh \bSigma^{-1} X_i \big] \\
 	&= \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ \tr (X_i^\top \wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} X_i) \big]
 \end{align*}
 since $\tr(x) = x$ for $x \in \R$, so that finally, using the cyclic invariance of the trace and linearity, we obtain
 \begin{align*}
-	\E \cE(\wh \theta) &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ \tr (\wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} X_i X_i^\top )\big] \\
+	\E [\cE(\wh \theta)] &\leq \frac{\sigma^2}{n^2} \sum_{i=1}^n \E \big[ \tr (\wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} X_i X_i^\top )\big] \\
 	&= \frac{\sigma^2}{n} \E \big[ \tr (\wh \bSigma^{-1} \bSigma \wh \bSigma^{-1} \wh \bSigma)\big] \\
 	&=\frac{\sigma^2}{n} \E \big[ \tr (\wh \bSigma^{-1} \bSigma)\big] \\
 	&=\frac{\sigma^2}{n} \E \big[ \tr ( (\bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2})^{-1}) \big] = \frac{\sigma^2}{n} \E[ \tr (\wt \bSigma^{-1}) ]
 \end{align*}
-which proves the upper bound.
+which proves the upper bound. $\hfill \square$
 
 
-\paragraph{Proof of Theorem~\ref{thm:minimax-leverage}} % (fold)
+\subsection{Proof of Theorem~\ref{thm:minimax-leverage}} % (fold)
 
-Let $X_{n+1} \sim \P_X$ be independent of $X_1, \ldots, X_n$.
-This proof uses a cute trick based on the Sherman-Morrison Lemma \todo{ortho}
+
+Let $X_{n+1} \sim \P_X$ be independent of $X_1, \ldots, X_n$ and write
 \begin{align*}
 	\frac 1n \E \tr( \wt \bSigma^{-1}) 
 	= \frac 1n \E \tr( (\wh \bSigma)^{-1} \bSigma) 
 	= \E \tr( (n \wh \bSigma)^{-1} X_{n+1} X_{n+1}^\top) \\
 	= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}}.
 \end{align*}
-We need the following
+The proof uses the following cute trick based on the Sherman-Morrison Lemma.
 \begin{lemma}
  For any $\bS \succ 0$ and any $v \in \R^d$ we have
  \begin{equation*}
