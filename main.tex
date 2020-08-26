@@ -1410,8 +1410,34 @@ Let $X_{n+1} \sim \P_X$ be independent of $X_1, \ldots, X_n$ and write
 	= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}}.
 \end{align*}
 The proof uses the following cute trick based on the Sherman-Morrison lemma.
-\begin{lemma}
+
+\begin{lemma}[Sherman-Morrison]
 	\label{lem:sherman-morrison}
+	Let $\bA$ be a $d \times d$ invertible real matrix and $u, v \in \R^d$. Then the following formula holds
+	\begin{equation*}
+		(\bA + u v^\top)^{-1} = \bA^{-1} - \frac{\bA^{-1} u v^\top \bA^{-1} }{1 + v^\top \bA^{-1} u}.
+	\end{equation*}
+\end{lemma}
+This classical lemma allows to inverse the rank-one perturbation of a matrix as a function of its inverse.
+\begin{proof}
+	The proof follows from a straightforward computation.
+	Put $q = v^\top \bA^{-1} u$ and write
+	\begin{align*}
+	(\bA + u v^\top) \Big( \bA^{-1} &- \frac{\bA^{-1} u v^\top \bA^{-1}}{1 + v^\top \bA^{-1} u} \Big) \\
+	& = (\bA + u v^\top) \frac{\bA^{-1} + q \bA^{-1} - \bA^{-1} u v^\top \bA^{-1}}{1 + q} \\
+	&= \frac{\bI + q \bI}{1 + q} = \bI
+	\end{align*}
+	\marginnote[*-2]{We omit obvious computations here, just develop and cancel the terms...}
+	A similar computation shows that 
+	\begin{equation*}
+		\Big( \bA^{-1} - \frac{\bA^{-1} u v^\top \bA^{-1} }{1 + v^\top \bA^{-1} u} \Big) 
+		(\bA + u v^\top) = \bI,
+	\end{equation*}
+	which proves the claim.
+\end{proof}
+
+\begin{lemma}
+	\label{lem:sherman-morrison-trick}
  	For any $\bS \succ 0$ and any $v \in \R^d$ we have
 	 \begin{equation*}
 	 	\inr{\bS^{-1} v, v} = \frac{\inr{(\bS + v v^\top)^{-1} v, v}}{1 - \inr{(\bS + v v^\top)^{-1} v, v}}.
@@ -1419,21 +1445,21 @@ The proof uses the following cute trick based on the Sherman-Morrison lemma.
 \end{lemma}
 This lemma gives a nice formula that allows to express a quadratic form as a function of its rank-1 perturbation.
 \begin{proof}
-	We have $\bS + v v^\top \mgeq \bS \succ 0$ so that $\bS + v v^\top$ is invertible and using the Sherman-Morrison formula, we have
+	We have $\bS + v v^\top \mgeq \bS \succ 0$ so that $\bS + v v^\top$ is invertible and using Lemma~\ref{lem:sherman-morrison} gives
 	\begin{equation*}
-		(\bS + v v^\top)^{-1} = \bS^{-1} - \frac{1}{1 + v^\top \bS^{-1} v} \bS^{-1} v v^\top \bS^{-1},
+		(\bS + v v^\top)^{-1} = \bS^{-1} - \frac{\bS^{-1} v v^\top \bS^{-1}}{1 + v^\top \bS^{-1} v},
 	\end{equation*}
 	so that 
 	\begin{align*}
 		\inr{(\bS + v v^\top)^{-1} v, v} &= v^\top \bS^{-1} v - \frac{v^\top \bS^{-1} v v^\top \bS^{-1} v}{1 + v^\top \bS^{-1} v} \\
 		&= \inr{\bS^{-1} v, v} - \frac{\inr{\bS^{-1} v, v}^2}{1 + \inr{\bS^{-1} v, v}} = \frac{\inr{\bS^{-1} v, v}}{1 + \inr{\bS^{-1} v, v}}
 	\end{align*}
-	which concludes the proof of Lemma~\ref{lem:sherman-morrison}.
+	which concludes the proof.
 \end{proof}
-This proves in particular that $\wh \ell_{n+1} \in [0, 1)$ almost surely since $\wh \bSigma \succ 0$ almost surely.
-Now, using Lemma~\ref{lem:sherman-morrison} we obtain
+This proves in particular that $\wh \ell_{n+1} \in [0, 1)$ a.s. since $\wh \bSigma \succ 0$ a.s.
+Now, using Lemma~\ref{lem:sherman-morrison-trick}, we obtain
 \begin{align*}
-	\frac 1n \E \tr( \wt \bSigma^{-1}) &= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}} \\
+	\frac 1n \E [\tr( \wt \bSigma^{-1}) ] &= \E \big[ \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}} \big] \\
 	&= \E \bigg[ \frac{ \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} }}{1 - \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} } } \bigg] \\
 	&= \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
 \end{align*}
