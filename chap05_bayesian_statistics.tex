@@ -372,7 +372,12 @@ This penalization avoid the parameters, also called the \emph{model weights} to 
 \todo{also tikonov regularization blabla}
 What we proved is that, for the Gaussian linear model, a Gaussian prior on the model weights acts exactly as a penalization term, forbidding these weights to be complextely \emph{free} (in eventually take arbitrary large values, when the conditioning of $\bX$ is bad, for instance). The variance term of the prior $\theta \sim \nor(0, \lambda^{-1} \bI_d)$ is parametrized by $\lambda > 0$: whenever $\lambda$ is small, then the prior is almost "flat" and the penalization in ??? is small: we expect in this case $\wh \theta_\lambda$ to be close to the least-squares estimator $\wh \theta_n$ (and $\wh \theta_\lambda = \wh \theta$ whenever $\lambda  = 0$). On the other hand, if $\lambda$ is large, the prior is highly concentrated around $0$, which is equivaluent to a strong penalization in ???
 
-\section{Proof of the minimax lower bound ???} % (fold)
+
+\section{Proofs} % (fold)
+\label{sec:sec:chap05_proofs}
+
+
+\subsection{Proof of the minimax lower bound ???} % (fold)
 \label{sec:proof_of_the_minimax_lower_bound_}
 
 Now, we have all the tools to prove the lower bound side of Theorem~??? namely that 
