@@ -1409,63 +1409,65 @@ Let $X_{n+1} \sim \P_X$ be independent of $X_1, \ldots, X_n$ and write
 	= \E \tr( (n \wh \bSigma)^{-1} X_{n+1} X_{n+1}^\top) \\
 	= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}}.
 \end{align*}
-The proof uses the following cute trick based on the Sherman-Morrison Lemma.
+The proof uses the following cute trick based on the Sherman-Morrison lemma.
 \begin{lemma}
- For any $\bS \succ 0$ and any $v \in \R^d$ we have
- \begin{equation*}
- 	\inr{\bS^{-1} v, v} = \frac{\inr{(\bS + v v^\top)^{-1} v, v}}{1 - \inr{(\bS + v v^\top)^{-1} v, v}}.
- \end{equation*}
+	\label{lem:sherman-morrison}
+ 	For any $\bS \succ 0$ and any $v \in \R^d$ we have
+	 \begin{equation*}
+	 	\inr{\bS^{-1} v, v} = \frac{\inr{(\bS + v v^\top)^{-1} v, v}}{1 - \inr{(\bS + v v^\top)^{-1} v, v}}.
+	 \end{equation*}
 \end{lemma}
- BLABLA sur le lemma This lemma gives a nice formula that allows to express a quadratic formula as a function of its rank-1 perturbation BLABLA
+This lemma gives a nice formula that allows to express a quadratic form as a function of its rank-1 perturbation.
 \begin{proof}
-	We have $\bS + v v^\top \mgeq \bS \succ 0$ so that $\bS + v v^\top$ is invertible so that using the Sherman Morrison formula we have
+	We have $\bS + v v^\top \mgeq \bS \succ 0$ so that $\bS + v v^\top$ is invertible and using the Sherman-Morrison formula, we have
 	\begin{equation*}
-		(\bS + v v^\top)^{-1} = \bS^{-1} - \frac{1}{1 + v^\top \bS^{-1} v} \bS^{-1} v v^\top \bS^{-1}
+		(\bS + v v^\top)^{-1} = \bS^{-1} - \frac{1}{1 + v^\top \bS^{-1} v} \bS^{-1} v v^\top \bS^{-1},
 	\end{equation*}
 	so that 
 	\begin{align*}
-		\inr{(\bS + v v^\top)^{-1} v, v} = v^\top \bS^{-1} v - \frac{v^\top \bS^{-1} v v^\top \bS^{-1} v}{1 + v^\top \bS^{-1} v} = \inr{S^{-1} v, v} - \frac{\inr{S^{-1} v, v}^2}{1 + \inr{S^{-1} v, v}} = \frac{\inr{S^{-1} v, v}}{1 + \inr{S^{-1} v, v}}
+		\inr{(\bS + v v^\top)^{-1} v, v} &= v^\top \bS^{-1} v - \frac{v^\top \bS^{-1} v v^\top \bS^{-1} v}{1 + v^\top \bS^{-1} v} \\
+		&= \inr{\bS^{-1} v, v} - \frac{\inr{\bS^{-1} v, v}^2}{1 + \inr{\bS^{-1} v, v}} = \frac{\inr{\bS^{-1} v, v}}{1 + \inr{\bS^{-1} v, v}}
 	\end{align*}
-	which concludes the proof of Lemma ???
+	which concludes the proof of Lemma~\ref{lem:sherman-morrison}.
 \end{proof}
-\todo{put this lemma somewhere and use it, say that it is useful for many things}
-
 This proves in particular that $\wh \ell_{n+1} \in [0, 1)$ almost surely since $\wh \bSigma \succ 0$ almost surely.
-We can know finish the proof of THeorem~? using Lemma ? since now
+Now, using Lemma~\ref{lem:sherman-morrison} we obtain
 \begin{align*}
 	\frac 1n \E \tr( \wt \bSigma^{-1}) &= \E \inr{(n \wh \bSigma)^{-1} X_{n+1}, X_{n+1}} \\
 	&= \E \bigg[ \frac{ \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} }}{1 - \inr{(n \wh \bSigma + X_{n+1} X_{n+1}^\top)^{-1} X_{n+1}, X_{n+1} } } \bigg] \\
 	&= \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
 \end{align*}
-which concludes the proof of THeorem???
+which concludes the proof of Theorem~\ref{thm:minimax-leverage}. $\hfill \square$
 
 
-\section{Proof of Corollary~\ref{}} % (fold)
-\label{sec:proof_of_corollary_}
+\section{Proof of Corollary~\ref{cor:proof-lower-bound-leverage}} % (fold)
 
-% section proof_of_corollary_ (end)
-\begin{proof}
-	Theorem~? and Jensen's inequality since $x \mapsto x / (1-x)$ is convex on $[0, 1]$ gives
-	\begin{equation*}
-		\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{\E[\wh \ell_{n+1}]}{1 - \E[\wh \ell_{n+1}}] \Big],
-	\end{equation*}
-	but a exchangeability arguments gives
-	\begin{align*}
-		\E [\wh \ell_{n + 1}] &= \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top 
-		\Big)^{-1} X_{n+1}, X_{n+1} \Big \rangle \\
-		&= \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{i}, X_{i} \Big \rangle
-	\end{align*}
-	so that
-	\begin{align*}
-	 	\E [\wh \ell_{n + 1}] &= \frac{1}{n+1} \E \Big \langle \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{i}, X_{i} \Big \rangle \\
-	 	&= \frac{1}{n+1}  \E \tr \bigg( \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} \sum_{i=1}^{n+1} X_i X_i^\top \bigg) 
-	 	&= \frac{d}{n + 1},
-	 \end{align*}
-	so that
-	\begin{equation*}
-		\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{d}{n - d + 1}.
-	\end{equation*}
-\end{proof}
+Theorem~\ref{thm:minimax-leverage} and Jensen's inequality applied with the convex function $x \mapsto x / (1-x)$ on $[0, 1)$ gives
+\begin{equation*}
+	\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{\E[\wh \ell_{n+1}]}{1 - \E[\wh \ell_{n+1}]}.
+\end{equation*}
+Now, an exchangeability%
+\sidenote{By ``exchangeability'' we mean that this expectation is unchanged when applying any permutation of $X_1, \ldots, X_{n+1}$, since these are iid.}
+argument gives
+\begin{align*}
+	\E [\wh \ell_{n + 1}] &= \E \bigg[ \Big \langle \Big( \sum_{i'=1}^{n+1} X_{i'} X_{i'}^\top 
+	\Big)^{-1} X_{n+1}, X_{n+1} \Big \rangle \bigg] \\
+	&= \E \bigg[ \Big \langle \Big( \sum_{i'=1}^{n+1} X_{i'} X_{i'}^\top \Big)^{-1} X_{i}, X_{i} 
+	\Big \rangle \bigg]
+\end{align*}
+
+for any $i=1, \ldots, n+1$, so that
+\begin{align*}
+ 	\E [\wh \ell_{n + 1}] &= \frac{1}{n+1} \sum_{i=1}^{n+1} \E \bigg[ \Big \langle \Big( \sum_{i'=1}^{n+1} X_{i'} X_{i'}^\top \Big)^{-1} X_{i}, X_{i} \Big \rangle \bigg] \\
+ 	&= \frac{1}{n+1}  \E \bigg [ \tr \bigg( \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} \sum_{i=1}^{n+1} X_i X_i^\top \bigg) \bigg] 
+ 	&= \frac{d}{n + 1},
+ \end{align*}
+so that
+\begin{equation*}
+	\E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \frac{d}{n - d + 1},
+\end{equation*}
+which proves the Corollary $\hfill \square$
+
 
 \input{chap05_bayesian_statistics}
 
