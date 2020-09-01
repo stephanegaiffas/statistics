@@ -396,86 +396,95 @@ The tentative agenda for the course is as follows:
 \chapter{Bayesian statistics}
 \label{chap:bayesian_statistics}
 
-Let us go back to the statistical inference problems that we considered in Chapter~\ref{chap:statistical_inference}.
+Let us go back to the problems of statistical inference that we considered in Chapter~\ref{chap:statistical_inference}.
 We have data $X$ valued on a measurable space $(E, \cE)$ and a model $\{ P_\theta : \theta \in \Theta\}$ for its distribution, see Definition~\ref{def:statistical_experiment} from Chapter~\ref{chap:statistical_models}.
-For the problems of estimation and testing, we can define a set $A$ of \emph{decisions}: for estimation, it is $A = \Theta \subset \R^d$ while for testing we have binary decisions, so that $A = \{ 0, 1 \}$.
+For the problems of estimation and testing, we can define a set $A$ of \emph{decisions}: for scalar estimation, it is $A = \Theta \subset \R$, while for testing, we have binary decisions, so that $A = \{ 0, 1 \}$.
 
 \section{Elements of decision theory} % (fold)
 \label{sec:elements_of_decision_theory}
 
-
-We have data $X \in E$ where $E$ is the values set of the observations.
-Given a statistical procedure $\delta : E \go A$, we \emph{decide} $\delta(X) \in A$.
-In order to assess or to quantify a decision, we need a \emph{loss function} $\ell : \Theta \times A \go \R$.
-This means that if the true parameter $\theta \in \Theta$ and if we decide $a \in A$ then we incur a loss $\ell(\theta, a)$.
-\begin{example}
-	For the estimation of a scalar parameter we have $\Theta = \R = A$ and $\ell(\theta, \theta') = (\theta - \theta')$ which corresponds to the quadratic risk introducion in Definitino~\ref{def:quadratic_risk}. 
-\end{example}
-
-\begin{example}
-	For a statistical test with hypothesis $H_0 : \theta \in \Theta_0$ and $H_1 : \theta \in \Theta_1$ with $\{ \Theta_0, \Theta_1 \}$ a partition of the set of parameters $\Theta$, we can consider the loss satisfying $\ell(\theta, 0) = 0$ if $\theta \in \Theta_0$, $\ell(\theta, 01) = 0$ if $\theta \in \Theta_1$ and $\ell(\theta, 0) = c_0$ if $\theta \in \Theta_1$, $\ell(\theta, 1) = c_1$ if $\theta \in \Theta_0$, where both constants $c_0, c_1 > 0$ allow to tune we importance we given to the Type~I and Type~II errors.
-\end{example}
+Given a (measurable) statistical procedure $\delta : E \go A$, we \emph{decide} $\delta(X) \in A$.
+In order to assess a decision, we use a \emph{loss function} $\ell : A \times \Theta \go \R$.
+This means that if the true parameter is $\theta \in \Theta$ and if we decide $a \in A$ then we incur a loss $\ell(a, \theta) \in \R$.
 
 \begin{definition}
-	Consider a statistical experiment with data $X \in E$ and a set of parameters $\Theta$, a set $A$ of decisions and a loss function $\ell : \Theta \times A \go \R$. The \emph{risk} of a statistical procedure $\delta : E \go A$ is the function $\Theta \go \R$ given by
+	Consider a statistical experiment with data $X \in E$ and a set of parameters $\Theta$, a set $A$ of decisions and a loss function $\ell : A \times \Theta \go \R$. The \emph{risk} of a statistical procedure $\delta : E \go A$ is given by
 	\begin{equation*}
-		R(\theta, \delta) = \E_\theta[ \ell(\theta, \delta(X))]
+		R(\delta, \theta) = \E_\theta[ \ell(\delta(X), \theta)]
 	\end{equation*}
 	for any $\theta \in \Theta$.
 \end{definition}
 
-\begin{example}
-	For estimation with $A = \Theta = \R$ we can choose $\ell(\theta, \theta')$ so that $R(\theta, \delta)$ is the quadratic risk, but we can used $\ell(\theta, \theta') = |\theta - \theta'|^p$ for some $p \geq 1$ as well. For tests we have $R(\theta, \delta) = c_i \P_\theta[\delta(X) = 1 - i]$ if $\theta \in \Theta_i$ for $i \in \{ 0, 1\}$ (which leads to an approach to statistical testing different from what we did in Section~\ref{sec:tests}).
-\end{example}
+For the problem of estimation of a scalar parameter, we have $\Theta = \R = A$ and $\ell(\theta', \theta) = (\theta' - \theta)^2$, so that the risk is, in this case, the quadratic risk introduced in Definition~\ref{def:quadratic_risk} from Chapter~\ref{chap:statistical_inference}.
+Note that we could consider other losses, such as $\ell(\theta', \theta) = |\theta' - \theta|^p$ for some $p \geq 1$.
 
 
-\section{Bayes risk} % (fold)
+Consider now statistical testing with hypotheses $H_0 : \theta \in \Theta_0$ and $H_1 : \theta \in \Theta_1$ where $\{ \Theta_0, \Theta_1 \}$ is a partition of $\Theta$.
+Introduce the loss given by
+\begin{equation}
+	\label{eq:bayes-test-loss}
+	\ell(i, \theta) = 0	\quad \text{if} \quad \theta \in \Theta_i \quad \text{ and } \quad \ell(i, \theta) = c_i \quad \text{if} \quad \theta \in \Theta_{1 - i}
+\end{equation}
+for $i \in \{ 0, 1 \}$ and constants $c_0, c_1 > 0$.
+The risk writes in this case
+\begin{equation*}
+	R(\delta, \theta) =	c_i \P_\theta [\delta(X) = i] \quad \text{when} 
+	\quad \theta \in \Theta_{1 - i}
+\end{equation*}
+for $i \in \{ 0, 1 \}$.
+The constants $c_0, c_1 > 0$ allow to tune the importance given to the Type~I and Type~II errors: the approach described here leads to an approach of statistical testing different from the one described in Section~\ref{sec:tests}.
 
 
-Given two statistical procedures $\delta, \delta'$ for the same problem of statistical inference, we do not have in general that $R(\theta, \delta) < R(\theta, \delta')$ uniformly for $\theta \in \Theta$.
-\todo{give bernoulli or gaussian example, exercice on Stein effect ?}
-We we can do instead is to consider an ``averaged risk'': we consider a distribution $\mu$ on $\Theta$ and we use it to integrate the risk over $\Theta$.
+\section{Bayesian risk} % (fold)
+
+
+Let us go back to the coin flip problem considered in Chapter~\ref{chap:statistical_inference}.
+We observe $X_1, \ldots, X_n$ iid distributed as $\ber(\theta)$ for $\theta \in (0, 1)$.
+The estimator we introduced back then was the empirical mean $\wh \theta_n = \bar X_n = n^{-1} \sum_{i=1}^n X_i$, and we know from~\eqref{eq:bernoulli-quadratic-risk} that the quadratic risk is given by $R(\wh \theta_n, \theta) = \theta (1 - \theta) / n$ for any $\theta \in (0, 1)$.
+But what about the estimator $\wt \theta_n = 0$ ? It is a rather stupid estimator, but if $\theta$ is close to $0$, than it turns out to be a good estimator, and actually, it is easy to see that
+$R(\wt \theta_n, \theta) < R(\wh \theta_n, \theta)$ whenever $\theta < 1 / (n + 1)$.
+This proves that $\wt \theta_n = 0$ is better than $\wh \theta_n$, when assessed by the quadratic risk, for $\theta$ small enough.%
+\sidenote{A longer story hides beneath this simple example: the Stein effect and the Stein estimator, which provably improves the sample average estimator using thresholding, see~\cite{stein1956inadmissibility,lehmann2006theory} for more details on this.}
+This very simple example illustrates the fact that it is not possible to find an estimator with an optimal risk for all $\theta \in \Theta$.
+
+%\todo{Exerice on Stein effect ?}
+
+As illustrated above, given two statistical procedures $\delta, \delta'$ for the same problem of statistical inference, we do not have in general that $R(\delta, \theta) < R(\delta', \theta)$ uniformly for $\theta \in \Theta$.
+What we can do instead is to consider an \emph{averaged risk}: choose a distribution $\mu$ on $\Theta$ and use it to integrate the risk over $\Theta$.
 This distribution is called the \emph{prior distribution} or simply the \emph{prior}.
 \begin{definition}[Bayesian risk]
-	The Bayesian risk of a procedure $\delta$ associated to the prior $\mu$ is given by
+	The Bayesian risk of a procedure $\delta$ associated to the \emph{prior} $\mu$ is given by
 	\begin{equation*}
-		R_B(\mu, \delta) = \int_{\Theta} R(\theta, \delta) \mu(d \theta) = \int_{\Theta} \mu(d \theta) 
-		\int_E \ell(\theta, \delta(x)) P_\theta(dx).
+		R_B(\delta, \mu) = \int_{\Theta} R(\delta, \theta) \mu(d \theta) 
+		= \int_{\Theta} \mu(d \theta) \int_E \ell(\delta(x), \theta) P_\theta(dx).
 	\end{equation*}
 \end{definition}
-Note that $R_B(\mu, \delta) \leq \max_{\theta \in \Theta} R(\theta, \delta)$ which means that the Bayes risk is always smaller than the minimax risk.
-We understand this risk as an average of the risk over $\Theta$ ``weighted'' by the prior $\mu$.
+Note that $R_B(\delta, \mu) \leq \sup_{\theta \in \Theta} R(\delta, \theta)$ which means that the Bayes risk is always smaller than the worst-case risk over $\Theta$.
+We understand this risk as an average of the risk over $\Theta$ ``weighted'' by the prior distribution $\mu$.
+Given a prior $\mu$, the Bayesian risk is a scalar value: we can compare procedures using it and even try to find a procedure that minimizes it.%
+\sidenote{We will do it in Section~\ref{sec:posterior_distribution_and_bayes_estimator}, such an estimator even has a name: it is a Bayesian estimator.}
+
 \begin{example}
-	For tests, the Bayes risk associated to a prior $\mu$ writes
+	For statistical testing with the loss given by~\eqref{eq:bayes-test-loss}, the Bayesian risk associated to a prior $\mu$ writes
 	\begin{align*}
-		R_B(\mu, \delta) &= c_0 \int_{\Theta_0} \P_\theta(\delta(X) = 1) \mu(d \theta) \\
-		& \quad + c_1 \int_{\Theta_1} \P_\theta(\delta(X) = 0) \mu(d \theta)
+		R_B(\delta, \mu) = \sum_{i \in \{ 0, 1 \}} c_i \int_{\Theta_{1 - i}} \P_\theta[\delta(X) = i] \mu(d \theta),
 	\end{align*}
 	which is a weighted combination of the Type~I and Type~II errors averaged by the prior $\mu$.
 \end{example}
 
-But we can understand it differently as well. 
-Indeed, we could say instead that the parameter $\theta$ is itself a random variable distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ conditionally on $T = \theta$. 
-In that case we can write
-\begin{equation*}
-	R_B(\mu, \delta) = \E[ \ell(T, \delta(X))] = \E_Q[ \ell(T, \delta(X))]
-\end{equation*}
-where the expectation is computed with respect to the joint distribution of $(T, X)$, namely integration with respect to $Q$ defined by
-\begin{align*}
-	Q(B \times C) &= \P[ T \in B, X \in C] = \int_B \mu(d \theta) \int_C P_\theta(dx) \\
-	&= \int_B P_\theta[C] \mu(d \theta).
-\end{align*}
-We do ``as if'' $\theta$ where random and with distribution $\mu$.
-The distribution $P_\theta$ becomes the conditional distribution of $X | T = \theta$, namely
-\begin{equation*}
-	P_\theta[A] = \E [\ind{A}(X) | T = \theta],
-\end{equation*}
-or even $P_T[A] = \E [\ind{A}(X) | T]$.
+Another interpretation of the Bayesian risk is of utmost important in Bayesian statistics.
+Indeed, we could say that the parameter $\theta$ \emph{is itself a random variable} distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ ``conditionally'' on $T = \theta$.%
+\sidenote[][*-3]{Of course the event $T = \theta$ has zero probability if $T$ is continuous with respect to the Lebesgue measure. We will explain clearly what such a \emph{conditional distribution} is in Section~\ref{sec:about_conditional_distributions_and_densities} below.}
 
-In what follows, we will assume that we have a dominating measure $\lambda$ on $\Theta$ such that $\mu = g \cdot \lambda$ where $g$ is the density of $T$ on $\Theta$ with resoect tp $\lambda$ (often $\lambda$ is the lEbuesgue measure).
-We suppose also that thre is a measure $\nu$ on $E$ for which $P_\theta = f(\cdot | \theta) \cdot \nu$ where similarly $\frac{d P_\theta}{d \nu} = f(x | \theta)$. 
-We use here the notation $f(\cot | \theta)$ instead of $f_\theta$ to stress that it will correspond to a conditional density.
-We need at this point to classify things about conditional distributions and conditional densities.
+Assuming that the joint distribution $P_{T, X}$ of $(T, X)$ is given by
+\begin{align*}
+	P_{T, X}[B \times C] = \P[ T \in B, X \in C] = \int_B \mu(d \theta) \int_C P_\theta(dx),
+\end{align*}
+we could write the Bayesian risk as an expectation with respect to $P_{T, X}$, since
+\begin{equation*}
+	R_B(\mu, \delta) = \int_{\Theta} \mu(d \theta) \int_E \ell(\delta(x), \theta) P_\theta(dx) = \E[ \ell(\delta(X), T)].
+\end{equation*}
+What we need to do now, in order to formalize this, is to explain what a conditional distribution is, and to explain some useful formulas, such as the Bayes formula for conditional densities.
 
 \section{About conditional distributions and densities} % (fold)
 \label{sec:about_conditional_distributions_and_densities}
@@ -576,6 +585,24 @@ The Bayesian reasoning is therefore as follows: we choose a prior on $\theta$, a
 A nice aspect of this approach is that we can quantify uncertainty right out of the box with such an approach since instead of producing a point estimatpr $\wh \theta_n$ in the \emph{frequentist} approach (what we did in Section???) we produce a full posterior distribution $Q_x[\cdot] = \P[T \in \cdot | X = x]$.
 
 \paragraph{Bayes estimator.} % (fold)
+
+
+In that case we can write
+
+where the expectation is computed with respect to the joint distribution of $(T, X)$, namely integration with respect to $Q$ defined by
+
+We do ``as if'' $\theta$ where random and with distribution $\mu$.
+The distribution $P_\theta$ becomes the conditional distribution of $X | T = \theta$, namely
+\begin{equation*}
+	P_\theta[A] = \E [\ind{A}(X) | T = \theta],
+\end{equation*}
+or even $P_T[A] = \E [\ind{A}(X) | T]$.
+
+In what follows, we will assume that we have a dominating measure $\lambda$ on $\Theta$ such that $\mu = g \cdot \lambda$ where $g$ is the density of $T$ on $\Theta$ with resoect tp $\lambda$ (often $\lambda$ is the lEbuesgue measure).
+We suppose also that thre is a measure $\nu$ on $E$ for which $P_\theta = f(\cdot | \theta) \cdot \nu$ where similarly $\frac{d P_\theta}{d \nu} = f(x | \theta)$. 
+We use here the notation $f(\cot | \theta)$ instead of $f_\theta$ to stress that it will correspond to a conditional density.
+We need at this point to classify things about conditional distributions and conditional densities.
+
 
 Let us consider the estimation problem where $A = \Theta$ and let us use the Bayes risk as a measure to assess the error of a procedure $\delta : E \go \Theta$.
 An optimal Bayesian estimator should minimize the Byaes risk. 
