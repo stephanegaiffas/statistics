@@ -436,7 +436,7 @@ The constants $c_0, c_1 > 0$ allow to tune the importance given to the Type~I an
 
 
 \section{Bayesian risk} % (fold)
-
+\label{sec:bayesian-risk}
 
 Let us go back to the coin flip problem considered in Chapter~\ref{chap:statistical_inference}.
 We observe $X_1, \ldots, X_n$ iid distributed as $\ber(\theta)$ for $\theta \in (0, 1)$.
@@ -484,147 +484,210 @@ we could write the Bayesian risk as an expectation with respect to $P_{T, X}$, s
 \begin{equation*}
 	R_B(\mu, \delta) = \int_{\Theta} \mu(d \theta) \int_E \ell(\delta(x), \theta) P_\theta(dx) = \E[ \ell(\delta(X), T)].
 \end{equation*}
-What we need to do now, in order to formalize this, is to explain what a conditional distribution is, and to explain some useful formulas, such as the Bayes formula for conditional densities.
+What we need to do now, in order to formalize this, is to explain what a conditional density is, and to explain some useful formulas, such as the Bayes formula for conditional densities.
 
-\section{About conditional distributions and densities} % (fold)
+\section{Conditional densities and the Bayes formula} % (fold)
 \label{sec:about_conditional_distributions_and_densities}
 
-Let $X$ and $Y$ be random variables on the same probability space and values in sets $\cX$ and $\cY$.
-For any integrable function $f(X)$, we can define the conditional expectation $\E [f(X) | Y]$ as the random variable $g(Y)$ (for some measurable function $g$) which is unique almost surely, such that
+Let $X$ and $Y$ be random variables on the same probability space and valued in measurable sets $\cX$ and $\cY$.
+Let $\phi$ be a measurable function such that $\phi(X)$ is integrable. 
+Let us recall that we can define the conditional expectation $\E [\phi(X) | Y]$ as the random variable $r(Y)$ (for some measurable function $r$, almost surely unique) such that
+\marginnote{We assume here that the reader is familiar with the definition of the conditional expectation.}
 \begin{equation}
-	\E[f(X) h(Y)] = \E[ g(Y) h(Y)]
+	\E[\phi(X) \varphi(Y)] = \E[ r(Y) \varphi(Y)]
 \end{equation}
-for any measurable and bounded function $h$.
-The particular value $g(y)$ of this conditional expectation is denoted $\E[f(X) | Y = y]$. 
-In particular, we have that
+for any measurable and bounded function $\varphi$.
+The particular value $r(y)$ for some $y \in \cY$ is denoted $\E[\phi(X) | Y = y]$. 
+One can prove that
 \begin{align*}
-	\E[f(X) h(Y) | Y] &= h(Y) \E[ f(X) | Y]
+	\E[\phi(X) h(Y) | Y] &= h(Y) \E[ \phi(X) | Y]
 \end{align*}
-almost surely and
+almost surely, for any measurable function $h$ and that
 \begin{align}
-	\E [\E[ f(X) | Y]] = \E[f(X)].
+	\E [\E[ \phi(X) | Y]] = \E[\phi(X)].
 \end{align}
-Let us suppose now that the joint distribution $\P_{X, Y}$ of $X$ and $Y$ has a density $p(x, y)$ with respect to $\lambda \otimes \nu$ on $\cX \times \cY$.
-We can define the marginal distributions of $X$ and $Y$ as
-\begin{equation*}
-	p_X(x) = \int_{\cY} p(x, y) \mu(dx), \quad
-	p_Y(y) = \int_{\cX} p(x, y) \lambda(dy)
-\end{equation*}
-\todo{bon y'a des $\lambda$ qui est pris avant non ?}
-which correpsond to the marginal distributions $\P_X$ and $\P_Y$ of $X$ and $Y$ so that
+Let us suppose now that the joint distribution $P_{X, Y}$ of $(X, Y)$ has a density $p(x, y)$ with respect to a product of dominating measures $\nu_X \otimes \nu_Y$ on $\cX \times \cY$.
+We can define the marginal densities of $X$ and $Y$ as
+\begin{equation}
+	\label{eq:bayes-marginal-densities}
+	p_X(x) = \int_{\cY} p(x, y) \nu_Y(d y) \quad \text{and} \quad
+	p_Y(y) = \int_{\cX} p(x, y) \nu_X(d x),
+\end{equation}
+so that we have
 \begin{align*}
-	\E[f(X)] &= \int_{\cX} f(x) P_X(dx) = \int_{\cX} f(x) p_X(x) \lambda(dx) \\ 
-	\E[f(Y)] &= \int_{\cY} g(y) P_Y(dx) = \int_{\cY} g(y) p_Y(x) \nu(dy)
+	\E[\phi(X)] &= \int_{\cX} \phi(x) P_X(dx) = \int_{\cX} \phi(x) p_X(x) \nu_X(dx) \\ 
+	\E[\varphi(Y)] &= \int_{\cY} g(y) P_Y(dx) = \int_{\cY} \varphi(y) p_Y(x) \nu_Y(dy)
 \end{align*}
-for any $f, g$ such that $f(X)$ and $g(Y)$ are integrabel. \todo{attention $g$ c'est pas deja pris ?}
+for any $\phi$ and $\varphi$ such that $\phi(X)$ and $\varphi(Y)$ are integrable. 
 Let us remark that
 \begin{align*}
-	P_{X, Y} \big[ \{ y \in \cY : p_Y(y) = 0 \} \big] &= \int_{\cX \times \cY} \ind{p_Y(y) = 0} p(x, y) \lambda(dx) \nu(dy) \\
-	&= \int_{y \in \cY : p_Y(y) = 0} \nu(dy) \int_{\cX} p(x, y) \lambda (dx) \\
-	&= \int_{y \in \cY : p_Y(y) = 0} p_Y(y) \nu(dy) = 0
+	P_{X, Y} \big[ \{ y \in \cY : p_Y(y) = 0 \} \big] 
+	&= \int_{\cX \times \cY} \ind{p_Y(y) = 0} p(x, y) \nu_X(dx) \nu_Y(dy) \\
+	&= \int_{y \in \cY : p_Y(y) = 0} \nu_Y(dy) \int_{\cX} p(x, y) \nu_X (dx) \\
+	&= \int_{y \in \cY : p_Y(y) = 0} p_Y(y) \nu_Y(dy) = 0
+	\marginnote{Using~\eqref{eq:bayes-marginal-densities}}
 \end{align*}
 namely $P_{X, Y}[ \{ y \in \cY : p_Y(y) = 0 \}] = 0$.
-So, given any density $q$ we can define
+Given any probability density $q$ on $\cX$ with respect to $\nu_X$, we can define
+\begin{equation}
+	\label{eq:cond-density-definition}
+	p_{X | Y}(x | y) := \frac{p(x, y)}{p_Y(y)} \ind{p_Y(y) > 0} + q(x) \ind{p_Y(y) = 0},
+\end{equation}
+so that all the versions of $p_{X | Y}$ associated to the choice of $q$ are equal $P_{X, Y}$-almost surely.
+Moreover, we can check immediately that $\int_{\cX} p_{X | Y}(x | y) \nu_X(dx) = 1$, so that it is a probability density with respect to $\nu_X$ on $\cX$.
+Now, if we define
 \begin{equation*}
-	p_{X | Y}(x | y) = \frac{p(x, y)}{p_Y(y)} \ind{p_Y(y) > 0} + k(x) \ind{p_Y(y) = 0},
+	r'(y) = \int_{\cX} \phi(x) p_{X | Y}(x | y) \nu_X(dx),
 \end{equation*}
-so that any version of $p_{X | Y}$ associated to the choice of $q$ are all equal $P_{X, Y}$-almost surely, since we can check immediatly that $\int_{\cX} p_{X | Y}(x | y) \lambda(dx) = 1$, so that it is a probability density with respect to $\lambda$ on $\cX$.
-Moreover, if we define
-\begin{equation*}
-	g(y) = \int_{\cX} f(x) p_{X | Y}(x | y) \lambda(dx)
-\end{equation*}
-we have for any measurable bounded function $h$, because of the Fubini theorem and using the fact that $\{y \in \cY : p_Y(y) = 0\}$ is a $P_{X, Y}$ -negligeable set that
+we can write, for any measurable and bounded $\varphi$, that
 \begin{align*}
-	\E[ g(Y) h(Y)] &= \int_{\cY} g(y) h(y) p_Y(y) \nu(dy) \\
-	&= \int_{\{ y \in \cY : p_Y(y) > 0 \}} h(y) p_Y(y) \nu(dy) \int_{\cX} f(x) \frac{p(x, y)}{p_Y(x)} \\
-	&= \int_{\cX \times \cY} f(x) h(y) p(x, y) \lambda(dx) \nu(dy) \lambda (dx)
-	&= \E[ f(X) h(Y)]
+	\E[ &r'(Y) \varphi(Y)] \\
+	&= \int_{\cY} r'(y) \varphi(y) p_Y(y) \nu_Y(dy) \\
+	\marginnote{Using the definition of $r'$, Fubini and~\eqref{eq:cond-density-definition}}
+	&= \int_{\{ y \in \cY \;:\; p_Y(y) > 0 \}} \varphi(y) p_Y(y) \nu_Y(dy) 
+	\int_{\cX} \phi(x) \frac{p(x, y)}{p_Y(y)} \nu_X(dx) \\
+	\marginnote{Using the fact that $P_{X, Y}[\{y \in \cY : p_Y(y) = 0\}] = 0$}
+	&= \int_{\cX \times \cY} \phi(x) \varphi(y) p(x, y) \nu_X(dx) \nu_Y(dy) \\
+	&= \E[ \phi(X) \varphi(Y)].
 \end{align*}
-warning $g$ is not any function but the function such that $g(Y) = \E[ f(X) | Y]$ almost surely.
-which indeed corresponds to the definition ??? of $g(Y) = \E[f(X) | Y)$.
-
-So, we proved that we can compute conditional expectation using the formula
+This corresponds to the definition of the conditional expectation, which is almost surely unique, so that we proved that $r = r'$ almost surely.
+Now, we know that we can compute a conditional expectation using the formula
 \begin{equation*}
-	\E[f(X) | Y] = \int_{\cX} f(x) p_{X | Y}(x | Y) \lambda(dx) = \int_{\cX} f(x) \P_{X | Y} (dx)
+	\E[\phi(X) | Y = y] = r(y) = \int_{\cX} \phi(x) p_{X | Y}(x | y) \nu_X(dx).
 \end{equation*}
-if we denote $P_{X | Y}$ as the distribution on $\cX$ fo,ction of $Y$ with density $p_{X | Y}(x | Y)$ with respect to $\lambda$. 
-We can define in the say way $p_{X | Y}$ and $\P_{X | Y}$ uniquely on the set $\{ y : p_Y(y) > 0 \}$.
-As explained above the complement $\{ y : p_Y(y) > 0 \}^\complement$ has mass equal to $0$: this has no iincidence since conditional expectation are themslef uniquely defined up to a negligable set .
+The density $p_{X | Y}$ is called the \emph{conditional density} of $X$ \emph{knowing} $Y$.
 
-We call $\P_{X | Y}$ the conditional distribution of $X$ conditionally on $Y$ and $p_{X | Y}(x | y)$ the density of $X$ ``conditionally on $Y=y$''. We can of couse define $P_{Y | X}$ and $p_{Y | X}$ exacly in the ame xay.
-So, we end up with the fact that, by construction of these conditional densities, the density of the joint density $p_{X, Y}$ of $(X, Y)$  satisfies
+% We can define in the exact same way $p_{Y | X}$ and $\P_{X | Y}$ uniquely on the set $\{ y : p_Y(y) > 0 \}$.
+% As explained above the complement $\{ y : p_Y(y) > 0 \}^\complement$ has mass equal to $0$: this has no iincidence since conditional expectation are themslef uniquely defined up to a negligable set .
+
+% We call $\P_{X | Y}$ the conditional distribution of $X$ conditionally on $Y$ and $p_{X | Y}(x | y)$ the density of $X$ ``conditionally on $Y=y$''. 
+We can define in the exact same way $p_{Y | X}$, the conditional density of $Y$ knowing $X$, and by construction of $p_{X | Y}$ and $p_{Y | X}$, we have that the following equalities
 \begin{equation}
 	\label{eq:cond-density-formula}
-	p_{X, Y}(x, y) = p_{X | Y}(x | y) p_Y(y) = p_{Y | X}(y | x) p_X(x)
+	p(x, y) = p_{X | Y}(x | y) p_Y(y) = p_{Y | X}(y | x) p_X(x)
 \end{equation}
-$P_{X, Y}$-almost surely.
+hold $P_{X, Y}$-almost surely.
+From these equalities we can deduce that
+\begin{equation*}
+	p_{X | Y}(x | y) = \frac{p(x, y)}{p_Y(y)} = \frac{p_{Y | X}(y | x) p_X(x)}{\int_{\cX} p(x', y) \nu_X(dx')}
+	\marginnote{Let us recall that we proved that $\{ y \in \cY : p_Y(y) = 0 \}$ has zero $P_{X, Y}$ probability.}
+\end{equation*}
+holds $P_{X, Y}$-almost surely, which leads, using again~\eqref{eq:cond-density-formula}, to the Bayes formula
+\begin{equation}
+	\label{eq:bayes-formula-conditional-densities}
+	p_{X | Y}(x | y) = \frac{p_{Y | X}(y | x) p_X(x)}{\int_{\cX} p_{Y | X}(y | x') p_X(x') \nu_X(dx')},
+\end{equation}
+that holds, once again $P_{X, Y}$-almost surely.
+This is a remarkable formula, since it allows to \emph{reverse the conditioning}: we can write the conditional density of $X$ knowing $Y$ as a function of the conditional density of $Y$ knowing $X$.
+This formula is at the core of Bayesian statistics, as explained in the next Section.
+
 
 \section{Posterior distribution and Bayes estimator} % (fold)
 \label{sec:posterior_distribution_and_bayes_estimator}
 
-We saw in ??? that the joint distribution $Q$ of $(T, X)$ is defined through its marginal distribution $g$ of $T$ and the conditional density $f(x | \theta)$ of $X$ conditionally on $T = \theta$ (hence the notation $f(x | \theta)$), so that
+Let us go back to the setting introduced in Section~\ref{sec:bayesian-risk}.
+We have data $X$ and a statistical model $\{ P_\theta : \theta \in \Theta \}$.
+We consider a prior distribution $\mu$ on $\Theta$.
+We assume that $\mu$ has a density $p(\cdot)$ with respect to a measure $\lambda$ on $\Theta$, namely $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and that $P_\theta$ has a density that we will denote as $p(\cdot | \theta)$ with respect to a measure $\nu$ on $E$.
+\marginnote[*-3]{Using the same letter for both the density of $\mu$ (namely $\theta \mapsto p(\theta)$) and the density of $P_\theta$ (namely $x \mapsto p(x | \theta$)) might sound like a bad idea, but it will lead to very nice notations in what follows, and it won't lead to any ambiguity.}
+We want to apply Bayesian reasoning: the density $p(\cdot | \theta)$ of the data is understood as a  conditional density of $X$ ``knowing the parameter $\theta$''.
+
+
+\paragraph{The posterior distribution.} % (fold)
+
+% paragraph paragraph_name (end)
+
+In order to formalize this, we introduce a random variable $T$ distributed as $\mu$, and
+we apply~\eqref{eq:cond-density-formula} in order to express the joint density of $(X, T)$ through the product of the conditional density of $X | T$ and the density of $T$:
 \begin{equation*}
-	Q(d \theta, dx) = g(\theta) f(x | \theta) (\lambda \otimes \nu) (d\theta, dx). 	
-\end{equation*} 
-The marginal density $\bar f$ of $X$ can be obtained by integrating with respect to $\theta$:
-\begin{equation*}
-	\bar f(x) = \int_{\Theta} f(x | \theta) g(\theta) \lambda(d \theta)
+	\marginnote{Which holds $P_{X, T}$-almost surely.}
+	p_{X, T}(x, \theta) = p_{X | T}(x | \theta) p_T(\theta) = p(x | \theta) p(\theta).
 \end{equation*}
-and the conditional density of $T | X = x$ can therefore we written as
+We can only proceed like this to express $p_{X, T}$, since what we are given is the prior density $p(\cdot)$ and the model, namely the density $p(\cdot | \theta)$.
+We know that the marginal density of $X$ can be computed as
 \begin{equation*}
-	g(\theta | x) = \frac{f(x | \theta) g(\theta)}{\bar f(x)} = \frac{f(x | \theta) g(\theta)}{\int_{\Theta} f(x | \theta') g(\theta') \lambda(d \theta')}.
+	p_X(x) = \int_\Theta p_{X, T}(x, \theta) \lambda(d \theta) 
+	= \int_\Theta p(x | \theta) p(\theta) \lambda(d \theta).
 \end{equation*}
-If is the density of the conditional distribution denoted $Q_x$ of $T | X = x$.
-We simply used here the \emph{Bayes formula} on conditional densities in order to reverse the order of the conditionning: we expressed $T | X$ from $X | T$ since the distribution of $X | T$ is specified by the model we considered
+Now, using the Bayes formula~\eqref{eq:bayes-formula-conditional-densities}, we can \emph{reverse the conditioning}, and define what we call the \emph{posterior density}
+\begin{equation*}
+	p(\theta | x) := p_{T | X}(\theta | x) = \frac{p_{X, T}(x, \theta)}{p_X(x)} 
+	=  \frac{p(x | \theta) p(\theta)}{\int_\Theta p(x | \theta') p(\theta') \lambda(d \theta')}.
+\end{equation*}
+This formula expresses the conditional density of the parameter $\theta$ knowing the data $x$ (more formally the conditional density of $T$ knowing $X$) through the model (the conditional density of $X$ knowing $T$) and the prior (the density of $T$) that are both known and chosen beforehand.
+Let us wrap-up what we constructed in the following definition.
+
+% We saw in ??? that the joint distribution $Q$ of $(T, X)$ is defined through its marginal distribution $g$ of $T$ and the conditional density $f(x | \theta)$ of $X$ conditionally on $T = \theta$ (hence the notation $f(x | \theta)$), so that
+% \begin{equation*}
+% 	Q(d \theta, dx) = g(\theta) f(x | \theta) (\lambda \otimes \nu) (d\theta, dx). 	
+% \end{equation*} 
+% The marginal density $\bar f$ of $X$ can be obtained by integrating with respect to $\theta$:
+% \begin{equation*}
+% 	\bar f(x) = \int_{\Theta} f(x | \theta) g(\theta) \lambda(d \theta)
+% \end{equation*}
+% and the conditional density of $T | X = x$ can therefore we written as
+% \begin{equation*}
+% 	g(\theta | x) = \frac{f(x | \theta) g(\theta)}{\bar f(x)} = \frac{f(x | \theta) g(\theta)}{\int_{\Theta} f(x | \theta') g(\theta') \lambda(d \theta')}.
+% \end{equation*}
+% If is the density of the conditional distribution denoted $Q_x$ of $T | X = x$.
+% We simply used here the \emph{Bayes formula} on conditional densities in order to reverse the order of the conditionning: we expressed $T | X$ from $X | T$ since the distribution of $X | T$ is specified by the model we considered
 
 \begin{definition}
-	We call $\mu = g \cdot \lambda$ the \emph{prior} distribution we call the conditional distribution $Q_x$of $T | X=x$ the \emph{posterior} distribution or simply \emph{posterior}.
+	Consider a \emph{prior} $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and a model $P_\theta(dx) = p(x | \theta) \nu(dx)$, and the corresponding joint distribution $P(dx, d\theta) = p(x | \theta) p(\theta) \nu(dx) \lambda(d \theta)$.
+	The \emph{posterior distribution} is the distribution with density
+	\begin{equation*}
+		p(\theta | x) = \frac{p(x | \theta) p(\theta)}{\int_\Theta p(x | \theta') p(\theta') \lambda(d \theta')}
+	\end{equation*}
+	with respect to $\lambda$. 
+	It is well-defined and unique for $P$--almost all $(x, \theta)$.
 \end{definition}
 
-The Bayesian reasoning is therefore as follows: we choose a prior on $\theta$, and we compute the posterior using the data. 
-A nice aspect of this approach is that we can quantify uncertainty right out of the box with such an approach since instead of producing a point estimatpr $\wh \theta_n$ in the \emph{frequentist} approach (what we did in Section???) we produce a full posterior distribution $Q_x[\cdot] = \P[T \in \cdot | X = x]$.
+The Bayesian reasoning is therefore as follows: choose a prior density $p(\theta)$ and a model $p(x | \theta)$ for the data $x$ knowing the parameter $\theta$.
+Then, compute%
+\sidenote{or approximate it using numerical methods, whenever the posterior distribution cannot be  computed explicitly}%
+the posterior distribution $p(\theta | x)$ of $\theta$ knowing the data $x$. 
+A nice aspect of this approach is that we can quantify uncertainty right out of the box, since instead of an estimator $\wh \theta_n$ (which is, given data, a single value), we obtain a full posterior distribution $p(\theta | x)$ for the parameter $\theta$, which takes into account the data $x$ that we observed.
+However, such a reasoning is of course only possible when we know how to choose a prior, and when we are able to compute or approximate the posterior.
+\sidenote{This is the main criticism with Bayesian methods: the computation of the posterior on complex models, the posterior distribution cannot be computed explicitely, and can require costely numericalapproximation, or algorithms that strongly depart from the original forulation of the model and prior. Citer LDA, Variational Bayes, etc..., voir Bishop}
 
-\paragraph{Bayes estimator.} % (fold)
+\paragraph{The Bayes estimator.} % (fold)
+
+% paragraph the_bayes_estimator_ (end)
+% We do ``as if'' $\theta$ where random and with distribution $\mu$.
+% The distribution $P_\theta$ becomes the conditional distribution of $X | T = \theta$, namely
+% \begin{equation*}
+% 	P_\theta[A] = \E [\ind{A}(X) | T = \theta],
+% \end{equation*}
+% or even $P_T[A] = \E [\ind{A}(X) | T]$.
+
+% In what follows, we will assume that we have a dominating measure $\lambda$ on $\Theta$ such that $\mu = g \cdot \lambda$ where $g$ is the density of $T$ on $\Theta$ with resoect tp $\lambda$ (often $\lambda$ is the lEbuesgue measure).
+% We suppose also that thre is a measure $\nu$ on $E$ for which $P_\theta = f(\cdot | \theta) \cdot \nu$ where similarly $\frac{d P_\theta}{d \nu} = f(x | \theta)$. 
+% We use here the notation $f(\cot | \theta)$ instead of $f_\theta$ to stress that it will correspond to a conditional density.
+% We need at this point to classify things about conditional distributions and conditional densities.
 
 
-In that case we can write
-
-where the expectation is computed with respect to the joint distribution of $(T, X)$, namely integration with respect to $Q$ defined by
-
-We do ``as if'' $\theta$ where random and with distribution $\mu$.
-The distribution $P_\theta$ becomes the conditional distribution of $X | T = \theta$, namely
-\begin{equation*}
-	P_\theta[A] = \E [\ind{A}(X) | T = \theta],
-\end{equation*}
-or even $P_T[A] = \E [\ind{A}(X) | T]$.
-
-In what follows, we will assume that we have a dominating measure $\lambda$ on $\Theta$ such that $\mu = g \cdot \lambda$ where $g$ is the density of $T$ on $\Theta$ with resoect tp $\lambda$ (often $\lambda$ is the lEbuesgue measure).
-We suppose also that thre is a measure $\nu$ on $E$ for which $P_\theta = f(\cdot | \theta) \cdot \nu$ where similarly $\frac{d P_\theta}{d \nu} = f(x | \theta)$. 
-We use here the notation $f(\cot | \theta)$ instead of $f_\theta$ to stress that it will correspond to a conditional density.
-We need at this point to classify things about conditional distributions and conditional densities.
-
-
-Let us consider the estimation problem where $A = \Theta$ and let us use the Bayes risk as a measure to assess the error of a procedure $\delta : E \go \Theta$.
-An optimal Bayesian estimator should minimize the Byaes risk. 
-Another beautiful aspect of this Bayesian approach is that the minimizer of the Byaes risk can be made explitic, since using Fubini toghther with thre fact that $f(x | \theta) g(\theta) = g(\theta | x) \bar f(x)$ almost surely, we can rewrite the Bayes risk as follows:
+Let us consider the estimation problem where $A = \Theta \subset \R$ and use the Bayes risk to assess the error of an estimator $\delta : E \go \Theta$.
+Arguably, an optimal Bayesian estimator should minimize the Bayes risk, and a beautiful aspect of the Bayesian approach is that such a minimizer can be computed.
+Indeed, we can rewrite the Bayes risk as follows:
 \begin{align*}
-	R_B(\mu, \delta) &= \int_{\Theta} \int_E \ell(\theta, \delta(x)) g(\theta | x) \bar f(x) \nu(dx) \lambda(d \theta) \\
-	&= \int_E \bar f(x) \nu(dx) \int_{\Theta} \ell(\theta, \delta(x)) g(\theta | x) \lambda(dx) \\
-	&=  \int_E \bar f(x) \nu(dx) \int_{\Theta} \ell(\theta, \delta(x)) Q_x(d \theta).
+	\marginnote{since $p(x | \theta) p(\theta)$ is the joint distribution of the data and the parameter}%
+	R_B(\delta, \mu) &= \int_{\Theta} \int_E \ell(\delta(x), \theta) p(x | \theta) p(\theta) \nu(dx) \lambda(d\theta)  \\
+	\marginnote{Using Fubini and since we know that $p(x | \theta) p(\theta) = p(\theta | x) p_X(x)$ almost surely}%
+	&= \int_E p_X(x) \nu(dx) \int_{\Theta} \ell(\delta(x), \theta) p(\theta | x) \lambda(dx).
 \end{align*}
-We is remarkable is that in order to minimize this quantity, we need to minimize for any fixed $x \in E$ the quantity
+What is remarkable with this rewriting is that in order to minimize $R_B(\delta, \mu)$, we need to minimize for any fixed $x \in E$ the quantity
 \begin{equation*}
-	\int_{\Theta} \ell(\theta, \delta(x)) Q_x(d \theta) = \E_{Q_x} [\ell(T, \delta(x))] 
-	= \E [\ell(T, \delta(X)) | X = x],
+	\marginnote{Once again, $T$ is a random variable with distribution $\mu(d\theta) = p(\theta) \lambda(d\theta)$ and }
+	\int_{\Theta} \ell(\delta(x), \theta) p(\theta | x) \lambda(d \theta) =
+	\E [\ell(\delta(X), T) | X = x],
 \end{equation*}
-namely the expectation of the loss with respect to the posterior distribution $Q_x$ of $T | X = x$.
+namely the conditional expectation of the loss with respect to the posterior distribution of $T$ knowing $X$.
 \begin{definition}
 	Any estimator $\wh \theta(X)$ (not necessarily unique) defined as 
 	\begin{equation*}
-		\wh \theta_(x) \in \argmin_{t \in \Theta} \int_{\Theta} \ell(\theta, t) Q_x(d \theta) 
-		= \argmin_{t \in \Theta} \E_{Q_x} [\ell(T, t) ],
+		\wh \theta(x) \in \argmin_{t \in \Theta} \int_{\Theta} \ell(t, \theta) p(\theta | x) \lambda(d \theta) = \argmin_{t \in \Theta} \E[\ell(t, T) | X = x],
 	\end{equation*}
-	namely a minimizer of the loss averaged by the posterior distribution is called a \emph{Bayes} or \emph{Bayesian estimator} associated to the prior $\mu = g \cdot \lambda$ and to the loss $\ell$.
+	namely a minimizer of the loss averaged by the posterior distribution, is called a \emph{Bayes} or \emph{Bayesian estimator} associated to the prior $\mu(\theta) = p(\theta) \lambda(d \theta)$ and to the loss $\ell$.
 \end{definition}
 
 WHenever $\ell(\theta, \theta') = (\theta - \theta')^2$ then
