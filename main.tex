@@ -516,7 +516,7 @@ We can define the marginal densities of $X$ and $Y$ as
 so that we have
 \begin{align*}
 	\E[\phi(X)] &= \int_{\cX} \phi(x) P_X(dx) = \int_{\cX} \phi(x) p_X(x) \nu_X(dx) \\ 
-	\E[\varphi(Y)] &= \int_{\cY} g(y) P_Y(dx) = \int_{\cY} \varphi(y) p_Y(x) \nu_Y(dy)
+	\E[\varphi(Y)] &= \int_{\cY} \varphi(y) P_Y(dy) = \int_{\cY} \varphi(y) p_Y(x) \nu_Y(dy)
 \end{align*}
 for any $\phi$ and $\varphi$ such that $\phi(X)$ and $\varphi(Y)$ are integrable. 
 Let us remark that
@@ -682,36 +682,43 @@ What is remarkable with this rewriting is that in order to minimize $R_B(\delta,
 	\E [\ell(\delta(X), T) | X = x],
 \end{equation*}
 namely the conditional expectation of the loss with respect to the posterior distribution of $T$ knowing $X$.
+This leads to the following definition of a Bayes estimator.
 \begin{definition}
 	Any estimator $\wh \theta(X)$ (not necessarily unique) defined as 
 	\begin{equation*}
 		\wh \theta(x) \in \argmin_{t \in \Theta} \int_{\Theta} \ell(t, \theta) p(\theta | x) \lambda(d \theta) = \argmin_{t \in \Theta} \E[\ell(t, T) | X = x],
 	\end{equation*}
-	namely a minimizer of the loss averaged by the posterior distribution, is called a \emph{Bayes} or \emph{Bayesian estimator} associated to the prior $\mu(\theta) = p(\theta) \lambda(d \theta)$ and to the loss $\ell$.
+	namely a minimizer of the loss $\ell$ averaged by the posterior distribution, is called a \emph{Bayes} or \emph{Bayesian estimator}.
+	Such an estimator depends on the prior distribution $\mu(d \theta) = p(\theta) \lambda(d \theta)$, the model $P_\theta(dx) = p(x | \theta) \nu(dx)$ and the loss $\ell$.
 \end{definition}
-
-WHenever $\ell(\theta, \theta') = (\theta - \theta')^2$ then
+For the square loss $\ell(\theta', \theta) = (\theta' - \theta)^2$, the Bayes estimator is given by the expectation of the posterior distribution.
+Indeed, it is easy to see that
 \begin{equation*}
-	\argmin_{t \in \R} \E_{Q_x}[ (T - t)^2] = \E_{Q_x}[T]
+	\argmin_{t \in \R} \int_\Theta (t - \theta)^2 p(\theta | x) \lambda(d \theta) 
+	= \int_\Theta \theta p(\theta | x) \lambda(d \theta).
 \end{equation*}
-namely the \emph{Bayes estimator with the quadratic loss is the expectation of the posterior distribution.}
-If $\ell(\theta, \theta') = |\theta - \theta'|$ then 
+If $\ell(\theta', \theta) = |\theta' - \theta|$, we can see that
 \begin{equation*}
-	\argmin_{t \in \R} \E_{Q_x}[ |(T - t| ] = \med(Q_x) = F_{Q_x}^{-1}(1/2),
+	\argmin_{t \in \R} \int_\Theta |t - \theta| p(\theta | x) \lambda(d \theta) = F_{x}^{-1}(1/2),
 \end{equation*}
-namely the Bayes estimator associated to the $\ell_1$ loss is given by the median of the posterior distribution. \todo{exo proof etc}
+where $F_{x}^{-1}(1/2)$ is the \emph{median} of the posterior distribution, where we denoted as $F_x^{-1}$ the generalized inverse of the distribution function $F_x(\theta) = \int_{-\infty}^\theta p(\theta' | x) \lambda(d \theta')$.%
+\sidenote{This comes from the fact that if $X$ is an integrable real random variable with distribution function $F$, a minimizer of $t \mapsto \E|X - t|$ is given by its median $F^{-1}(1/2)$.}
 
 \begin{recipe}
-	On simple examples, we can compute explicitly the Bayes estimator. Given the data density $f(x | \theta)$ and  the prior density $g$, we simply wrte the joint distribution of $(T, X)$ and use the fact that the posterior density is a density, namely it must integrate with respect to $\theta$ to $1$:
+	On some examples, we can compute explicitly the posterior distribution. 
+	Given the data density $p(x | \theta)$ and the prior density $p(\theta)$, we simply write the joint distribution of $(X, T)$ and use the fact that the posterior density is a density, namely its integral with respect to $\theta$ must equal $1$:
 	\begin{equation*}
-		g(\theta | x) = \mathrm{constant}(x) f(x | \theta) g(\theta)
+		p(\theta | x) = \mathrm{constant}(x) p(x | \theta) p(\theta)
 	\end{equation*}
-	where $\mathrm{constant}(x) =  1 / \int_\Theta f(x | \theta) g(\theta) \lambda(d \theta)$, so that we can identify the posterior distribution with a carefull look, and ideally some coffee at the formula fpr $f(x | \theta) g(\theta)$ and identify a density with respect to $\theta$.
+	where $\mathrm{constant}(x) =  1 / \int_\Theta p(x | \theta) p(\theta) \lambda(d \theta)$. 
+	Therefore, we can try to identify directly the posterior distribution by having a careful look at $p(x | \theta) p(\theta)$, together with some coffee, and looking for a density with respect to $\theta$.
 \end{recipe}
 
-Let us give some standard examples of prior and data distribution wuth that the prior can be made epxlicit .
+Let us give some standard examples of prior and models (data distributions) for which the posterior and the Bayes estimator can be made explicit.
 
+\paragraph{The Bayesian coin flip.}
 
+The first example is, once again, a coin flip with a Bayesian flavor.
 Consider the data distribution $X \sim \bin(n, \theta)$ and with prior $\uni([0, 1])$ on $\theta$. This means that $X | T = \theta$ has density
 \begin{equation*}
 	f(x | \theta) = \binom{n}{x} \theta^x (1 - \theta^{n-x} \ind{\{ 0, \ldots, n\}}(x)	

@@ -1,5 +1,6 @@
 
 
+
 \setchapterpreamble[u]{\margintoc}
 \chapter{Linear regression}
 \label{chap:linear_regression}
@@ -131,12 +132,12 @@ matrix
 \begin{equation}
 	\E[ X X^\top] = (\E [X_j X_k])_{1 \leq j, k \leq d}.
 \end{equation}
+We will assume throughout this section that $\E[ X X^\top]$ is invertible, namely that $\E[ X X^\top] \succ 0$.
 The next theorem proves that the uniqueness of the least-squares estimator is equivalent to several equivalent properties on the distribution $\P_X$ of~$X$ (the distribution of the features).
 \begin{theorem}
 	\label{thm:least-squares-existence}
 	Assume that $n \geq d$. The following points about $\P_X$ are all equivalent whenever $X_1, \ldots, X_n$ are independent.
 	\begin{enumerate}
-		\item $\E[X X^\top] \succ 0$
 		\item For any hyperplane $H \subset \R^d$ we have $\P[X \in H] = 0$, namely $\P[X^\top t = 0] = 0$ for any $t \in S^{d-1}$
 		\marginnote{where $S^{d-1} = \{ u \in \R^d : \norm{u} = 1 \}$}
 		\item $\bX^\top \bX = \sum_{i=1}^n X_i X_i^\top \succ 0$ almost surely
@@ -150,14 +151,14 @@ The next theorem proves that the uniqueness of the least-squares estimator is eq
 \end{theorem}
 
 The proof of Theorem~\ref{thm:least-squares-existence} is given in Section~\ref{sec:chap04_proofs} below.
-The non-degenerate assumption stated in Point~2 means that $\P_X$ does not put mass on any hyperplane of $\R^d$.
+The non-degenerate assumption stated in Point~1 means that $\P_X$ does not put mass on any hyperplane of $\R^d$.
 This is a mild assumption: whenever $\P_X \ll \leb$ then this assumption is satisfied, since $\leb[H] = 0$ for any hyperplane $H$.
 In the next section, we provide some first statistical properties about the least-squares estimator $\wh \theta_n$, under the assumption that $\P_X$ is non-degenerate.
 
 \section{Properties of the least squares estimator} % (fold)
 \label{sec:some_properties_of_the_least_squares_estimator}
 
-In this Section we work under the assumption that $\bX^\top \bX \succ 0$ almost surely (this is Point~3 of Theorem~\ref{thm:least-squares-existence}), namely under the assumption that $\P_X$ is non-degenerate.
+In this Section we work under the assumption that $\bX^\top \bX \succ 0$ almost surely (this is Point~2 of Theorem~\ref{thm:least-squares-existence}), namely under the assumption that $\P_X$ is non-degenerate.
 So, without loss of generality, and in order to simplify notations, we consider in this section that $\bX$ is deterministic%
 \sidenote{If we want to work with random $X_1, \ldots, X_n$ then we just need to replace all expectations by conditional expectation with respect to $X_1, \ldots, X_n$.} 
 and such that $\bX^\top \bX \succ 0$, so that $\eps_1, \ldots, \eps_n$ are iid and such that $\E[\beps] = 0$.
@@ -720,7 +721,11 @@ We will see also in the next Section that the leverage score is a very important
 While the previous contents is quite classical and well-known, the results provided in this Section are surprisingly recent and coming from the PhD manuscript of J. Mourtada, see~\sidecite{mourtadaphd, mourtada_leastsquares}.
 
 Let us come back to the general case where $(X_1, Y_1), \ldots, (X_n, Y_n)$ are iid with same distribution as $(X, Y)$, with $X \in \R^d$ and $Y \in \R$ such that $\E \norm{X}^2 < +\infty$ and $\E[Y^2] < +\infty$. 
-Also, we assume that $\P_X$ is non-degenerate, as explained in Theorem~\ref{thm:least-squares-existence}.
+Also, we assume that $\P_X$ is non-degenerate, as explained in Theorem~\ref{thm:least-squares-existence} and we assume that
+\begin{equation*}
+	\bSigma := \E[X X^\top] \succ 0,
+\end{equation*}
+namely that $\bSigma$ is invertible.
 We consider again the linear model (not Gaussian, the results stated here are much more general than that).
 Given $\sigma^2$ and $\P_X$, we consider the following classes of distribution $\P_{X, Y}$ on $(X, Y)$.
 
@@ -738,7 +743,7 @@ We consider the quadratic risk
 \begin{equation*}
 	R(\theta) := \E [ (Y - X^\top \theta)^2] = \int (y - x^\top \theta)^2 \P_{X, Y}(dx, dy).
 \end{equation*}
-If $\P_X$ is non degenerate then $\bSigma = \E[ X X^\top] \succ 0$, and it is easy to see that
+It is easy to see that
 \begin{equation*}
 	\theta^\star = \argmin_{\theta \in \R^d} R(\theta) = \bSigma^{-1} \E[Y X].
 \end{equation*}
@@ -758,7 +763,7 @@ Note that if $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$, then
 	&= \norm{\theta^\star - \theta}_{\bSigma}^2,
 \end{align*}%
 \marginnote[*-5]{We use here the fact that $Y = X^\top \theta^\star + \eps$ and that $\E[\eps | X] = 0$ almost surely.}%
-where we introduced $\norm{x}_{\bSigma}^2 = x^\top \bSigma x$, which is a norm since $\bSigma \succ 0$ ($\P_X$ is non-degenerate).
+where we introduced $\norm{x}_{\bSigma}^2 = x^\top \bSigma x$, which is a norm since we assumed $\bSigma \succ 0$.
 Whenever $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$ we will therefore write
 \begin{equation*}
 	\cE_P(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta^\star - \theta}_{\bSigma}^2
@@ -853,7 +858,7 @@ Let us recall at this point that since $\P_X$ is non-degenerate, and if $X_1, \l
 	\label{thm:minimax-leverage}
 	Under the same assumptions as that of Theorem~\ref{thm:least-squares-minimax}, the minimax risk can be written as
 	\begin{equation*}
-		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
+		\frac 1n \E [\tr ( \wt \bSigma^{-1}) ] = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
 	\end{equation*}
 	where $\ell_{n+1}$ is the leverage of one data point among $n+1$ given by
 	\begin{equation*}
@@ -873,7 +878,7 @@ A corollary of Theorem~\ref{thm:minimax-leverage} is an improved lower bound com
 	\label{cor:proof-lower-bound-leverage}
 	Under the same assumptions as that of Theorem~\ref{thm:least-squares-minimax}, we have that the minimax risk satisfies
 	\begin{equation*}
-		\frac 1n \E \tr ( (\wt \bSigma)^{-1}) = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \sigma^2 \frac{d}{n - d + 1}.
+		\frac 1n \E [ \tr ( \wt \bSigma^{-1}) ] = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big] \geq \sigma^2 \frac{d}{n - d + 1}.
 	\end{equation*}
 \end{corollary}
 The proof can be found in Section~\ref{sec:chap04_proofs}.
@@ -883,11 +888,11 @@ The lower bound $\sigma^2 d / (n - d + 1)$ is very sharp since it can be seen th
 \end{equation*}
 whenever $\P_X = \nor(0, \bSigma)$, if $\wh \theta_n$ is the ordinary least squares estimator.
 This comes from the study of the Wishart distribution, which is the distribution of $\bX^\top \bX$ when $X \sim \nor(0, \bSigma)$.%
-\sidenote{We don't pursue further about Wishart distributions.}
+\sidenote{We won't pursue further about Wishart distributions.}
 This result means that the Gaussian \emph{design} $\nor(0, \bSigma)$ is, almost, the most favorable design for linear regression, since for this distribution, the minimax risk is almost minimal (compare the denominators $n - d - 1$ and $n - d + 1$).%
 \sidenote{Finding the most favorable distribution is, up to our knowledge, an open problem. We conjecture that it is given by the uniform distribution on the unit sphere of $\R^d$.}
 
-We were able to provide a lower bound for $\tr (\E [\wt \bSigma]^{-1} )$ that is explicit with respect to $d, n$ and $\sigma^2$.
+We were able to provide a lower bound for $\E[ \tr (\wt \bSigma^{-1})]$ that is explicit with respect to $d, n$ and $\sigma^2$.
 Now, it remains to provide a similarly explicit upper bound for this quantity.
 This requires extra assumptions on $\P_X$.
 
@@ -939,10 +944,10 @@ Let us wrap up some of the nice things that we learned in this Section.
 
 \subsection{Proof of Theorem~\ref{thm:least-squares-existence}} % (fold)
 
-Point~(3) $\Leftrightarrow$ Point~(4) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. 
-Point~(1) $\Leftrightarrow$ Point~(2) is obvious as well, since $0 = \E[X X^\top] u = 0$ entails $0 = u^\top \E[X X^\top] u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. 
-Point~(3) $\Rightarrow$ Point~(2) comes from a proof by contradiction. If $0 < p = \P[X^\top u = 0]$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
-The proof of Point~(2) $\Rightarrow$ Point~(3) can be done by recurrence. 
+Point~(2) $\Leftrightarrow$ Point~(3) is obvious since $\bX^\top \bX \succ 0$ entails that $\bX^\top \bX$ is invertible. 
+% Point~(1) $\Leftrightarrow$ Point~(2) is obvious as well, since $0 = \E[X X^\top] u = 0$ entails $0 = u^\top \E[X X^\top] u = \E[ (X^\top u)^2] = 0$ which entails $X^\top u = 0$ almost surely. 
+Point~(2) $\Rightarrow$ Point~(1) comes from a proof by contradiction. If $0 < p = \P[X^\top u = 0]$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
+The proof of Point~(1) $\Rightarrow$ Point~(2) can be done by recurrence. 
 We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$.%
 \sidenote{Indeed, $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.}
 We will show that $\spa(X_1, \ldots, X_d) = \R^d$ almost surely by recurrence. 
@@ -950,7 +955,7 @@ We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$.
 For $k=1$ we do have $\dim V_1 = 1$ so it is OK.
 Now, assume that $\dim(V_{k-1}) = k-1$. 
 We have that $X_k$ is independent from $V_{k-1} = \spa(X_1, \ldots, X_{k-1})$ and $\dim(V_{k-1}) = k-1 < d$ so that $V_{k-1} \subset H$ where $H \subset \R^d$ is an hyperplane. 
-So, we have again by independence that $\P[X_k \in V_{k-1}] = \P[X_k \in V_{k-1} | X_1, \ldots, X_{k-1}] \leq \P[X_k \in H] = 0$ using Point~(2). 
+So, we have again by independence that $\P[X_k \in V_{k-1}] = \P[X_k \in V_{k-1} | X_1, \ldots, X_{k-1}] \leq \P[X_k \in H] = 0$ using Point~(1). 
 So, $X_k \notin V_{k-1}$ almost surely, and $\dim(V_k) = k$ almost surely. $\hfill \square$
 
 
