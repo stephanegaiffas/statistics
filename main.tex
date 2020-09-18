@@ -441,7 +441,7 @@ The constants $c_0, c_1 > 0$ allow to tune the importance given to the Type~I an
 Let us go back to the coin flip problem considered in Chapter~\ref{chap:statistical_inference}.
 We observe $X_1, \ldots, X_n$ iid distributed as $\ber(\theta)$ for $\theta \in (0, 1)$.
 The estimator we introduced back then was the empirical mean $\wh \theta_n = \bar X_n = n^{-1} \sum_{i=1}^n X_i$, and we know from~\eqref{eq:bernoulli-quadratic-risk} that the quadratic risk is given by $R(\wh \theta_n, \theta) = \theta (1 - \theta) / n$ for any $\theta \in (0, 1)$.
-But what about the estimator $\wt \theta_n = 0$ ? It is a rather stupid estimator, but if $\theta$ is close to $0$, than it turns out to be a good estimator, and actually, it is easy to see that
+But what about the estimator $\wt \theta_n = 0$ ? It is a rather stupid estimator, but if $\theta$ is close to~$0$, it turns out to be a good estimator, and actually, it is easy to see that
 $R(\wt \theta_n, \theta) < R(\wh \theta_n, \theta)$ whenever $\theta < 1 / (n + 1)$.
 This proves that $\wt \theta_n = 0$ is better than $\wh \theta_n$, when assessed by the quadratic risk, for $\theta$ small enough.%
 \sidenote{A longer story hides beneath this simple example: the Stein effect and the Stein estimator, which provably improves the sample average estimator using thresholding, see~\cite{stein1956inadmissibility,lehmann2006theory} for more details on this.}
@@ -462,7 +462,7 @@ This distribution is called the \emph{prior distribution} or simply the \emph{pr
 Note that $R_B(\delta, \mu) \leq \sup_{\theta \in \Theta} R(\delta, \theta)$ which means that the Bayes risk is always smaller than the worst-case risk over $\Theta$.
 We understand this risk as an average of the risk over $\Theta$ ``weighted'' by the prior distribution $\mu$.
 Given a prior $\mu$, the Bayesian risk is a scalar value: we can compare procedures using it and even try to find a procedure that minimizes it.%
-\sidenote{We will do it in Section~\ref{sec:posterior_distribution_and_bayes_estimator}, such an estimator even has a name: it is a Bayesian estimator.}
+\sidenote{We will do it in Section~\ref{sec:posterior_distribution_and_bayes_estimator}, such an estimator is called a Bayesian estimator.}
 
 \begin{example}
 	For statistical testing with the loss given by~\eqref{eq:bayes-test-loss}, the Bayesian risk associated to a prior $\mu$ writes
@@ -474,7 +474,7 @@ Given a prior $\mu$, the Bayesian risk is a scalar value: we can compare procedu
 
 Another interpretation of the Bayesian risk is of utmost important in Bayesian statistics.
 Indeed, we could say that the parameter $\theta$ \emph{is itself a random variable} distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ ``conditionally'' on $T = \theta$.%
-\sidenote[][*-3]{Of course the event $T = \theta$ has zero probability if $T$ is continuous with respect to the Lebesgue measure. We will explain clearly what such a \emph{conditional distribution} is in Section~\ref{sec:about_conditional_distributions_and_densities} below.}
+\sidenote[][*-3]{Of course the event $T = \theta$ has zero probability if $T$ is continuous with respect to the Lebesgue measure. We will explain clearly what such a \emph{conditional density} is in Section~\ref{sec:about_conditional_distributions_and_densities} below.}
 
 Assuming that the joint distribution $P_{T, X}$ of $(T, X)$ is given by
 \begin{align*}
@@ -498,14 +498,15 @@ Let us recall that we can define the conditional expectation $\E [\phi(X) | Y]$ 
 \end{equation}
 for any measurable and bounded function $\varphi$.
 The particular value $r(y)$ for some $y \in \cY$ is denoted $\E[\phi(X) | Y = y]$. 
-One can prove that
+We know that
 \begin{align*}
 	\E[\phi(X) h(Y) | Y] &= h(Y) \E[ \phi(X) | Y]
 \end{align*}
-almost surely, for any measurable function $h$ and that
+almost surely, for any measurable function $h$ such that $h(Y)$ and $\phi(X) h(Y)$ are integrable, and we have also
 \begin{align}
 	\E [\E[ \phi(X) | Y]] = \E[\phi(X)].
 \end{align}
+Finally, we have $\E[\phi(X) | Y] = \E[\phi(X)]$ whenever $X$ and $Y$ are independent.
 Let us suppose now that the joint distribution $P_{X, Y}$ of $(X, Y)$ has a density $p(x, y)$ with respect to a product of dominating measures $\nu_X \otimes \nu_Y$ on $\cX \times \cY$.
 We can define the marginal densities of $X$ and $Y$ as
 \begin{equation}
@@ -519,19 +520,22 @@ so that we have
 	\E[\varphi(Y)] &= \int_{\cY} \varphi(y) P_Y(dy) = \int_{\cY} \varphi(y) p_Y(x) \nu_Y(dy)
 \end{align*}
 for any $\phi$ and $\varphi$ such that $\phi(X)$ and $\varphi(Y)$ are integrable. 
-Let us remark that
+Let us introduce 
+\begin{equation*}
+	\cY_0 = \big\{ y \in \cY : p_Y(y) = 0 \big\}
+\end{equation*}
+and remark that
 \begin{align*}
-	P_{X, Y} \big[ \{ y \in \cY : p_Y(y) = 0 \} \big] 
-	&= \int_{\cX \times \cY} \ind{p_Y(y) = 0} p(x, y) \nu_X(dx) \nu_Y(dy) \\
-	&= \int_{y \in \cY : p_Y(y) = 0} \nu_Y(dy) \int_{\cX} p(x, y) \nu_X (dx) \\
-	&= \int_{y \in \cY : p_Y(y) = 0} p_Y(y) \nu_Y(dy) = 0
+	P_{X, Y} [ \cX \times \cY_0 ] 
+	&= \int_{\cX \times \cY_0} p(x, y) \nu_X(dx) \nu_Y(dy) \\
+	&= \int_{\cY_0} \nu_Y(dy) \int_{\cX} p(x, y) \nu_X (dx) \\
+	&= \int_{\cY_0} p_Y(y) \nu_Y(dy) = 0.
 	\marginnote{Using~\eqref{eq:bayes-marginal-densities}}
 \end{align*}
-namely $P_{X, Y}[ \{ y \in \cY : p_Y(y) = 0 \}] = 0$.
 Given any probability density $q$ on $\cX$ with respect to $\nu_X$, we can define
 \begin{equation}
 	\label{eq:cond-density-definition}
-	p_{X | Y}(x | y) := \frac{p(x, y)}{p_Y(y)} \ind{p_Y(y) > 0} + q(x) \ind{p_Y(y) = 0},
+	p_{X | Y}(x | y) := \frac{p(x, y)}{p_Y(y)} \ind{\cY_0^\complement}(y) + q(x) \ind{\cY_0}(y),
 \end{equation}
 so that all the versions of $p_{X | Y}$ associated to the choice of $q$ are equal $P_{X, Y}$-almost surely.
 Moreover, we can check immediately that $\int_{\cX} p_{X | Y}(x | y) \nu_X(dx) = 1$, so that it is a probability density with respect to $\nu_X$ on $\cX$.
@@ -544,9 +548,9 @@ we can write, for any measurable and bounded $\varphi$, that
 	\E[ &r'(Y) \varphi(Y)] \\
 	&= \int_{\cY} r'(y) \varphi(y) p_Y(y) \nu_Y(dy) \\
 	\marginnote{Using the definition of $r'$, Fubini and~\eqref{eq:cond-density-definition}}
-	&= \int_{\{ y \in \cY \;:\; p_Y(y) > 0 \}} \varphi(y) p_Y(y) \nu_Y(dy) 
+	&= \int_{\cY_0^\complement} \varphi(y) p_Y(y) \nu_Y(dy) 
 	\int_{\cX} \phi(x) \frac{p(x, y)}{p_Y(y)} \nu_X(dx) \\
-	\marginnote{Using the fact that $P_{X, Y}[\{y \in \cY : p_Y(y) = 0\}] = 0$}
+	\marginnote{Using the fact that $P_{X, Y}[\cX \times \cY_0] = 0$}
 	&= \int_{\cX \times \cY} \phi(x) \varphi(y) p(x, y) \nu_X(dx) \nu_Y(dy) \\
 	&= \E[ \phi(X) \varphi(Y)].
 \end{align*}
@@ -570,14 +574,14 @@ hold $P_{X, Y}$-almost surely.
 From these equalities we can deduce that
 \begin{equation*}
 	p_{X | Y}(x | y) = \frac{p(x, y)}{p_Y(y)} = \frac{p_{Y | X}(y | x) p_X(x)}{\int_{\cX} p(x', y) \nu_X(dx')}
-	\marginnote{Let us recall that we proved that $\{ y \in \cY : p_Y(y) = 0 \}$ has zero $P_{X, Y}$ probability.}
+	\marginnote{recalling that $P_{X, Y}[\cX \times \cY_0] = 0$}
 \end{equation*}
 holds $P_{X, Y}$-almost surely, which leads, using again~\eqref{eq:cond-density-formula}, to the Bayes formula
 \begin{equation}
 	\label{eq:bayes-formula-conditional-densities}
 	p_{X | Y}(x | y) = \frac{p_{Y | X}(y | x) p_X(x)}{\int_{\cX} p_{Y | X}(y | x') p_X(x') \nu_X(dx')},
 \end{equation}
-that holds, once again $P_{X, Y}$-almost surely.
+that holds, once again, $P_{X, Y}$-almost surely.
 This is a remarkable formula, since it allows to \emph{reverse the conditioning}: we can write the conditional density of $X$ knowing $Y$ as a function of the conditional density of $Y$ knowing $X$.
 This formula is at the core of Bayesian statistics, as explained in the next Section.
 
@@ -589,7 +593,7 @@ Let us go back to the setting introduced in Section~\ref{sec:bayesian-risk}.
 We have data $X$ and a statistical model $\{ P_\theta : \theta \in \Theta \}$.
 We consider a prior distribution $\mu$ on $\Theta$.
 We assume that $\mu$ has a density $p(\cdot)$ with respect to a measure $\lambda$ on $\Theta$, namely $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and that $P_\theta$ has a density that we will denote as $p(\cdot | \theta)$ with respect to a measure $\nu$ on $E$.
-\marginnote[*-3]{Using the same letter for both the density of $\mu$ (namely $\theta \mapsto p(\theta)$) and the density of $P_\theta$ (namely $x \mapsto p(x | \theta$)) might sound like a bad idea, but it will lead to very nice notations in what follows, and it won't lead to any ambiguity.}
+\marginnote[*-3]{Using the same letter for both the density of $\mu$ (namely $\theta \mapsto p(\theta)$) and the density of $P_\theta$ (namely $x \mapsto p(x | \theta$)) might look like a bad idea, but it will lead to very nice notations in what follows, and it won't lead to any ambiguity.}
 We want to apply Bayesian reasoning: the density $p(\cdot | \theta)$ of the data is understood as a  conditional density of $X$ ``knowing the parameter $\theta$''.
 
 
@@ -599,10 +603,11 @@ We want to apply Bayesian reasoning: the density $p(\cdot | \theta)$ of the data
 
 In order to formalize this, we introduce a random variable $T$ distributed as $\mu$, and
 we apply~\eqref{eq:cond-density-formula} in order to express the joint density of $(X, T)$ through the product of the conditional density of $X | T$ and the density of $T$:
-\begin{equation*}
+\begin{equation}
+	\label{eq:joint-as-conditional-distribution}
 	\marginnote{Which holds $P_{X, T}$-almost surely.}
 	p_{X, T}(x, \theta) = p_{X | T}(x | \theta) p_T(\theta) = p(x | \theta) p(\theta).
-\end{equation*}
+\end{equation}
 We can only proceed like this to express $p_{X, T}$, since what we are given is the prior density $p(\cdot)$ and the model, namely the density $p(\cdot | \theta)$.
 We know that the marginal density of $X$ can be computed as
 \begin{equation*}
@@ -633,7 +638,8 @@ Let us wrap-up what we constructed in the following definition.
 % We simply used here the \emph{Bayes formula} on conditional densities in order to reverse the order of the conditionning: we expressed $T | X$ from $X | T$ since the distribution of $X | T$ is specified by the model we considered
 
 \begin{definition}
-	Consider a \emph{prior} $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and a model $P_\theta(dx) = p(x | \theta) \nu(dx)$, and the corresponding joint distribution $P(dx, d\theta) = p(x | \theta) p(\theta) \nu(dx) \lambda(d \theta)$.
+	\label{def:posterior-distribution}
+	Consider a \emph{prior} $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and a model $P_\theta(dx) = p(x | \theta) \nu(dx)$ for $\theta \in \Theta$, and the corresponding joint distribution $P(dx, d\theta) = p(x | \theta) p(\theta) \nu(dx) \lambda(d \theta)$.
 	The \emph{posterior distribution} is the distribution with density
 	\begin{equation*}
 		p(\theta | x) = \frac{p(x | \theta) p(\theta)}{\int_\Theta p(x | \theta') p(\theta') \lambda(d \theta')}
@@ -646,9 +652,9 @@ The Bayesian reasoning is therefore as follows: choose a prior density $p(\theta
 Then, compute%
 \sidenote{or approximate it using numerical methods, whenever the posterior distribution cannot be  computed explicitly}%
 the posterior distribution $p(\theta | x)$ of $\theta$ knowing the data $x$. 
-A nice aspect of this approach is that we can quantify uncertainty right out of the box, since instead of an estimator $\wh \theta_n$ (which is, given data, a single value), we obtain a full posterior distribution $p(\theta | x)$ for the parameter $\theta$, which takes into account the data $x$ that we observed.
-However, such a reasoning is of course only possible when we know how to choose a prior, and when we are able to compute or approximate the posterior.
-\sidenote{This is the main criticism with Bayesian methods: the computation of the posterior on complex models, the posterior distribution cannot be computed explicitely, and can require costely numericalapproximation, or algorithms that strongly depart from the original forulation of the model and prior. Citer LDA, Variational Bayes, etc..., voir Bishop}
+A nice aspect of this approach is that we can quantify uncertainty right out of the box, since instead of an estimator $\wh \theta_n$ (which is, given data, a single value), we obtain a full posterior distribution $p(\theta | x)$, which takes into account the data $x$ that we observed.
+However, such a reasoning is of course only possible when we know how to choose a prior, and when we are able to compute exactly or to approximate efficiently the posterior.
+\sidenote{This is the main criticism with Bayesian methods: beyond simple models and conjugate distributions (more on this later), the computation of the posterior is not explicit and requires approximation algorithms that can be numerically expensive, or can depart significantly from the original model, see for instance Chapters~9 and~10 in~\cite{bishop2006pattern}.}
 
 \paragraph{The Bayes estimator.} % (fold)
 
@@ -667,95 +673,123 @@ However, such a reasoning is of course only possible when we know how to choose 
 
 
 Let us consider the estimation problem where $A = \Theta \subset \R$ and use the Bayes risk to assess the error of an estimator $\delta : E \go \Theta$.
-Arguably, an optimal Bayesian estimator should minimize the Bayes risk, and a beautiful aspect of the Bayesian approach is that such a minimizer can be computed.
+Arguably, an optimal Bayesian estimator should minimize the Bayes risk, and a beautiful aspect of the Bayesian approach is that such a minimizer can be defined precisely.
 Indeed, we can rewrite the Bayes risk as follows:
 \begin{align*}
-	\marginnote{since $p(x | \theta) p(\theta)$ is the joint distribution of the data and the parameter}%
+	\marginnote{using~\eqref{eq:joint-as-conditional-distribution}}%
 	R_B(\delta, \mu) &= \int_{\Theta} \int_E \ell(\delta(x), \theta) p(x | \theta) p(\theta) \nu(dx) \lambda(d\theta)  \\
 	\marginnote{Using Fubini and since we know that $p(x | \theta) p(\theta) = p(\theta | x) p_X(x)$ almost surely}%
 	&= \int_E p_X(x) \nu(dx) \int_{\Theta} \ell(\delta(x), \theta) p(\theta | x) \lambda(dx).
 \end{align*}
-What is remarkable with this rewriting is that in order to minimize $R_B(\delta, \mu)$, we need to minimize for any fixed $x \in E$ the quantity
+What is remarkable with this rewriting is that in order to minimize $R_B(\delta, \mu)$, we need to minimize, for any fixed $x \in E$, the quantity
 \begin{equation*}
-	\marginnote{Once again, $T$ is a random variable with distribution $\mu(d\theta) = p(\theta) \lambda(d\theta)$ and }
+	\marginnote{Once again, $T$ is a random variable with distribution $\mu(d\theta) = p(\theta) \lambda(d\theta)$}
 	\int_{\Theta} \ell(\delta(x), \theta) p(\theta | x) \lambda(d \theta) =
 	\E [\ell(\delta(X), T) | X = x],
 \end{equation*}
-namely the conditional expectation of the loss with respect to the posterior distribution of $T$ knowing $X$.
+namely the expectation of the loss with respect to the posterior distribution given by Definition~\ref{def:posterior-distribution}.
 This leads to the following definition of a Bayes estimator.
 \begin{definition}
-	Any estimator $\wh \theta(X)$ (not necessarily unique) defined as 
+	Given a prior $\mu(d \theta) = p(\theta) \lambda(d \theta)$, a model $P_\theta(dx) = p(x | \theta) \nu(dx)$ and a loss $\ell$, any estimator $\wh \theta(X)$ defined as
+	\marginnote{such an estimator is not necessarily unique}
 	\begin{equation*}
 		\wh \theta(x) \in \argmin_{t \in \Theta} \int_{\Theta} \ell(t, \theta) p(\theta | x) \lambda(d \theta) = \argmin_{t \in \Theta} \E[\ell(t, T) | X = x],
 	\end{equation*}
-	namely a minimizer of the loss $\ell$ averaged by the posterior distribution, is called a \emph{Bayes} or \emph{Bayesian estimator}.
-	Such an estimator depends on the prior distribution $\mu(d \theta) = p(\theta) \lambda(d \theta)$, the model $P_\theta(dx) = p(x | \theta) \nu(dx)$ and the loss $\ell$.
+	namely a minimizer of the expectation of the loss with respect to the posterior distribution, is called a \emph{Bayes} or a \emph{Bayesian estimator}.
 \end{definition}
 For the square loss $\ell(\theta', \theta) = (\theta' - \theta)^2$, the Bayes estimator is given by the expectation of the posterior distribution.
 Indeed, it is easy to see that
-\begin{equation*}
-	\argmin_{t \in \R} \int_\Theta (t - \theta)^2 p(\theta | x) \lambda(d \theta) 
-	= \int_\Theta \theta p(\theta | x) \lambda(d \theta).
-\end{equation*}
+\begin{equation}
+	\label{eq:bayesian-estimator-square-loss}
+	\wh \theta(x) = \argmin_{t \in \R} \int_\Theta (t - \theta)^2 p(\theta | x) 
+	\lambda(d \theta) = \int_\Theta \theta p(\theta | x) \lambda(d \theta).
+\end{equation}
 If $\ell(\theta', \theta) = |\theta' - \theta|$, we can see that
 \begin{equation*}
-	\argmin_{t \in \R} \int_\Theta |t - \theta| p(\theta | x) \lambda(d \theta) = F_{x}^{-1}(1/2),
+	\wh \theta(x) = \argmin_{t \in \R} \int_\Theta |t - \theta| p(\theta | x) \lambda(d \theta) = F_{x}^{-1}(1/2),
 \end{equation*}
-where $F_{x}^{-1}(1/2)$ is the \emph{median} of the posterior distribution, where we denoted as $F_x^{-1}$ the generalized inverse of the distribution function $F_x(\theta) = \int_{-\infty}^\theta p(\theta' | x) \lambda(d \theta')$.%
-\sidenote{This comes from the fact that if $X$ is an integrable real random variable with distribution function $F$, a minimizer of $t \mapsto \E|X - t|$ is given by its median $F^{-1}(1/2)$.}
+where $F_{x}^{-1}(1/2)$ is the \emph{median} of the posterior distribution.
+Here, the notation $F_x^{-1}$ stands for the generalized inverse of the distribution function $F_x(\theta) = \int_{-\infty}^\theta p(\theta' | x) \lambda(d \theta')$ of the posterior distribution.%
+\sidenote{This comes from the fact that if $X$ is an integrable real random variable with distribution function $F$, a minimizer of $t \mapsto \E|X - t|$ is given by the median $F^{-1}(1/2)$ of $X$.}
 
 \begin{recipe}
-	On some examples, we can compute explicitly the posterior distribution. 
-	Given the data density $p(x | \theta)$ and the prior density $p(\theta)$, we simply write the joint distribution of $(X, T)$ and use the fact that the posterior density is a density, namely its integral with respect to $\theta$ must equal $1$:
+	On some examples, we can compute explicitly the posterior distribution.
+	Given the data density $p(x | \theta)$ and the prior density $p(\theta)$, the joint density of the data and the prior is $p(x | \theta) p(\theta)$ and we know from Definition~\ref{def:posterior-distribution} that the posterior density is proportional to the joint density, namely 
 	\begin{equation*}
-		p(\theta | x) = \mathrm{constant}(x) p(x | \theta) p(\theta)
+		p(\theta | x) = \mathrm{constant}(x) p(x | \theta) p(\theta),
 	\end{equation*}
 	where $\mathrm{constant}(x) =  1 / \int_\Theta p(x | \theta) p(\theta) \lambda(d \theta)$. 
-	Therefore, we can try to identify directly the posterior distribution by having a careful look at $p(x | \theta) p(\theta)$, together with some coffee, and looking for a density with respect to $\theta$.
+	So, using the fact that the integral of the posterior density with respect to $\theta$ equals~$1$, we can try to identify directly the posterior distribution by having a careful look at $p(x | \theta) p(\theta)$, together with some coffee, and looking for a density with respect to $\theta$.
 \end{recipe}
 
-Let us give some standard examples of prior and models (data distributions) for which the posterior and the Bayes estimator can be made explicit.
+\section{Examples} % (fold)
+\label{sec:bayesian-examples}
 
-\paragraph{The Bayesian coin flip.}
 
-The first example is, once again, a coin flip with a Bayesian flavor.
-Consider the data distribution $X \sim \bin(n, \theta)$ and with prior $\uni([0, 1])$ on $\theta$. This means that $X | T = \theta$ has density
+Let us give some standard examples of priors and data distributions where can apply this recipe.
+
+\subsection{How to choose a restaurant ? (Bayesian coin flip)}
+\label{sub:bayesian-coin-flip}
+
+
+The first example is, once again, a coin flip, but this time with a Bayesian flavor.
+Consider the data distribution $X \sim \bin(n, \theta)$, namely the model with density
 \begin{equation*}
-	f(x | \theta) = \binom{n}{x} \theta^x (1 - \theta^{n-x} \ind{\{ 0, \ldots, n\}}(x)	
+	p(x | \theta) = \binom{n}{x} \theta^x (1 - \theta)^{n-x} \ind{\{ 0, \ldots, n\}}(x)	
 \end{equation*}
-with respect to the counting measure $\nu$ on $\N$ and that the prior distribution has density $g(\theta) = \ind{[0, 1]}(\theta)$ wuth respect to the Lebuesgye measure $\lambda$ on $\R$, so that the joint distribition of $(T, X)$ has density
+with respect to the counting measure $\nu$ on $\N$ and the \emph{flat prior} on $\theta$ with distribution $\uni([0, 1])$ on $\theta$, namely a density
 \begin{equation*}
-	f(\theta, x) = \binom{n}{x} \theta^x (1 - \theta)^{n - x} \ind{[0, 1]}(\theta) 
-	\ind{\{ 0, \ldots, n\}}(x)
+	p(\theta) = \ind{[0, 1]}(\theta)
 \end{equation*}
-with respect to the product measure $\lambda \otimes \nu$. THe posterior distribution, namely the distriution of $T | X=x$ is therefore proportional to $\mapsto \theta^x (1 - \theta)^{n - x} \ind{[0, 1]}(\theta)$. We recognize the $\bet(a, b)$ distribution ???, that as density
+with respect to the Lebesgue measure $\lambda$.
+
+\begin{marginfigure}
+	\includegraphics{images/restos.png}
+	\caption{How to choose a restaurant? Is a restaurant with a good rating but few rates better than a restaurant with a slightly worse rating but more rates?}
+	\label{fig:restaurants}
+\end{marginfigure}
+This model can be useful to help us choose a restaurant: given a restaurant, $\theta$ is the unknown probability that a customer is happy ($1$) or unhappy ($0$) with it and $n$ is the number of customers who gave their (binary) opinion.
+We have no prior information on $\theta$, so we consider the flat prior.
+For each restaurant, we observe the percentage of happy customers (rescaled to a 0 to 5 stars rating in Figure~\ref{fig:restaurants}) and the number $n$ of customers who rated it, so $X$ stands here for the number of happy customers among the $n$ who rated it. 
+Assuming that the customers opinions are independent, we have $X \sim \bin(n, \theta)$.
+The question is the following: how can we choose a restaurant? Is a restaurant with a good rating but few rates better than a restaurant with a slightly worse rating but more rates?
+
+Using the previous recipe, we know that the density of the posterior distribution is proportional to the density of the joint distribution of the data and prior
+\begin{equation*}{}
+	p(x, \theta) = p(x | \theta) p(\theta) = \binom{n}{x} \theta^x (1 - \theta)^{n - x} \ind{[0, 1]}(\theta) \ind{\{ 0, \ldots, n\}}(x)
+\end{equation*}
+with respect to the product measure $\nu \otimes \lambda$.
+This means that the posterior density is proportional to $\mapsto \theta^x (1 - \theta)^{n - x} \ind{[0, 1]}(\theta)$. 
+We recognize the density
 \begin{equation*}
-	\frac{1}{\beta(a, b)} t^{a-1} (1 - t)^{b-1} \ind{[0, 1]}(t)
+	\theta \mapsto \frac{1}{\beta(a, b)} \theta^{a-1} (1 - \theta)^{b-1} \ind{[0, 1]}(\theta)
 \end{equation*}
+ of the $\bet(a, b)$ distribution, that we introduced in Section~\ref{sub:some_classical_distributions} of Chapter~\ref{chap:linear_regression},
 where we recall that $\beta(a, b) = \int_0^1 t^{a-1} (1 - t)^{b-1} d t = \Gamma(a) \Gamma(b)  / \Gamma(a + b)$.
-Therefore, we have that the posterior distribution is given by
+Therefore, we know that the posterior distribution is $\bet(x + 1, n - x + 1)$, namely
 \begin{equation*}
-	Q_x = \bet(x + 1, n - x + 1).
+	p(\theta | x) = \frac{1}{\beta(x + 1, n - x + 1)} \theta^{x} (1 - \theta)^{n-x} \ind{[0, 1]}(\theta)
 \end{equation*}
-Also, we have that
-\begin{equation*}
-	\E[Z^k] = \frac{\beta(a + k, b)}{\beta(a, b)} = \frac{\Gamma(a + k) \Gamma(a + b)}{\Gamma(a + k + b) \Gamma(a)} = \frac{a (a + 1) \cdots (a + k -1)}{(a + b) (a + b + 1) \cdots (a + k + b - 1)}
-\end{equation*}
-\todo{cjeck formula}. In aprticualr we get whenver $B \sim \bet(a, b)$ that
+If $B \sim \bet(a, b)$, we know that
 \begin{equation*}
 	\E[Z] = \frac{a}{a + b} \quad \text{and} \quad \var[Z] = \frac{ab}{(a + b)^2 (a + b + 1)}.
 \end{equation*}
-So, using ???, the Bayes estimator of $\theta$ for the quadratic loss is given by 
+If we consider the square loss for the estimation of $\theta$, we know from Equation~\eqref{eq:bayesian-estimator-square-loss} that the Bayesian estimator is given by the expectation of the posterior, namely
 \begin{equation*}
-	\E_{Q_x}[T | X=x] = \E[ \bet(x+1, n - x + 1)] = \frac{x + 1}{n + 2},
+	\wh \theta = \frac{X + 1}{X + 1 + n - X + 1} = \frac{X + 1}{n + 2}.
 \end{equation*}
-\todo{formula c'est ok comem ca?}
-namely
-\begin{equation*}
-	\wh \theta_n^B = \frac{X + 1}{n + 2},
-\end{equation*}
-which is an estimator different from $\wh \theta_n = X / n$, the one we use in Section~???.
-The quadratic risk of $\wh \theta_n^B$ is, using the bias-variance formula from ??? given by
+Note the difference with the \emph{frequentist} (non-Bayesian) estimator $X / n$ that we considered all along Chapter~\ref{chap:statistical_inference} (it was denoted $S_n / n$ back then).
+This estimator gives a cute Bayesian answer to the restaurant selection problem.
+This estimator is also known as the Laplace's \emph{rule of succession} (see~\sidecite{rule-of-successino} and Figure~\ref{fig:rule-of-succession}).
+\begin{marginfigure}
+	\includegraphics{images/laplace.png}
+	\caption{``Essai philosophique sur les probabilités'' by Pierre-Simon Laplace (1814) in which is introduced the \emph{rule of succession} formula in order to ``solve'' the sunrise problem (what is the probability that the sun will rise tomorrow ?).}
+	\label{fig:rule-of-succession}
+\end{marginfigure}
+
+\todo{BLABLA regle de succession de Laplace}
+
+The quadratic risk of $\wh \theta$ is, using the bias-variance formula from ??? given by
 \begin{align*}
 	\E_\theta[ (\wh \theta_n^B - \theta)^2] &= \var_\theta[\wh \theta_n^B] + (\E_\theta[\wh \theta_n^B] - \theta)^2 \\
 	&= \frac{n \theta(1 - \theta)}{(n + 2)^2} + \Big( \frac{1 - 2 \theta}{n + 2} \Big)^2 = \frac{(1 - 2 \theta)^2 + n \theta (1 - \theta)}{(n+2)^2}
