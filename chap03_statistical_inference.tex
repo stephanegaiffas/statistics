@@ -574,7 +574,7 @@ Indeed, we need to remove the dependence on $\theta$ from the distribution in or
 There is of course a strong connection between confidence intervals and tests, as explained in the following proposition.
 \begin{proposition}
 	\label{prop:ci-and-tests}
-	If $S(X)$ is a confidence set of level $1 - \alpha$, namely $\P_\theta[ \theta \in S(X)] \geq 1 - \alpha$ for any $\theta \in \Theta$, then the test with rejection set $\{ x : D(x) \cap \Theta_0  = \emptyset\}$ is of level $\alpha$.
+	If $S(X)$ is a confidence set of level $1 - \alpha$, namely $\P_\theta[ \theta \in S(X)] \geq 1 - \alpha$ for any $\theta \in \Theta$, then the test with rejection set $\{ x : S(x) \cap \Theta_0  = \emptyset\}$ is of level $\alpha$.
 \end{proposition}
 This proposition easily follows from the fact that $\P_\theta[ S(X) \cap \Theta_0 = \emptyset] \leq \P_\theta[ \theta \notin S(X) ] \leq \alpha$ for any $\theta \in \Theta_0$.
 Confidence intervals and tests are therefore deeply intertwined notions in the sense that when you have built one of the two, you can build easily the other.
@@ -652,7 +652,7 @@ However, the reign of $p$-values in many fields of science are highly criticized
 
 \paragraph{Proof of Theorem~\ref{thm:hoeffding}.} 
 
-We follow the proof from~\cite{massart2007concentration}.
+We follow the proof from~\sidecite{massart2007concentration}.
 First, we can assume without loss of generality that each $X_i$ is centered: it does not change the length $b_i - a_i$ of the interval containing $X_i$ almost surely. 
 We use the Cram\'er-Chernoff method: because of the Markov's inequality, we have
 \begin{equation*}
