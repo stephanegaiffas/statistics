@@ -11,11 +11,11 @@ We know that the closest $X_1$-measurable function which is the closest from $Y_
 Therefore, we want to use the observations $(X_i, Y_i)$ for $i=1, \ldots, n$ in order to build some approximation of $f$.
 
 What kind of functions should we consider ?
-We can consider the simplest non-constant function $\R^d \go \R$ that we can think of, which is naturally a \emph{linear} function $x \mapsto x^\top \theta + c$, hence the name \emph{linear regression model}.
+We can consider the simplest non-constant function $\R^d \go \R$ that we can think of, which is naturally a \emph{linear} function $x \mapsto x^\top w + b$, hence the name \emph{linear regression model}.
 
 \begin{kaobox}[frametitle=Features engineering]
 	Considering only linear functions is of course very limiting. But let us stress that, in practice, we can do whatever we want with the data $(X_1, Y_1), \ldots, (X_n, Y_n)$. 
-	A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings, such as a polynomial mapping, pairwise products leading to $d(d-1)/2$ extra coordinates, etc.
+	A linear model is typically \emph{trained} on \emph{mappings} of $X_i$, that can include non-linear mappings, such as a \emph{polynomial mapping}, that includes all the pairwise products leading to $d(d-1)/2$ extra coordinates, etc.
 	It is uncommon (and suspicious) to work directly with the \emph{raw} vectors of \emph{features} $X_1, \ldots, X_n$: a lot of effort is usually put on the construction of a mapping, that requires knowledge about the data itself.
 	The construction of such a \emph{features mapping}%
 	\marginnote[*-2]{The problem considered here is also known as an instance of \emph{supervised learning} with vectors of \emph{features} $X_i \in \R^d$ and \emph{labels} $Y_i \in \R$.}
@@ -23,12 +23,10 @@ We can consider the simplest non-constant function $\R^d \go \R$ that we can thi
 	Many industrial large scale problems%
 	\marginnote{Large scale means that both $n$ and $d$ are large, when $n$ is large and $n \gg d$ we are considering \emph{big data} while when $d$ is large and $d \gg n$ we work with \emph{high-dimensional} data.}
 	(such as web-display advertisement) are handled using simple linear models, but on highly tested and engineered feature mappings. We won't discuss this in this chapter, and will assume that $X_i$ are well-crafted vectors of features on which we want to train a linear model.	
-	% This makes the model linear we respect to $\phi(X_i)$ but certainly not with respect to $X_i$.
-	% From now on, we will forget about it, and study the linear model which uses $X_i$ as input.
 \end{kaobox}
 
-\emph{Training} a linear model means \emph{learning} the \emph{model weights} $\theta \in \R^d$ and the \emph{intercept} or \emph{population bias} $c \in \R$.  
-To simplify notations we will forget about the intercept from now on, since without loss of generality we can replace $\theta$ by $[1 \; \theta^\top]^\top$ and $X_i$ by $[1 \; X_i^\top]^\top$ (and $d$ by $d +1$).
+\emph{Training} a linear model means \emph{learning} the \emph{model weights} $w \in \R^d$ and the \emph{intercept} or \emph{population bias} $b \in \R$.  
+To simplify notations we will forget about the intercept from now on, since without loss of generality we can simply put $\theta = [1 \; w^\top]^\top$ and replace $X_i$ by $[1 \; X_i^\top]^\top$ (and $d$ by $d +1$).
 
 \section{Ordinary least squares estimator} % (fold)
 \label{sec:least_squares_estimator}
@@ -374,21 +372,21 @@ This proves the following theorem.
 Theorem~\ref{thm:gaussian-ols-distribution} has many consequences for the inference of $\theta$ and $\sigma^2$ in the Gaussian linear model.
 If $\sigma^2$ is known, the set
 \begin{equation*}
-	\cE = \Big \{ t \in \R^d : \frac{1}{\sigma} \norm{(\bX^\top \bX)^{-1} (\wh \theta_n - t)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
+	\cE = \Big \{ t \in \R^d : \frac{1}{\sigma^2} \norm{(\bX^\top \bX)^{1/2} (\wh \theta_n - t)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
 \end{equation*}
 where $q_{\chisq(d)}(1 - \alpha)$ is the quantile function of the $\chisq(d)$ distribution at $1 - \alpha$, is a \emph{confidence set}%
-\sidenote{we call also $\cE$ a confidence ellipsoid in view of its definition}
+\sidenote{we call also $\cE$ a confidence \emph{ellipsoid}}
 for $\theta$ in the Gaussian linear model at level $1 - \alpha$, since it satisfies by construction the coverage property $\P_\theta[ \theta \in \cE] = 1 - \alpha$.
 If $\sigma^2$ is unknown (which is always the case), we use the fact%
-\sidenote{We proved above that $\norm{\bX(\wh \theta_n - \theta)}^2 / \sigma^2 \sim \chisq(d)$ and that $(n-d) \wh \sigma^2 / \sigma^2 \sim \chisq(n - d)$ are independent random variables, so that the definition~\eqref{eq:fisher-definition} of the Fisher distribution entails the result.}
+\sidenote{We proved above that the numerator $\norm{(\bX^\top \bX)^{1/2}(\wh \theta_n - \theta)}^2 / \sigma^2$ has $\chisq(d)$ distribution while the denominator $(n-d) \wh \sigma^2 / \sigma^2$ has $\chisq(n - d)$ distribution and that both are independent, so that the definition~\eqref{eq:fisher-definition} of the Fisher distribution entails the result.}
 that
 \begin{equation*}
-	\frac{\norm{\bX(\wh \theta_n - \theta)}^2}{d \wh \sigma^2} \sim \fis(d, n-d)
+	\frac{\norm{(\bX^\top \bX)^{1/2}(\wh \theta_n - \theta)}^2}{d \wh \sigma^2} \sim \fis(d, n-d)
 \end{equation*}
 and consider instead the ellipsoid
 \begin{equation}
 	\label{eq:fisher-ellipsoid-construction}
-	\Big \{ \theta \in \R^d : \frac{1}{d \wh \sigma^2} \norm{(\bX^\top \bX)^{-1} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\},
+	\Big \{ \theta \in \R^d : \frac{1}{d \wh \sigma^2} \norm{(\bX^\top \bX)^{1/2} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\},
 \end{equation}
 which is by construction a confidence set at level $1 - \alpha$.
 Note the cute trick involved in~\eqref{eq:fisher-ellipsoid-construction}: the ratio structure allows to cancel out $\sigma^2$, leading to a statistic that does not depend on $\sigma^2$, with a \emph{known} distribution.
@@ -666,7 +664,7 @@ Since $\beps / \sigma \sim \nor(0, \bI_n)$ we know from Theorem~\ref{thm:cochran
 since $\dim(E^\perp) = n - k$ and $\dim(W) = k-1$ and that these are independent variables since $E^\perp \perp W$.
 This proves that
 \begin{equation*}
-  T = \frac{\| X_E - X_F \|^2 / (k-1)}{\| X - X_E \|^2 / (n-k)} \sim \cF(k-1, n-k),
+  T = \frac{\| X_E - X_F \|^2 / (k-1)}{\| X - X_E \|^2 / (n-k)} \sim \fis(k-1, n-k),
 \end{equation*}
 so we can consider the Fisher test with rejection region 
 \begin{equation*}
@@ -949,7 +947,7 @@ Point~(2) $\Leftrightarrow$ Point~(3) is obvious since $\bX^\top \bX \succ 0$ en
 Point~(2) $\Rightarrow$ Point~(1) comes from a proof by contradiction. If $0 < p = \P[X^\top u = 0]$ then $X_i^\top u = 0$ for all $i=1, \ldots, n$ with a probability $p^n > 0$ since $X_1, \ldots, X_n$ are iid, so that $\bX^\top \bX \theta = \sum_{i=1}^n (X_i^\top \theta)^2 X_i = 0$ and $\bX^\top \bX$ cannot be invertible almost surely.
 The proof of Point~(1) $\Rightarrow$ Point~(2) can be done by recurrence. 
 We first remark that $\bX^\top \bX$ is invertible if and only if $\spa(X_1, \ldots X_n) = \R^d$.%
-\sidenote{Indeed, $\ker(\bX^\top \bX = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.}
+\sidenote{Indeed, $\ker(\bX^\top \bX) = \ker(\bX)$ so that $\bX^\top \bX u = 0 \Leftrightarrow \bX u = 0 \Leftrightarrow X_i^\top \theta = 0$ for all $i=1, \ldots, n$.}
 We will show that $\spa(X_1, \ldots, X_d) = \R^d$ almost surely by recurrence. 
 We put $V_k = \spa(X_1, \ldots, X_k)$ so that $\dim(V_k) \leq k \leq d$.
 For $k=1$ we do have $\dim V_1 = 1$ so it is OK.

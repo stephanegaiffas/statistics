@@ -497,14 +497,14 @@ The proof of Proposition~\ref{prop:stochastic-ordering} is given in Section~\ref
 However, the proof of $(3) \Rightarrow (1)$ deserves to be discussed here, since it uses a simple yet beautiful \emph{coupling} argument, which is a very powerful technique often used in probability theory~\sidecite{den2012probability}.
 More precisely, we use something called a ``quantile coupling'': consider a random variable $U \sim \uni([0, 1])$%
 \sidenote[][*-6]{We say that $X \sim \uni([a, b])$ for $a < b$ if it has density $x \mapsto (b - a)^{-1} \ind{[a, b]}(x)$ with respect to the Lebesgue measure, namely $\P_X(dx) = (b - a)^{-1} \ind{[a, b]}(x) dx$.}%
-on some probability space and define $X = F_P^-(U)$ and $Y = F_P^-(U)$.
+on some probability space and define $X = F_P^-(U)$ and $Y = F_Q^-(U)$.
 We have by construction%
 \sidenote{This comes from the fact that $\P[F_P^-(U) \leq x] = \P[U \leq F_P(x)] = F_P(x)$ since $U \sim \uni([0, 1])$ and since, by construction of the generalized inverse, we have that $F_P^-(u) \leq x$ is equivalent to $u \leq F_P(x)$ for any $u \in [0, 1]$ and $x \in \R$.}% 
 that $X \sim P$ and $Y \sim Q$, and that
 \begin{equation*}
-	\P[X \leq Y] = \P[F_P^-(U) \leq F_P^-(U)] = 1
+	\P[X \leq Y] = \P[F_P^-(U) \leq F_Q^-(U)] = 1
 \end{equation*}
-since Point~3 tells us that $F_P^-(p) \leq F_P^-(p)$ for any $p \in [0, 1]$. This proves Point~3 $\Rightarrow$ Point~1.
+since Point~3 tells us that $F_P^-(p) \leq F_Q^-(p)$ for any $p \in [0, 1]$. This proves Point~3 $\Rightarrow$ Point~1.
 
 The really nice feature of Proposition~\ref{prop:stochastic-ordering} is that it allows to reformulate $P \lest Q$, which is a property regarding the \emph{distributions} $P$ and $Q$, as a property about \emph{random variables} $X \sim P$ and $Y \sim Q$.
 Let us provide two examples.
@@ -643,7 +643,7 @@ then we are strongly rejecting $H_0$, since it would require a level $\alpha < 1
 If $\alpha(x) = 3\%$, the result of the test is rather ambiguous while $\alpha(x) = 30\%$ is a strong acceptation of $H_0$.
 
 In many sciences, in order to publish conclusions based on experimental observations, researchers must exhibit the $p$-values of the considered statistical tests in order to justify that some effect is indeed observed.
-However, the reign of $p$-values in many fields of science are highly criticized, see for instance~\sidecite{wasserstein-p-values}.
+However, the reign of the $p$-value in many fields of science is highly criticized, see for instance~\sidecite{wasserstein-p-values}.
 
 
 \section{Proofs} % (fold)

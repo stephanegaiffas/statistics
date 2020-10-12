@@ -781,13 +781,11 @@ If we consider the square loss for the estimation of $\theta$, we know from Equa
 Note the difference with the \emph{frequentist} (non-Bayesian) estimator $X / n$ that we considered all along Chapter~\ref{chap:statistical_inference} (it was denoted $S_n / n$ back then).
 This estimator gives a cute Bayesian answer to the restaurant selection problem.
 This estimator is also known as the Laplace's \emph{rule of succession} (see~\sidecite{rule-of-successino} and Figure~\ref{fig:rule-of-succession}).
-\begin{marginfigure}
+\begin{marginfigure}[*2]
 	\includegraphics{images/laplace.png}
-	\caption{``Essai philosophique sur les probabilités'' by Pierre-Simon Laplace (1814) in which is introduced the \emph{rule of succession} formula in order to ``solve'' the sunrise problem (what is the probability that the sun will rise tomorrow ?).}
+	\caption{``Essai philosophique sur les probabilités'' by Pierre-Simon Laplace (1814) in which is introduced the \emph{rule of succession} formula in order to ``solve'' the sunrise problem (What is the probability that the sun will rise tomorrow ?).}
 	\label{fig:rule-of-succession}
 \end{marginfigure}
-
-\todo{BLABLA regle de succession de Laplace}
 
 The quadratic risk of $\wh \theta$ is, using the bias-variance formula from ??? given by
 \begin{align*}
@@ -807,6 +805,13 @@ Note that however, this is not often the case and BLALBA
 The more general case is the Dirichlet / Multinomial distributions, that we leave as an exercice.
 
 \todo{dire aussi qu'on peut noter abusiement $\theta \sim ???$}
+
+
+
+\subsection{Gaussian sample with a Gaussian prior}
+
+% subsection subsection_name (end)
+
 Another classical example is with the Gaussian distribution.
 Consider data $X_1, \ldots, X_n$ iid with distribution $\nor(\theta, \sigma^2)$ and prior $\theta \sim \cN(0, \tau^2)$.
 Let us find out the posterior distribution in this case
@@ -825,6 +830,12 @@ so that the Bayes estimator for the quadratic risk is given by
 	\wh \theta_n^B = \frac{1}{n + \sigma^2 / \tau^2} \sum_{i=1}^n X_i.
 \end{equation*}
 This entails also that the Gussian distribuion is conjuguated to itself.
+
+
+
+\subsection{Bayesian linear regression with Gaussian prior} % (fold)
+
+% subsection subsection_name (end)
 
 Another very interesting example is the Gaussian linear regression model we considered in Chapter ??? where
 $Y_i = X_i^\top \theta + \eps_i$ with deterministic $X_i \in R^d$ (or everythin is doe conditionally on them) and $\eps_i \sim \nor(0, \sigma^2)$ and iid.
