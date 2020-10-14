@@ -673,8 +673,8 @@ so we can consider the Fisher test with rejection region
 We can rewrite the statistic $T$ in a much more interpretable way.
 First, we can write
 \begin{align*}
-  \| X - X_E \|^2 &= \sum_{i=1}^k \sum_{j=1}^{n_i} (X_{i, j} - X_{i, \bullet})^2 \\
-  &= \sum_{i=1}^k n_i  \frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - X_{i, \bullet})^2 =: n V_{\text{intra}},
+  \| X - X_E \|^2 &= \sum_{i=1}^k \sum_{j=1}^{n_i} (X_{i, j} - \bar X_{i, \bullet})^2 \\
+  &= \sum_{i=1}^k n_i  \frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - \bar X_{i, \bullet})^2 =: n V_{\text{intra}},
 \end{align*}
 where $V_{\text{intra}}$ is the so-called \emph{intra-class variance}%
 \sidenote{A \emph{class} corresponds here to a sample $i$}
@@ -773,7 +773,7 @@ and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$, 
 where this expectation is with respect to $P^{\otimes n}$, for the randomness coming from the data. 
 We can consider now the \emph{minimax risk} for a set $\cP$ of distributions:
 \begin{equation*}
-	\inf_{\wh \theta} \sup_{P \in \cP} \E \cE_P(\wh \theta).
+	\inf_{\wh \theta} \sup_{P \in \cP} \E \big[ \cE_P(\wh \theta) \big].
 \end{equation*}
 The infimum is taken over any possible estimator, namely any statistic of the data, while the sup is over all distributions in $\cP$. Hence the name minimax, since we look at the worst-case excess risk over the considered set $\cP$, but we consider the best possible estimator (with the inf).
 Since $\cG(\P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$, the minimax risk of the former is smaller than the one of the latter.
@@ -789,7 +789,7 @@ Let us introduce
 \begin{equation*}
 	\wh \bSigma = \frac 1n \sum_{i=1}^n X_i X_i^\top = \frac 1n \bX^\top \bX
 \end{equation*}
- and let us introduce also the ``whitened'' random vectors $\wt X_i = \bSigma^{-1/2} X_i$ (so that $\var[\wt X_i] = \bI_d$) and define
+ and let us introduce also the ``whitened'' random vectors $\wt X_i = \bSigma^{-1/2} X_i$ (so that $\E[\wt X_i (\wt X_i)^\top] = \bI_d$) and define
 \begin{equation*}
 	\wt \bSigma = \frac 1n \sum_{i=1}^n \wt X_i \wt X_i^\top = \bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2}.
 \end{equation*}
