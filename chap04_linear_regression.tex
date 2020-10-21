@@ -1,6 +1,5 @@
 
 
-
 \setchapterpreamble[u]{\margintoc}
 \chapter{Linear regression}
 \label{chap:linear_regression}
@@ -764,21 +763,21 @@ Note that if $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$, then
 where we introduced $\norm{x}_{\bSigma}^2 = x^\top \bSigma x$, which is a norm since we assumed $\bSigma \succ 0$.
 Whenever $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$ we will therefore write
 \begin{equation*}
-	\cE_P(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta^\star - \theta}_{\bSigma}^2
+	\cE(\theta) = R(\theta) - R(\theta^\star) = \norm{\theta - \theta^\star}_{\bSigma}^2
 \end{equation*}
 and whenever $\wh \theta$ depends on the data $(X_1, Y_1), \ldots, (X_n, Y_n)$, we can consider, since $(X, Y)$ is an independent copy with the same distribution,
 \begin{equation*}
-	\E [ \cE_P(\wh \theta) ]
+	\E [ \cE(\wh \theta) ]
 \end{equation*}
 where this expectation is with respect to $P^{\otimes n}$, for the randomness coming from the data. 
 We can consider now the \emph{minimax risk} for a set $\cP$ of distributions:
 \begin{equation*}
-	\inf_{\wh \theta} \sup_{P \in \cP} \E \big[ \cE_P(\wh \theta) \big].
+	\inf_{\wh \theta} \sup_{P \in \cP} \E[\cE(\wh \theta)].
 \end{equation*}
 The infimum is taken over any possible estimator, namely any statistic of the data, while the sup is over all distributions in $\cP$. Hence the name minimax, since we look at the worst-case excess risk over the considered set $\cP$, but we consider the best possible estimator (with the inf).
 Since $\cG(\P_X, \sigma^2) \subset \cC(\P_X, \sigma^2)$, the minimax risk of the former is smaller than the one of the latter.
 
-Some remarks and extra notation is required before we can state the main result of the section.
+Some remarks and extra notations are required before we can state the main result of the section.
 \begin{itemize}
 	\item The linear model is \emph{well-specified} here, since we assume that $Y = X^\top \theta^\star + \eps$ almost surely with $\E[\eps | X] = 0$, so that there is no approximation term of $\E[Y | X]$ by $X^\top \theta^\star$.
 	\item For the class $\cP = \cC(\P_X, \sigma^2)$, we expect a \emph{minimax estimator}%
@@ -801,8 +800,8 @@ The following theorem holds.
 	\begin{equation}
 		\label{eq:least-squares-minimax}
 		\begin{split}
-			\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] 
-			&= \inf_{\wh \theta} \sup_{P \in \cG(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] \\
+			\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE(\wh \theta)] 
+			&= \inf_{\wh \theta} \sup_{P \in \cG(\P_X, \sigma^2)} \E [\cE(\wh \theta)] \\
 			&= \frac{\sigma^2}{n} \E [\tr(\wt \bSigma ^{-1})].
 		\end{split}
 	\end{equation}
@@ -819,7 +818,13 @@ This theorem deserves several remarks.
 	\item The Gaussian noise, namely the class $\cG(\P_X, \sigma^2)$ ``saturates'' the minimax risk, and corresponds to the \emph{least favorable} distribution in the minimax sense.
 	\item The minimax risk is invariant by a linear transformation of the features vectors: it is unchanged if one replaces $X_i$ by $X_i' = \bA X_i$ for some deterministic invertible matrix $\bA$. Indeed we have in this case $\wh \bSigma' = \frac 1n \sum_{i=1}^n X_i' X_i'^\top = \bA \wh \bSigma \bA^\top$ so that $(\wh \bSigma')^{-1} \bSigma' = (\bA^\top)^{-1} (\wh \bSigma)^{-1} \bSigma \bA^\top$ which proves that $(\wh \bSigma')^{-1} \bSigma'$ and $(\wh \bSigma)^{-1} \bSigma$ are congruent matrices, so that they share the same trace, namely $\tr((\wh \bSigma')^{-1} \bSigma') = \tr((\wh \bSigma)^{-1} \bSigma)$, and the minimax risk is indeed invariant when replacing $X_i$ by $\bA X_i$. This is of course expected, since the supremum is over linear functions.
 \end{itemize}
-Since $\bA \mapsto \tr( \bA^{-1})$ is a \emph{convex} function on the cone of positive definite matrices, we know from Jensen's inequality that
+A lower bound for $\sigma^2 \E [\tr(\wt \bSigma ^{-1})] / n$ can be easily obtained thanks to the following proposition.
+\begin{proposition}
+	\label{prop:trace-inv-convex}
+	The function $\bA \mapsto \tr( \bA^{-1})$ is convex on the cone of positive definite matrices.
+\end{proposition}
+The proof of Proposition~\ref{prop:trace-inv-convex} is given in Section~\ref{sec:chap04_proofs} below.
+By combining Proposition~\ref{prop:trace-inv-convex} and Jensen's inequality, we obtain
 \begin{equation*}
 	\E [\tr({\wt \bSigma}^{-1}) ] \geq \tr (\E [\wt \bSigma]^{-1} ),
 \end{equation*}
@@ -830,25 +835,9 @@ but $\E[\wt \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma^{-1}] \bSigma^{-1/2} = \bI
 holds, and consequently the minimax risk satisfies
 \begin{equation}
 	\label{eq:first-explicit-minimax-lower-bound}
-	\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] 
+	\inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE(\wh \theta)] 
 	= \frac{\sigma^2}{n} \E [\tr(\wt \bSigma ^{-1})] \geq \sigma^2 \frac dn.
 \end{equation}
-The proof of the convexity of $\bA \mapsto \tr(\bA)^{-1})$ can be easily deduced from the following Taylor expansion. 
-Take $\bA \succ 0$ and $\bB$ a symmetrical matrix and $t > 0$ small.
-We have the expansion
-\begin{align*}
-	(\bA + t \bB)^{-1} &= (\bA (\bI + t \bA^{-1} \bB))^{-1} \\
-	&= \bA^{-1} - t \bA^{-1} \bB \bA^{-1} + t^2 (\bA^{-1} \bB)^2 \bA^{-1} + \cdots
-\end{align*}
-so that 
-\begin{align*}
-	\frac{\partial^2 \tr((\bA + t \bB)^{-1})}{\partial t^2} 
-	&= 2 \tr( (\bA^{-1} \bB)^2 \bA^{-1} ) \\
-	&= 2 \tr( \bA^{-1} \bB \bA^{-1} \bB \bA^{-1} ) \\
-	&= 2 \tr( \bC \bA^{-1} \bC^\top)
-\end{align*}
-where $\bC = \bA^{-1} \bB$. But since $\bA^{-1} \succ 0$ we have $\bC \bA^{-1} \bC^\top \succ 0$ which proves that the second derivative is non-negative.
-
 
 We can also provide another expression for $\E [\tr (\wt \bSigma^{-1})]$ using the leverage scores we discussed in Section~\ref{sec:leverages}.
 Let us recall at this point that since $\P_X$ is non-degenerate, and if $X_1, \ldots X_{n+1}$ are iid and distributed as $\P_X$, we have $\sum_{i=1}^{n+1} X_i X_i^\top \succ 0$.
@@ -858,7 +847,7 @@ Let us recall at this point that since $\P_X$ is non-degenerate, and if $X_1, \l
 	\begin{equation*}
 		\frac 1n \E [\tr ( \wt \bSigma^{-1}) ] = \E \Big[ \frac{\wh \ell_{n+1}}{1 - \wh \ell_{n+1}} \Big]
 	\end{equation*}
-	where $\ell_{n+1}$ is the leverage of one data point among $n+1$ given by
+	where $\wh \ell_{n+1}$ is the leverage of one data point among $n+1$ given by
 	\begin{equation*}
 		\wh \ell_{n+1} = X_{n+1}^\top \Big( \sum_{i=1}^{n+1} X_i X_i^\top \Big)^{-1} X_{n+1},
 	\end{equation*}
@@ -882,7 +871,7 @@ A corollary of Theorem~\ref{thm:minimax-leverage} is an improved lower bound com
 The proof can be found in Section~\ref{sec:chap04_proofs}.
 The lower bound $\sigma^2 d / (n - d + 1)$ is very sharp since it can be seen that
 \begin{equation*}
-	\E [\cE_P(\wh \theta_n)] = \sigma^2 \frac{d}{n - d - 1}
+	\E [\cE(\wh \theta_n)] = \sigma^2 \frac{d}{n - d - 1}
 \end{equation*}
 whenever $\P_X = \nor(0, \bSigma)$, if $\wh \theta_n$ is the ordinary least squares estimator.
 This comes from the study of the Wishart distribution, which is the distribution of $\bX^\top \bX$ when $X \sim \nor(0, \bSigma)$.%
@@ -898,10 +887,10 @@ The first assumption is a ``quantified'' version of the non-degenerate assumptio
 Indeed, we assume that there is $\alpha \in (0, 1]$ and $C \geq 1$ such that
 \begin{equation}
 	\label{eq:quanti-nondegenerate}
-	\P[ |X^\top \theta | \geq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
+	\P[ |X^\top \theta | \leq t \norm{\theta}_{\bSigma} ] \leq (C t)^\alpha
 \end{equation}
 for any $t > 0$ and any non-zero vector $\theta \in \R^d$. 
-This is equivalent to the assumption that $\P[ |\wt X^\top \theta | \geq t] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1} X$.
+This is equivalent to the assumption that $\P[ |\wt X^\top \theta | \leq t] \leq (C t)^\alpha$ for any $\theta \in S^{d-1}$ where we recall that $\wt X = \bSigma^{-1/2} X$.
 This assumption ``quantifies'' the assumption $\P[X^\top \theta = 0] = 0$.
 The second assumption about $\P_X$ requires that
 \begin{equation}
@@ -921,7 +910,7 @@ by the condition $\E[(X^\top \theta)^4]^{1/4} \leq \kappa \E[ (X^\top \theta)^2]
 	\end{equation*}
 	This entails, together with Theorem~\ref{thm:least-squares-minimax} and the lower bound~\eqref{eq:first-explicit-minimax-lower-bound}, that
 	\begin{equation*}
-		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE_P(\wh \theta)] \leq \sigma^2 \frac dn 
+		\sigma^2 \frac dn \leq \inf_{\wh \theta} \sup_{P \in \cC(\P_X, \sigma^2)} \E [\cE(\wh \theta)] \leq \sigma^2 \frac dn 
 		\Big( 1 + 8 C' \kappa \Big( \frac dn \Big) \Big).
 	\end{equation*}
 \end{theorem}
@@ -976,6 +965,46 @@ Finally, since $\bP_j$ is an orthogonal projection matrix onto a space of dimens
 We know that $Z' := \bQ^\top Z \sim \nor(0, \bI_n)$, so $\bP_j Z = \bQ [Z_1' \cdots Z_{n_j}']^\top =: \bQ Z_-'$ and $\norm{\bP_j Z}^2 = \norm{\bQ Z_-''}^2 = \norm{Z_-''}^2$ (since $\bQ^\top \bQ = \bI_n$), so that finally, we have $\norm{\bP_j Z}^2 = \sum_{j=1}^{n_j} (Z_j')^2$.
 This proves that $\norm{\bP_j Z}^2 \sim \chisq(n_j)$ since $Z' \sim \nor(0, \bI_n)$.
 $\hfill \square$
+
+
+\subsection{Proof of Proposition~\ref{prop:trace-inv-convex}} % (fold)
+\label{sub:proof_of_proposition_prop:trace-inv-convex}
+
+Put $f(\bA) = \tr(\bA^{-1})$ for $\bA \succ 0$ and consider $\bA, \bB \succ 0$ and $\alpha \in [0, 1]$.
+We write
+\begin{equation*}
+	f(\alpha \bA + (1 - \alpha) \bB) = f(\bA + (1 - \alpha) \bD) = g(1 - \alpha),
+\end{equation*}
+where we defined $g_{\bA, \bD}(u) = f(\bA + u \bD)$ for $u \in [0, 1]$ and $\bD = \bB - \bA$.
+First, let us prove that $g_{\bA, \bD}''(0) \geq 0$ for any $\bA \mgeq 0$ and symmetric $\bD$.
+Indeed, we have using a Taylor expansion that
+\begin{align*}
+	(\bA + \eps \bD)^{-1} &= (\bA (\bI + \eps \bA^{-1} \bD))^{-1} \\
+	&= \bA^{-1} - \eps \bA^{-1} \bD \bA^{-1} + \eps^2 (\bA^{-1} \bD)^2 \bA^{-1} + \cdots
+\end{align*}
+where $\eps > 0$ is small enough and $\cdots$ contains terms of order $O(\eps^3)$.
+So, we have that
+\begin{align*}
+	g_{\bA, \bD}''(0) = 2 \tr( (\bA^{-1} \bD)^2 \bA^{-1} ) 
+	% = 2 \tr( \bA^{-1} \bD \bA^{-1} \bD \bA^{-1} ) 
+	= 2 \tr( \bC \bA^{-1} \bC^\top)
+\end{align*}
+where $\bC = \bA^{-1} \bD$.
+But $\bA^{-1} \mgeq 0$ so $\bC \bA^{-1} \bC^\top \mgeq 0$ and $g_{\bA, \bD}''(0) \geq 0$.
+But
+\begin{align*}
+	g_{\bA, \bD}''(u) &= \frac{\partial^2}{\partial \eps^2} g_{\bA, \bD}(u + \eps) 
+	= \frac{\partial^2}{\partial \eps^2} f(\bA + (u + \eps) \bD) \\
+	&= g_{\bA + u \bD, \bD}''(0) \geq 0
+\end{align*}
+since $\bA + u \bD = (1 - u) \bA + u \bB \mgeq 0$.
+This proves that $g_{\bA, \bD} : [0, 1] \rightarrow \R^+$ is convex, which allows to conclude since
+\begin{align*}
+	f(\alpha \bA + (1 - \alpha) \bB) &= g(1 - \alpha) 
+	= g(\alpha \cdot 0 + (1 - \alpha) \cdot 1) \\
+	&\leq \alpha g(0) + (1 - \alpha) g(1) \\
+	&= \alpha f(\bA) + (1 - \alpha) f(\bB).
+\end{align*}
 
 
 \subsection{Proof of Theorem~\ref{thm:least-squares-minimax}:  the upper bound} % (fold)

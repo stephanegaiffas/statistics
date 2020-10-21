@@ -405,7 +405,7 @@ For the problems of estimation and testing, we can define a set $A$ of \emph{dec
 
 Given a (measurable) statistical procedure $\delta : E \go A$, we \emph{decide} $\delta(X) \in A$.
 In order to assess a decision, we use a \emph{loss function} $\ell : A \times \Theta \go \R$.
-This means that if the true parameter is $\theta \in \Theta$ and if we decide $a \in A$ then we incur a loss $\ell(a, \theta) \in \R$.
+This means that if the true parameter is $\theta \in \Theta$ and if we decide $a \in A$, we incur a loss $\ell(a, \theta) \in \R$.
 
 \begin{definition}
 	Consider a statistical experiment with data $X \in E$ and a set of parameters $\Theta$, a set $A$ of decisions and a loss function $\ell : A \times \Theta \go \R$. The \emph{risk} of a statistical procedure $\delta : E \go A$ is given by
@@ -472,8 +472,8 @@ Given a prior $\mu$, the Bayesian risk is a scalar value: we can compare procedu
 	which is a weighted combination of the Type~I and Type~II errors averaged by the prior $\mu$.
 \end{example}
 
-Another interpretation of the Bayesian risk is of utmost important in Bayesian statistics.
-Indeed, we could say that the parameter $\theta$ \emph{is itself a random variable} distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ ``conditionally'' on $T = \theta$.%
+Another interpretation of the Bayesian risk is of utmost importance in Bayesian statistics.
+Indeed, we could say that the parameter $\theta$ is \emph{itself a random variable} distributed as $\mu$, that we denote $T$ instead of $\theta$, and that $P_\theta$ is actually the distribution of $X$ ``conditionally'' on $T = \theta$.%
 \sidenote[][*-3]{Of course the event $T = \theta$ has zero probability if $T$ is continuous with respect to the Lebesgue measure. We will explain clearly what such a \emph{conditional density} is in Section~\ref{sec:about_conditional_distributions_and_densities} below.}
 
 Assuming that the joint distribution $P_{T, X}$ of $(T, X)$ is given by
@@ -787,128 +787,350 @@ This estimator is also known as the Laplace's \emph{rule of succession} (see~\si
 	\label{fig:rule-of-succession}
 \end{marginfigure}
 
-The quadratic risk of $\wh \theta$ is, using the bias-variance formula from ??? given by
+Using the bias-variance formula~\eqref{eq:bias-variance-decomposition} from Chapter~\ref{chap:statistical_inference}, we can compute the quadratic risk of $\wh \theta$ as follows:
 \begin{align*}
-	\E_\theta[ (\wh \theta_n^B - \theta)^2] &= \var_\theta[\wh \theta_n^B] + (\E_\theta[\wh \theta_n^B] - \theta)^2 \\
-	&= \frac{n \theta(1 - \theta)}{(n + 2)^2} + \Big( \frac{1 - 2 \theta}{n + 2} \Big)^2 = \frac{(1 - 2 \theta)^2 + n \theta (1 - \theta)}{(n+2)^2}
+	\E_\theta[ (\wh \theta - \theta)^2] &= \var_\theta[\wh \theta] + (\E_\theta[\wh \theta] - \theta)^2 \\
+	&= \frac{n \theta(1 - \theta)}{(n + 2)^2} + \Big(\frac{1 - 2 \theta}{n + 2} \Big)^2 \\
+	&= \frac{n \theta - n \theta^2 + 1 - 4 \theta + 4 \theta^2}{(n+2)^2},
 \end{align*}
-and the Bayes ris can be computed as 
+so that the Bayes risk with uniform prior $\mu(d \theta) = p(\theta) d\theta$ where $p(\theta) = \ind{[0, 1]}(\theta)$ is given by
+\begin{align*}
+	R_B(\wh \theta, \mu) &= \int_0^1 \E_\theta[ (\wh \theta - \theta)^2] d \theta 
+	= \frac{1}{6(n+2)}.
+\end{align*}
+Using the exact same arguments, it is easy to see that if we use the prior distribution $\beta(a, b)$ instead of $\uni([0, 1])$ (which is a particular case, since $\uni([0, 1]) = \beta(1, 1)$) the posterior distribution is given by
 \begin{equation*}
-	\int_0^1 \Big( \frac{1 - 2 \theta}{n + 2} \Big)^2 = \frac{(1 - 2 \theta)^2 + n \theta (1 - \theta)}{(n+2)^2} d \theta = ???
+	p(\theta | x) = \bet(a + x, b + n - x + b),
 \end{equation*}
-\todo{une facton plus direct de le calculer ?}
-
-
-Followingn Example ? it is easy to see that if the prior is $\beta(a, b)$ and the data distribution
-\todo{define clearly data distributin } si $\bin(n, \theta)$ then the posterio distribution is $\bet(a + x - 1, b + n - x + 1)$. Note that for this example the prior and posterior belong to the same family of $\bet$ distributions. In such a case, we say the the $\bin$ and $\bet$ distributions are conjuguate distributions: computations cna be made explicit in such case.
-Note that however, this is not often the case and BLALBA
-The more general case is the Dirichlet / Multinomial distributions, that we leave as an exercice.
-
-\todo{dire aussi qu'on peut noter abusiement $\theta \sim ???$}
-
-
+which leads to a Bayesian estimator (for the square loss) given by
+\begin{equation*}
+	\wh \theta = \frac{X + a}{n + a + b}.
+\end{equation*}
+In this example, the prior and the posterior both belong to the family of $\bet$ distributions. 
+In such a case, we say that the $\bin$ and $\bet$ distributions are \emph{conjugated}, which corresponds to a situation where the posterior distribution can be \emph{explicitly} computed.
 
 \subsection{Gaussian sample with a Gaussian prior}
 
-% subsection subsection_name (end)
-
 Another classical example is with the Gaussian distribution.
-Consider data $X_1, \ldots, X_n$ iid with distribution $\nor(\theta, \sigma^2)$ and prior $\theta \sim \cN(0, \tau^2)$.
-Let us find out the posterior distribution in this case
+Consider data $X_1, \ldots, X_n$ iid with $\nor(\theta, \sigma^2)$ distribution, namely
+\begin{equation*}
+	p(x | \theta) = \text{const}(\sigma) \exp\Big( - \frac{1}{2 \sigma^2} \sum_{i=1}^n 
+	(x_i - \theta)^2 \Big),
+\end{equation*}
+where $x = [x_1 \cdots x_n]^\top$ and $\text{const}(\sigma)$ is a constant which depends only on $\sigma$ and a prior $\nor(0, \tau^2)$ distribution on $\theta$, namely
+\begin{equation*}
+	p(\theta) = \text{const}(\tau) \exp\Big(-\frac{\theta^2}{2 \tau^2} \Big).
+\end{equation*}
+We proceed as previously and write the joint distribution
 \begin{align*}
-	f_{X | T}(x | \theta) g(\theta) &= c(\sigma) \exp\Big( - \frac{1}{2 \sigma^2} \sum_{i=1}^n (x_i - \mu)^2 - \frac{\mu}{\tau^2} \Big) \\
-	&= c(\sigma) \exp \Big (  -\Big( \frac{1}{2 \gamma} \mu^2 + \frac{\mu}{\sigma^2} \sum_{i=1}^n x_i + c(x_1, \ldots, x_n) \Big)  \Big ) \\
-	&= c(\sigma) \exp \Big( -\Big( \frac{1}{2 \gamma} \Big( \mu -  \frac{\mu}{\sigma^2} \sum_{i=1}^n x_i 
-	\Big)^2 + c(x_1, \ldots, x_n) \Big)  \Big )
+	p(x | \theta) p(\theta) &= \text{const}(\sigma, \tau) \exp\Big( - \frac{1}{2 \sigma^2} 
+	\sum_{i=1}^n (x_i - \theta)^2 - \frac{\theta^2}{2 \tau^2} \Big) \\
+	&= \text{const}(\sigma, \tau, x) \exp \bigg ( - \frac 12 \Big( \frac{n}{\sigma^2} + \frac{1}{\tau^2} \Big) \theta^2 + \frac{1}{\sigma^2} \sum_{i=1}^n x_i \theta  \bigg) \\
+	&= \text{const}(\sigma, \tau, x) \exp \bigg( - \frac{1}{2 \gamma} \Big(\theta - \frac{\gamma}{\sigma^2} \sum_{i=1}^n x_i \Big)^2 \bigg),
 \end{align*}
-where we put $\gamma = 1 / (n / \sigma^2 + 1 / \tau^2) = \sigma^2 / (n + \sigma^2 / \tau^2)$ and where $c$ stands for uninteresing constants which entails that the posterior distribution is
+where we put $\gamma = \sigma^2 / (n + \sigma^2 / \tau^2)$.
+This proves that
 \begin{equation*}
-	\nor\Big( \frac{\mu}{\sigma^2} \sum_{i=1}^n x_i, \sigma^2 / (n + \sigma^2 / \tau^2) \Big)
+	p(\theta | x) = \nor \bigg( \frac{1}{n + \sigma^2 / \tau^2} \sum_{i=1}^n x_i, \frac{\sigma^2}{n + \sigma^2 / \tau^2} \bigg),
 \end{equation*}
-so that the Bayes estimator for the quadratic risk is given by 
+and that the Bayes estimator for the square loss is given by
 \begin{equation*}
-	\wh \theta_n^B = \frac{1}{n + \sigma^2 / \tau^2} \sum_{i=1}^n X_i.
+	\wh \theta = \frac{1}{n + \sigma^2 / \tau^2} \sum_{i=1}^n X_i.
 \end{equation*}
-This entails also that the Gussian distribuion is conjuguated to itself.
+This proves, in particular, that the Gaussian family is \emph{conjugate} with itself.
 
 
+\subsection{Bayesian linear regression with a Gaussian prior} % (fold)
 
-\subsection{Bayesian linear regression with Gaussian prior} % (fold)
 
-% subsection subsection_name (end)
-
-Another very interesting example is the Gaussian linear regression model we considered in Chapter ??? where
-$Y_i = X_i^\top \theta + \eps_i$ with deterministic $X_i \in R^d$ (or everythin is doe conditionally on them) and $\eps_i \sim \nor(0, \sigma^2)$ and iid.
-In the Gaussian linear regression setting, we have that $\by \sim \nor(\bX \theta, \sigma^2 \bI)$ where we recall that $\by$ $\bX$ are given by ????.
-We consider this in a Bayesian setting by assuming that $\by | T = \theta = \nor(\bX \theta, \sigma^2 \bI)$ and by considering the prior distribution $\theta \sim \nor(0, \frac{1}{\lambda} \bI_d)$.
-The joint distribution of $(\by, T)$ is, therefor, given by
+Another very interesting example is the Gaussian linear regression model that we considered in Section~\ref{sec:gaussian_linear_model} of Chapter~\ref{chap:linear_regression}, where
 \begin{equation*}
-	f_{\by | T = \theta}(y | \theta) g(\theta) = \frac{1}{(\sigma \sqrt{2 \pi})^{n}} 
+	Y_i = X_i^\top \theta + \eps_i	
+\end{equation*}
+with deterministic $X_i \in \R^d$ and iid $\eps_i \sim \nor(0, \sigma^2)$.
+This means that $\by \sim \nor(\bX \theta, \sigma^2 \bI_n)$, where we recall that $\by = [Y_1 \cdots Y_n]^\top$ and that $\bX$ is the $n \times d$ matrix with rows given by $X_1, \ldots, X_n$.
+We consider this model in a Bayesian setting, by using a $\nor(0, \lambda^{-1} \bI_d)$ prior on $\theta$, where $\lambda > 0$.
+The joint distribution of $(\theta, \by)$ is given by
+\begin{equation*}
+	p(\theta, \by) = \text{const}(\sigma, \lambda)
 	\exp \Big( -\frac{1}{2 \sigma^2} \norm{\by - \bX \theta}^2 - \frac {\lambda}{2} \norm{\theta}^2 \Big).
 \end{equation*}
-What is, in this setting, the posterior distribution $\P_{\theta | \by}$ ?
-\todo{ en fait c'est chiant, on a vraiment envie de simplifier ces putain de notations de merde}
-This is somewhat more complicated then what we did in both previous examples, and we need the following theorem about the multivatiate Gaussian distribution to handle this example.
+What is, in this setting, the posterior distribution $p(\theta | \by)$ ?
+This is slightly more complicated than what we did in both previous examples, and deserves the next theorem.
 \begin{theorem}
-	Consider two matrices $\bLambda \succ 0$ and $\bL \succ 0$ and consider 
-	$X$ such that $\P_X = \nor(\mu, \bLambda^{-1})$ and $Y$ such that $\P_{Y | X = x} = \nor(\bA x + b, \bL^{-1})$. Then, we have the following:
+	\label{thm:posterior-gaussian-linear}
+	Consider the Gaussian linear model, namely the data distribution
 	\begin{equation*}
-		\P_Y \sim \nor( \bA \mu + b, \bL^{-1} + \bA \bLambda^{-1} \bA^\top)		
+		p(\by | \theta) =  \nor(\bX \theta, \sigma^2 \bI_n)	
 	\end{equation*}
-	and
+	with prior
 	\begin{equation*}
-		\P_{X | Y = y} = \nor(\bSigma (\bA^\top \bL (y - b) + \bLambda \mu), \bSigma)
+		p(\theta) = \nor(0, \lambda^{-1} \bI_d)
 	\end{equation*}
-	where $\bSigma = (\bLambda + \bA^\top \bL \bA)^{-1}$.
+	for some $\lambda > 0$. Then, we have
+	\begin{align*}
+		&p(\theta | \by) \\
+		\; &= \nor \Big( (\bX^\top \bX  + \lambda \sigma^2 \bI_d)^{-1} \bX^\top \by, \;
+		\sigma^2 (\bX^\top \bX + \lambda \sigma^2  \bI_d)^{-1} \Big).
+	\end{align*}
 \end{theorem}
-The proof of this results can be found in ???? Bishop ??? dire endroit exact.
-This is a computational proves that makes heavy use of ???
- The proof is given in ???
-In the case that interests us we have $\mu = 0$, $\bLambda^{-1} = \bI_d / \lambda$, $\bLambda = \lambda \bI_d$, $\bL^{-1} = \sigma^2 \bI_n$, $\bA = \bX$ and $b = 0$ so that
+The proof of Theorem~\ref{thm:posterior-gaussian-linear} is given in Section~\ref{sec:sec:chap05_proofs} below.
+If we consider the square loss $\ell(\theta', \theta) = \norm{\theta' - \theta}^2$ where $\norm{\cdot}$ is the Euclidean norm on $\R^d$, we have that the Bayesian estimator is the expectation%
+\sidenote{since $L(t) = \E [\norm{Z - t}^2]$ for $t \in \R^d$ is minimized at $t^* = \E[Z]$ whenever $\E [\norm{Z}^2] < +\infty$} 
+of the posterior distribution, namely
 \begin{equation*}
-	\bSigma = \Big( \lambda \bI_d + \frac{1}{\sigma^2} \bX^\top \bX \Big)^{-1} = \sigma^2 \Big( \bX^\top \bX  + \lambda \sigma^2 \Big)
+	\wh \theta = (\bX^\top \bX  + \lambda \sigma^2 \bI_d)^{-1} \bX^\top \by.
 \end{equation*}
-so that the posterior is given by
+In this example, the Bayes estimator coincides%
+\sidenote{since the mode and the expectation of a Gaussian distribution are the same}
+with the so-called MAP estimator (Maximum A Posteriori), which is given, when it exists, by the \emph{mode} of the posterior distribution.
+
+We could have computed the MAP estimator without computing the posterior distribution.
+Indeed, we know that the posterior distribution $p(\by | \theta)$ is proportional to the joint distribution $p(\theta, \by)$, hence proportional to
 \begin{equation*}
-	\P_{\theta | \by} = \nor \Big( (\bX^\top \bX  + \lambda \sigma^2 \bI_d)^{-1} \bX^\top \by,
-	\sigma^2 (\bX^\top \bX + \lambda \sigma^2 \bI_d)^{-1} \Big)
-	 \Big)
-\end{equation*}
-and the Bayes estimator for the quaradtic risk writes
-\begin{equation*}
-	\wh \theta_n^B = (\bX^\top \bX  + \lambda \sigma^2 \bI_d)^{-1} \bX^\top \by.
-\end{equation*}
-In this example, the Bayes estimator coincides with the so-called MAP estimator (maximum a posterior), which is given by, when it exists, the mode of the posterior, since the Gaussian distribution is symmetrical.
-Indeed, the posterior distribugion is propoertional to
-\begin{equation*}
-	\exp \Big( -\frac{1}{2 \sigma^2} \norm{\by - \bX \theta}^2 - \frac{\lambda}{2} \norm{\theta}^2 \Big)
+	\exp \Big( -\frac{1}{2 \sigma^2} \norm{\by - \bX \theta}^2 - \frac{\lambda}{2} \norm{\theta}^2 \Big),
 \end{equation*}
 so that maximizing this function with respect to $\theta$ corresponds to minimizing
 \begin{equation*}
 	F(\theta) = \norm{\by - \bX \theta}^2 + \sigma^2 \lambda \norm{\theta}^2.
 \end{equation*}
-The function $F$ is strongly convex, since its Hessian satisfies $\nabla^2 F(\theta) = 2 \bX^\top \bX + 2\sigma^2 \lambda \bI_d \mgeq \sigma^2 \lambda \bI_d \succ 0$.
-So, its minimizers must cancel out its gradient
+The function $F$ is strongly convex on $\R^d$, since its Hessian satisfies 
+$\nabla^2 F(\theta) = 2 \bX^\top \bX + 2\sigma^2 \lambda \bI_d \mgeq \sigma^2 \lambda \bI_d \succ 0$ for any $\theta \in \R^d$.
+So, its unique global minimizer cancels out the gradient
 \begin{equation*}
 	\nabla F(\theta) = 2 \bX^\top (\bX \theta - \by) + 2 \sigma^2 \lambda \theta,
 \end{equation*}
-and therefore equals
+and is therefore equal to
 \begin{equation*}
-	\wh \theta_n = (\bX^\top \bX + 2 \sigma^2 \lambda \bI_d)^{-1} \bX^\top \by.
+	\wh \theta = (\bX^\top \bX + 2 \sigma^2 \lambda \bI_d)^{-1} \bX^\top \by,
 \end{equation*}
-Note that this corresponds to a \emph{regularized} or \emph{penalized} version of the least-squares estimator 
-since
+as announced above.
+This estimator corresponds to a \emph{regularized} or \emph{penalized} version of the least-squares estimator.
+Any minimizer of
 \begin{equation*}
-	\wh \theta_\lambda = \argmin_{\theta \in \R^d} \Big( \norm{\by - \bX \theta}^2 + \pen(\theta) \Big),
+	\wh \theta_{\pen} = \argmin_{\theta \in \R^d} \Big\{ \norm{\by - \bX \theta}^2 + \pen(\theta) \Big\},
 \end{equation*}
-with $\pen(\theta) = \sigma^2 \lambda \norm{\theta}^2$ is called the \emph{ridge penalization}.
-This penalization avoid the parameters, also called the \emph{model weights} to take large values, and is the most widely used form of penalization in statistics and machine learning (and is used way beyond the least-squares regression problem considered here).
-\todo{also tikonov regularization blabla}
-What we proved is that, for the Gaussian linear model, a Gaussian prior on the model weights acts exactly as a penalization term, forbidding these weights to be complextely \emph{free} (in eventually take arbitrary large values, when the conditioning of $\bX$ is bad, for instance). The variance term of the prior $\theta \sim \nor(0, \lambda^{-1} \bI_d)$ is parametrized by $\lambda > 0$: whenever $\lambda$ is small, then the prior is almost "flat" and the penalization in ??? is small: we expect in this case $\wh \theta_\lambda$ to be close to the least-squares estimator $\wh \theta_n$ (and $\wh \theta_\lambda = \wh \theta$ whenever $\lambda  = 0$). On the other hand, if $\lambda$ is large, the prior is highly concentrated around $0$, which is equivaluent to a strong penalization in ???
+where $\pen : \R^d \rightarrow \R^+$ is a so-called \emph{penalization}, is called a \emph{penalized} least-squares estimator.\sidenote{it might be unique or not, depending on $\pen$ and $\bX$}
+A penalization function $\pen$ typically satisfies $\pen(0) = 0$ and that $\pen(\theta)$ is a non-increasing function with respect to the absolute value of each coordinate of $\theta$, so that $\pen$ \emph{penalizes} the fact that $\theta$ has large coordinates.
 
+
+\paragraph{Ridge penalization.}
+
+Whenever $\pen(\theta) = \lambda \norm{\theta}^2$, we call $\pen$ the \emph{ridge} penalization and the problem is called \emph{ridge regression}. 
+This penalization ``forces'' the coordinates of $\theta \in \R^d$ to remain ``small''.
+It is the most widely used form of penalization in statistics and machine learning and it is used way beyond the setting of least-squares regression. 
+For instance, this penalization is used in deep learning under the name \emph{Weight decay}.
+
+
+\paragraph{A prior is a form of regularization.}
+
+Interestingly, we observe in this example that for the model of Gaussian linear regression, an isotropic Gaussian prior $p(\theta) = \nor(0, \lambda^{-1} \bI_d)$ acts exactly as a ridge penalization, which forbids the coordinates of $\theta$ to be \emph{free}.%
+\sidenote{and eventually take arbitrary large values, whenever the conditioning of $\bX$ is bad for instance}
+Given $\lambda > 0$, we define the minimizer of the ridge regression problem as
+\begin{equation}
+	\label{eq:ridge-regression}
+	\wh \theta_\lambda = \argmin_{\theta \in \R^d} \Big\{ \norm{\by - \bX \theta}^2 + \lambda \norm{\theta}^2 \Big\}.
+\end{equation}
+Whenever $\lambda$ is very small, then the prior is almost "flat" which is equivalent to the fact that the ridge penalization term in~\eqref{eq:ridge-regression} is negligible.
+In this case, we expect $\wh \theta_\lambda$ to be close to the least-squares estimator $\wh \theta_0$.%
+\sidenote{which is $\wh \theta_\lambda$ with $\lambda = 0$}
+On the other hand, if $\lambda$ is large, the prior is highly concentrated around $0$, which is equivalent to a very strong ridge penalization in the computation of $\wh \theta_\lambda$.
+
+The parameter $\lambda > 0$ used in the ridge penalization correspond to a regularization \emph{strength}.
+It is also called in machine learning a \emph{hyper-parameter}%
+\sidenote{since it ``parametrizes'' the parameters...}, which is tuned in practice using cross-validation.
+
+\todo{Show the regularization path of the ridge estimator on a dataset}
 
 \section{Proofs} % (fold)
 \label{sec:sec:chap05_proofs}
+
+
+\subsection{Proof of Theorem~\ref{thm:posterior-gaussian-linear}} % (fold)
+\label{sub:proof_of_theorem_thm:posterior-gaussian-linear}
+
+Let us first recall that the prior is given by
+\begin{equation*}
+	p(\theta) = \text{const}(\lambda) \exp \Big(- \frac{\lambda}{2} \norm{\theta}^2 \Big)
+\end{equation*}
+and that the model is given by
+\begin{equation*}
+	p(\by | \theta) = \text{const}(\sigma) \exp\Big( -\frac{1}{2 \sigma^2} \norm{\by - \bX \theta}^2 \Big),
+\end{equation*}
+so that the logarithm of the joint density of $(\theta, \by)$ writes
+\begin{align*}
+	\log p(\theta, \by) &= \log p(\theta) + \log p(\by | \theta) \\
+	&= \text{const}(\sigma^2, \lambda) - \frac{1}{2 \sigma^2} (\by - \bX \theta)^\top (\by - \bX \theta) 
+	- \frac{\lambda}{2} \theta^\top \theta.
+\end{align*}
+Let us develop and rewrite this expression as a quadratic form with respect to $(\theta, \by)$ (forgetting about the constant terms):
+\begin{align*}
+	&\frac{1}{\sigma^2} y^\top y - \frac{2}{\sigma^2} \by^\top \bX \theta + \frac{1}{\sigma^2} \theta^\top \bX^\top \bX \theta + \lambda \theta^\top \theta \\
+	& \quad = 
+	\begin{bmatrix}
+	\theta \\
+	\by
+	\end{bmatrix}^\top
+	\begin{bmatrix}
+	\frac{1}{\sigma^2} \bX^\top \bX + \lambda \bI_d & - \frac{1}{\sigma^2} \bX^\top  \\
+	- \frac{1}{\sigma^2} \bX & \frac{1}{\sigma^2} \bI_n
+	\end{bmatrix}
+	\begin{bmatrix}
+	\theta \\
+	\by
+	\end{bmatrix} \\
+	& \quad = \begin{bmatrix}
+	\theta \\
+	\by
+	\end{bmatrix}^\top
+	\bK
+	\begin{bmatrix}
+	\theta \\
+	\by
+	\end{bmatrix}.
+\end{align*}
+This computation proves that the joint distribution of $(\theta, \by)$ is Gaussian with \emph{precision} matrix $\bK$,%
+\sidenote{The \emph{precision} matrix is the \emph{inverse} of the covariance matrix}
+namely 
+\begin{equation*}
+	p(\theta, \by) = \nor(0, \bK^{-1}).
+\end{equation*}
+Now, in order to obtain the posterior distribution $p(\theta | \by)$, we need to compute the conditional density of $\theta$ 
+knowing $\by$ from the joint distribution of $(\theta, \by)$.
+Since the joint distribution is Gaussian, it turns out to be particularly easy, as explained in the following proposition.
+\begin{proposition}
+	\label{prop:cond-gaussian-vector}
+	Let $Z$ be a Gaussian vector $Z \sim \nor(\mu, \bSigma)$ on $\R^m$ with $\bSigma \succ 0$. 
+	We consider the decomposition of $Z$, and of its expectation and covariance matrix, into two blocks $X_a$ and $X_b$ as follows
+	\begin{equation*}
+		X = 
+		\begin{bmatrix}
+			X_a \\
+			X_b
+		\end{bmatrix},
+		\quad
+		\mu =
+		\begin{bmatrix}
+			\mu_a \\
+			\mu_b	
+		\end{bmatrix}
+		\quad \text{and} \quad
+		\bSigma = 
+		\begin{bmatrix}
+			\bSigma_{a, a} & \bSigma_{a, b} \\
+			\bSigma_{a, b}^\top & \bSigma_{b, b}
+		\end{bmatrix}.
+	\end{equation*}
+	We decompose in the same way the precision matrix, namely
+	\begin{equation}
+		\bK = \bSigma^{-1} =
+		\begin{bmatrix}
+			\bK_{a, a} & \bK_{a, b} \\
+			\bK_{a, b}^\top & \bK_{b, b}
+		\end{bmatrix}.		
+	\end{equation}
+	Then, the conditional density of $X_a$ knowing $X_b$ is given by
+	\begin{equation*}
+		p_{X_a | X_b}(x_a | x_b) = 
+		\nor \Big( \mu_a - \bK_{a, a}^{-1} \bK_{a, b} (x_b - \mu_b), 
+		\; \bK_{a, a}^{-1} \Big),
+	\end{equation*}
+	where we used the precision matrix $\bK$. 
+	We can also compute the conditional density as
+	\begin{align*}
+		&p_{X_a | X_b}(x_a | x_b) \\
+		&= \nor \Big( \mu_a + \bSigma_{a, b} \bSigma_{b, b}^{-1} (x_b - \mu_b), 
+		\; \bSigma_{a, a} - \bSigma_{a, b} \bSigma_{b, b}^{-1} \bSigma_{a, b}^\top \Big),	
+	\end{align*}
+	where we used this time the covariance $\bSigma$.
+\end{proposition}
+The proof of Proposition~\ref{prop:cond-gaussian-vector} is given below.
+In order to compute the posterior $p(\theta | \by)$, we use Proposition~\ref{prop:cond-gaussian-vector} with $X_a = \theta$, $X_b = \by$, $\mu_a = 0$, $\mu_b = 0$ and the precision matrix
+\begin{equation*}
+	\bK =
+	\begin{bmatrix}
+		\bK_{a, a} & \bK_{a, b} \\
+		\bK_{a, b}^\top & \bK_{b, b}
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+	\frac{1}{\sigma^2} \bX^\top \bX + \lambda \bI_d & - \frac{1}{\sigma^2} \bX^\top  \\
+	- \frac{1}{\sigma^2} \bX & \frac{1}{\sigma^2} \bI_n
+	\end{bmatrix}.
+\end{equation*}
+Namely, we obtain that $p(\theta | \by) = \nor(\mu_{\theta | \by}, \; \bSigma_{\theta | \by})$ with
+\begin{align*}
+	\mu_{\theta | \by} &= \mu_a - \bK_{a, a}^{-1} \bK_{a, b} (x_b - \mu_b) 
+	% = \frac{1}{\sigma^2}  \Big( \frac{1}{\sigma^2} \bX^\top \bX + \lambda \bI_d \Big)^{-1} \bX^\top \by \\
+	= \big( \bX^\top \bX + \lambda \sigma^2 \bI_d \big)^{-1} \bX^\top \by,
+\end{align*}
+and
+\begin{equation*}
+	\bSigma_{\theta | \by} = \bK_{a, a}^{-1} = \sigma^2 \Big( \bX^\top \bX + \lambda \sigma^2 \bI_d \Big)^{-1},
+\end{equation*}
+which concludes the proof of Theorem~\ref{thm:posterior-gaussian-linear}.
+
+\paragraph{Proof of Proposition~\ref{prop:cond-gaussian-vector}.} % (fold)
+
+We have that
+\begin{align*}
+	\log p_{(X_a, X_b)}(x_a, x_b) = \text{const}(\bK) - \frac 12 (x - \mu)^\top \bK (x - \mu)
+\end{align*}
+and that
+\begin{align*}
+	&(x - \mu)^\top \bK (x - \mu) \\
+	&= (x_a - \mu_a)^\top \bK_{a,a} (x_a - \mu_a) + (x_a - \mu_a)^\top \bK_{a, b} (x_b - \mu_b) \\
+	&\quad + (x_b - \mu_b)^\top \bK_{a,b}^\top (x_a - \mu_a) + (x_b - \mu_b)^\top \bK_{b,b} (x_b - \mu_b) \\
+	&= (x_a - \mu_a + \bK_{a,a}^{-1} \bK_{a,b} (x_b - \mu_b))^\top \bK_{a, a} \\
+	& \quad \times (x_a - \mu_a + \bK_{a,a}^{-1} \bK_{a,b} (x_b - \mu_b)) + \text{const}(\mu, \bK, x_b).
+\end{align*}
+We know that $p_{X_a | X_b}(x_a | x_b)$ is proportional to $p_{(X_a, X_b)}(x_a, x_b)$, so we already know from the previous computation that
+\begin{equation*}
+	p_{X_a | X_b}(x_a | x_b) = 
+	\nor \Big( \mu_a - \bK_{a, a}^{-1} \bK_{a, b} (x_b - \mu_b), 
+	\; \bK_{a, a}^{-1} \Big).
+\end{equation*}
+Now, in order to express $p_{X_a | X_b}$ through the covariance $\bSigma$, we need to compute the inverse of $\bSigma$.
+Let us recall the following classical block inversion formula
+\begin{equation*}
+	\begin{bmatrix}
+	\bA & \bB \\
+	\bC & \bD		
+	\end{bmatrix}^{-1}
+	=
+	\begin{bmatrix}
+		\bS & - \bS \bB \bD^{-1} \\
+		- \bD^{-1} \bC \bS & \bD^{-1} + \bD^{-1} \bC \bS \bB \bD^{-1}
+	\end{bmatrix},
+\end{equation*}
+where $\bS = (\bA - \bB \bD^{-1} \bC)^{-1}$ is called the \emph{Schur complement} with respect to the block $\bD$.
+We use this formula to compute
+\begin{equation*}
+	\bK = 
+	\begin{bmatrix}
+		\bK_{a, a} & \bK_{a, b} \\
+		\bK_{a, b}^\top & \bK_{b, b}
+	\end{bmatrix}
+	= 
+	\begin{bmatrix}
+		\bSigma_{a, a} & \bSigma_{a, b} \\
+		\bSigma_{a, b}^\top & \bSigma_{b, b}
+	\end{bmatrix}^{-1}.
+\end{equation*}
+This gives us
+\begin{equation*}
+	\bK_{a, a} = \bS = (\bA - \bB \bD^{-1} \bC)^{-1} = (\bSigma_{a,a} - \bSigma_{a,b} \bSigma_{b,b}^{-1} \bSigma_{a,b}^\top)^{-1}
+\end{equation*}
+and
+\begin{equation*}
+	\bK_{a,a}^{-1} \bK_{a,b} = - \bS^{-1} \bS \bB \bD^{-1} = - \bB \bD^{-1} = - \bSigma_{a,b} \bSigma_{b,b}^{-1},
+\end{equation*}
+so that
+\begin{align*}
+	\mu_a - \bK_{a, a}^{-1} \bK_{a, b} (x_b - \mu_b) = \mu_a + \bSigma_{a,b} \bSigma_{b,b}^{-1} (x_b - \mu_b),
+\end{align*}
+which concludes the proof of Proposition~\ref{prop:cond-gaussian-vector}. $\hfill \square$
+
 
 
 \subsection{Proof of the minimax lower bound ???} % (fold)
