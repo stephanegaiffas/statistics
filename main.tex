@@ -1171,10 +1171,13 @@ So, using Theorem~\ref{thm:posterior-gaussian-linear}, we have that
 	p(\theta | \by) = \nor\Big( \wh \theta_\lambda, \frac{\sigma^2}{n} (\bX^\top \bX + \lambda \bI_d)^{-1} \Big)
 \end{equation*}
 where
-\begin{equation*}
-	\wh \theta_\lambda = (\bX^\top \bX + n \lambda \bI_d)^{-1} \bX^\top \by = 
-	\argmin_{\theta \in \R^d} \Big( \frac 1n \norm{\by - \bX \theta}^2 + \lambda \norm{\theta}^2 \Big)
-\end{equation*}
+\begin{equation}
+	\label{eq:ridge-estimator-lower-bound}
+	\begin{split}
+		\wh \theta_\lambda &= (\bX^\top \bX + n \lambda \bI_d)^{-1} \bX^\top \by \\
+		&= \argmin_{\theta \in \R^d} \Big( \frac 1n \norm{\by - \bX \theta}^2 + \lambda \norm{\theta}^2 \Big)		
+	\end{split}
+\end{equation}
 is the ridge-penalized least squares estimator.
 The second trick is that we \emph{know how to minimize the Bayes risk}~\eqref{eq:ls-bayes-risk}: it can be minimized by looking for
 \begin{equation*}
@@ -1185,65 +1188,65 @@ But, let us remark that if $Z$ is a random vector such that $\E \norm{Z}^2 < \in
 by $F(t) = \E \norm{Z - t}_{\bSigma}^2$ is minimized at $t^* = \E[Z]$ whenever 
 $\bSigma \succ 0$.
 This entails that the Bayes estimator for the loss $\ell(\theta', \theta) = \norm{\theta' - \theta}_{\bSigma}^2$ is indeed $\wh \theta_\lambda$.
-ICI ICI ICI ICI ICI ICI
-% \begin{equation*}
-% 	 = \Big( \frac 1n \bX^\top \bX + \lambda \bI_d\Big)^{-1} \bX^\top \by
-% \end{equation*}
-and we end up, by combining ??? and ??? to the lower bound 
+So, we end up with the lower bound 
 \begin{align*}
-	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 &\geq 
+	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta 
+	\norm{\wh \theta - \theta}_{\bSigma}^2 &\geq 
 	\int_{\R^d} \E_\theta \norm{\wh \theta_\lambda - \theta}_{\bSigma}^2 \Pi_\lambda(d \theta) \\
-	&= \E_{\theta \sim \Pi_\lambda} \E_\theta [\cE(\wh \theta_\lambda)] 
+	&= \E_{\theta \sim \Pi_\lambda} \E_\theta [\cE(\wh \theta_\lambda)]
 \end{align*}
-on the minimax risk, for any $\lambda > 0$, that we are able to compute exactly, thanks to the next Lemma.
-Let us recall that $\wh \bSigma = n^{-1} \bX^\top \bX = n^{-1} \sum_{i=1}^n X_i X_i\top$ and introduce $\wh \bSigma_\lambda = \wh \bSigma + \lambda \bI_d$.
+for any $\lambda > 0$, that we are able to compute exactly thanks to the next Lemma.
+Let us recall that $\wh \bSigma = n^{-1} \bX^\top \bX = n^{-1} \sum_{i=1}^n X_i X_i^\top$ and introduce $\wh \bSigma_\lambda = \wh \bSigma + \lambda \bI_d$.
 \begin{lemma}
 	\label{lem:excess_risk_ridge}
-	The excess risk of the ridge estimator $\wh \theta_\lambda$ given by ? equals
-	\begin{equation*}
-		\E [\cE(\wh \theta_\lambda)] = \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big)
-	\end{equation*}
+	The excess risk of the ridge estimator $\wh \theta_\lambda$ given by~\eqref{eq:ridge-estimator-lower-bound} is given by
+	\begin{align*}
+		\E [\cE(\wh \theta_\lambda)] &= \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \\
+		& \quad + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big)
+	\end{align*}
 	under the assumption that $Y_i = X_i^\top \theta^* + \eps_i$ for $\eps_i \sim \nor(0, \sigma^2)$.
 \end{lemma}
-We inject the formula given by Lemma~\ref{lem:excess_risk_ridge} in ??? to end up with the lower bound
+We inject the formula given by Lemma~\ref{lem:excess_risk_ridge} to end up with the lower bound
 \begin{equation*}
-	\E_{\theta^* \sim \Pi_\lambda} \Big[ \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2  + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \big) \Big].
+	\E_{\theta^* \sim \Pi_\lambda} \Big[ \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2  + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big) \Big].
 \end{equation*}
 So, using Fubini, and since $\E_{\theta^* \sim \Pi_\lambda} [\theta^* (\theta^*)^\top] = \frac{\sigma^2}{\lambda n} \bI_d$ by definition of $\Pi_\lambda$, we end up with
 \begin{align*}
 	\E_{\theta^* \sim \Pi_\lambda} \Big[ \lambda^2 & \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} 
 	\bSigma (\wh \bSigma_\lambda)^{-1}}^2 \Big] \\
+	\marginnote{using $\tr[x] = x$ for $x \in \R$ }
 	&= \lambda^2 \; \E \; \E_{\theta^* \sim \Pi_\lambda} \tr \Big[ (\theta^*)^\top (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta^* \Big] \\
 	&= \lambda^2 \; \E \; \E_{\theta^* \sim \Pi_\lambda} \tr \Big[(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta^*  (\theta^*)^\top \Big] \\
 	&= \frac{\sigma^2}{n} \; \E \tr \Big[(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}
-	\lambda \bI_d \Big]
+	\lambda \bI_d \Big],
 \end{align*}
-where we used $\tr[x] = x$ for $x \in \R$ in the second line ???? so that the minimization becomes now
+so that the lower bound becomes now
 \begin{equation*}
 	\frac{\sigma^2}{n} \E \tr \Big[ (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} (\wh \bSigma + \lambda \bI_d) \Big] = \frac{\sigma^2}{n} \E \tr \big[ (\wh \bSigma_\lambda)^{-1} \bSigma \big].
 \end{equation*}
-So, we proved that for any $\lambda > 0$ we have the lower bound
+We proved that the lower bound
 \begin{equation*}
 	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 \geq
 	\frac{\sigma^2}{n} \E \tr \big[ (\wh \bSigma_\lambda)^{-1} \bSigma \big]
 \end{equation*}
-for any $\lambda > 0$.
-Since $P_X$ is non-degenerate, we know that $\wh \Sigma \succ 0$ almost surely and furthermore the function 
+holds for any $\lambda > 0$.
+Since $\P_X$ is non-degenerate, we know from Theorem~\ref{thm:least-squares-existence} that $\wh \bSigma \succ 0$ almost surely and we have that the function 
 \begin{equation*}
 	\lambda \mapsto \tr \big[ (\wh \bSigma + \lambda \bI_d)^{-1} \bSigma \big] 
 	= \tr \big[ (\bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2} + \lambda \bSigma^{-1})^{-1} \big]
 \end{equation*}
-is decreasing on $(0, +\infty)$ since $\lambda_2 \bSigma^{-1} \succ \lambda_1 \bSigma^{-1}$ whenever $\lambda_2 > \lambda_1$ and is positive, so that by monotone convergence we have indeed that
+is decreasing on $(0, +\infty)$ since $\lambda_2 \bSigma^{-1} \succ \lambda_1 \bSigma^{-1}$ whenever $\lambda_2 > \lambda_1$.
+So, by monotone convergence, we have indeed that
 \begin{equation*}
 	\E \tr \big[ (\wh \bSigma_\lambda)^{-1} \bSigma \big] \go 
 	\E \tr \big[ (\wh \bSigma)^{-1} \bSigma \big] = \E \tr \big[ (\wt \bSigma)^{-1} \big]
 \end{equation*}
 as $\lambda \go 0^+$.
-This proves the lower bound stated in Theorem~? up to the proof of Lemma~\ref{lem:excess_risk_ridge}.
+This proves the desired lower bound of the minimax risk, up to the proof of Lemma~\ref{lem:excess_risk_ridge}. $\hfill \square$
 
 \paragraph{Proof of Lemma~\ref{lem:excess_risk_ridge}.}
 
-Let us recall that $Y_i = X_i^\top \theta^* + \eps_i$ with $\eps_i | X_i \sim \nor(0, \sigma^2)$ ($\eps_i$ are independent of $X_i$).
+Let us recall that $Y_i = X_i^\top \theta^* + \eps_i$ with $\eps_i \sim \nor(0, \sigma^2)$ and that each $\eps_i$ is independent of $X_1, \ldots, X_n$.
 We have
 \begin{equation*}
 	\frac 1n \sum_{i=1}^n Y_i X_i = \frac 1n \sum_{i=1}^n X_i X_i^\top \theta^* 
@@ -1253,7 +1256,7 @@ so that
 \begin{equation*}
 	\E_{\theta^*} [\cE(\wh \theta_\lambda)] 
 	=  \E_{\theta^*} \norm{\wh \theta_\lambda - \theta^*}_{\bSigma}^2 
-	= \E \Big\| (\wh \bSigma_\lambda)^{-1} \Big(\wh \bSigma \theta^* + \frac 1n \sum_{i=1}^n \eps_i X_i \Big) - \theta^* \Big\|_{\bSigma}^2 
+	= \E \Big\| (\wh \bSigma_\lambda)^{-1} \Big(\wh \bSigma \theta^* + \frac 1n \sum_{i=1}^n \eps_i X_i \Big) - \theta^* \Big\|_{\bSigma}^2,
 \end{equation*}
 but using $(\wh \bSigma_\lambda)^{-1} (\wh \bSigma + \lambda \bI_d - \lambda \bI_d) = \bI_d - \lambda 
 (\wh \bSigma_\lambda)^{-1}$ we obtain
@@ -1270,8 +1273,7 @@ But
 	&= \frac 1n \sum_{i=1}^n \tr \Big[ (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} X_i X_i^\top \Big] \\
 	&= \tr \big[ (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \big],
 \end{align*}
-which concludes the proof of Lemma~\ref{lem:excess_risk_ridge}.
-
+which concludes the proof of Lemma~\ref{lem:excess_risk_ridge}. $\hfill \square$
 
 
 \input{chap06_mle_exponential_models}
