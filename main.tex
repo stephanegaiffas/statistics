@@ -1182,14 +1182,13 @@ The second trick is that we \emph{know how to minimize the Bayes risk}~\eqref{eq
 \end{equation*}
 as explained in Section~\ref{sec:posterior_distribution_and_bayes_estimator}.
 But, let us remark that if $Z$ is a random vector such that $\E \norm{Z}^2 < \infty$, then the function $F : \R^d \go \R^+$ given 
-by $F(t) = \E \norm{Z - t}_{\bSigma}^2$ is minimized at $t^* = \E[Z]$ whenever $\bSigma \succ 0$
-\todo{proof en marge}.
-ICI ICI ICI
-
-This entails that here, the Bayes estimator is indeed
-\begin{equation*}
-	\wh \theta_\lambda = \Big( \frac 1n \bX^\top \bX + \lambda \bI_d\Big)^{-1} \bX^\top \by
-\end{equation*}
+by $F(t) = \E \norm{Z - t}_{\bSigma}^2$ is minimized at $t^* = \E[Z]$ whenever 
+$\bSigma \succ 0$.
+This entails that the Bayes estimator for the loss $\ell(\theta', \theta) = \norm{\theta' - \theta}_{\bSigma}^2$ is indeed $\wh \theta_\lambda$.
+ICI ICI ICI ICI ICI ICI
+% \begin{equation*}
+% 	 = \Big( \frac 1n \bX^\top \bX + \lambda \bI_d\Big)^{-1} \bX^\top \by
+% \end{equation*}
 and we end up, by combining ??? and ??? to the lower bound 
 \begin{align*}
 	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 &\geq 
