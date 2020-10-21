@@ -841,7 +841,7 @@ This proves, in particular, that the Gaussian family is \emph{conjugate} with it
 
 
 \subsection{Bayesian linear regression with a Gaussian prior} % (fold)
-
+\label{sub:bayesian-linear-regression}
 
 Another very interesting example is the Gaussian linear regression model that we considered in Section~\ref{sec:gaussian_linear_model} of Chapter~\ref{chap:linear_regression}, where
 \begin{equation*}
@@ -1133,50 +1133,59 @@ which concludes the proof of Proposition~\ref{prop:cond-gaussian-vector}. $\hfil
 
 
 
-\subsection{Proof of the minimax lower bound ???} % (fold)
+\subsection{Proof of the lower bound from Theorem~\ref{thm:least-squares-minimax}} % (fold)
 \label{sec:proof_of_the_minimax_lower_bound_}
 
-Now, we have all the tools to prove the lower bound side of Theorem~??? namely that 
+We have now all the tools required to prove the lower bound involved in Theorem~\ref{thm:least-squares-minimax} from Chapter~\ref{chap:linear_regression}, namely that
 \begin{equation}
-	\inf_{\wh \theta} \sup_{P \in \cG(P_X, \sigma^2)} \E_P \norm{\wh \theta - \theta}^2 \geq \frac{\sigma^2}{n} \E [ (\wt \bSigma)^{-1}] = \frac{\sigma^2}{n} \E [ (\wt \bSigma)^{-1}] = \frac{\sigma^2}{n} \E [ (\bSigma^{-1/2} \wh \bSigma \bSigma^{-1/2})^{-1}].
+	\inf_{\wh \theta} \sup_{P \in \cG(\P_X, \sigma^2)} \E \norm{\wh \theta - \theta^*}_{\bSigma}^2 
+	\geq \frac{\sigma^2}{n} \E [\tr({\wt \bSigma}^{-1})],
 \end{equation}
-Let us recall recall that in the setting of Theorem~??? we have $(X_1, Y_1), \ldots, (X_n, Y_n)$ iid and that $\cG(P_X, \sigma^2)$ is the set of joint distribution on $(X, Y)$ satisfying $X \sim P_X$, $Y = X^\top \theta^* + \eps$ almost surely and $\eps$ independent of $X$ and such that $\eps \sim \nor(0, \sigma^2)$.
-Let us recal that the excenss risk si given by $\cE(\wh \theta) = R(\wh \theta) - R(\theta) = \norm{\wh \theta - \theta}_{\bSigma}^2$ and that $\bSigma = \E[X X^\top] \succ 0$ with $R(\theta) = \E[(Y - X^\top \theta)^2]$.
+where we recall that  $\bSigma = \E[X X^\top] \succ 0$ and that $\cG(\P_X, \sigma^2)$ is the set of joint distributions $P$ for $(X, Y)$ satisfying $X \sim \P_X$, $Y = X^\top \theta^* + \eps$ almost surely and $\eps$ independent of $X$ and such that $\eps \sim \nor(0, \sigma^2)$.
+Let us recall also that $\wh \theta$ is any estimator, namely any measurable function of $(X_1, Y_1), \ldots, (X_n, Y_n)$ iid with the same distribution $P \in \cG(\P_X, \sigma^2)$.
 
-First, let us remark that $\sup_{P \in \cG(P_X, \sigma^2)}$ corresponds to $\sup_{\theta^* \in \Theta}$ denoting $\P_{\theta^*} = P_{X, Y}$ and let us denote also $\E_{\theta^*}$, so that we can to lower bound
+First, let us remark that $\sup_{P \in \cG(P_X, \sigma^2)}$ corresponds to $\sup_{\theta^* \in \R^d}$, so that denoting $\P_{\theta^*} = P_{X, Y}$ and the corresponding expectation $\E_{\theta^*}$, we need to lower bound
 \begin{equation*}
 	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2.
 \end{equation*}
-The first, and certainly main trick, is to lower bound this minimax risk by the Bayes risk. Let us choose some prior distribution $\Pi$ for $\theta$ and write
+The first, and certainly most important trick, is to lower bound the minimax risk by the \emph{Bayes} risk. 
+Let us choose some prior distribution $\Pi(d \theta) = p(\theta) d \theta$ for $\theta$ and write
 \begin{align}
 	\nonumber
 	\inf_{\wh \theta} \sup_{\theta \in \Theta} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 
-	&\geq \inf_{\wh \theta} \int_{\R^d} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 \Pi(d \theta) \\
+	&\geq \inf_{\wh \theta} \int_{\R^d} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2 \, p(\theta) d \theta \\
 	\label{eq:ls-bayes-risk}
 	&= \inf_{\wh \theta} \E_{\theta \sim \Pi} \E_\theta \norm{\wh \theta - \theta}_{\bSigma}^2.
 \end{align}
-All the following computations are performed conditionally on $X_1, \ldots, X_n$ inside the expectations.
-The distribution of $\by | \theta$ is $\nor(\bX \theta, \sigma^2 \bI_n)$. We choose the prior distribution
+Let us reason conditionally on $X_1, \ldots, X_n$ in what follows to simplify notations and use Bayesian reasoning where the data has density 
 \begin{equation*}
-	\theta \sim \Pi_\lambda := \nor\Big( 0, \frac{\sigma^2}{\lambda n} \bI_d \Big)
+	p(\by | \theta) = \nor(\bX \theta, \sigma^2 \bI_n)
 \end{equation*}
-which corresponds to what we did in Exercice ??? with $\lambda' = n \lambda / \sigma^2$.
-So we know, using this exerice, that 
+and where the prior on $\theta$ is given by $\Pi_\lambda(d \theta) = p_\lambda(\theta) d\theta$ with
 \begin{equation*}
-	\theta | \by \sim \nor\Big( \wh \theta_\lambda, \frac{\sigma^2}{n} (\bX^\top \bX + \lambda \bI_d)^{-1} \Big)
+	p_\lambda(\theta) = \nor\Big(0, \frac{\sigma^2}{\lambda n} \bI_d \Big)
+\end{equation*}
+for some $\lambda > 0$. Note that this example is exactly the one considered in Section~\ref{sub:bayesian-linear-regression} with $\lambda' = n \lambda / \sigma^2$ instead of $\lambda$.
+So, using Theorem~\ref{thm:posterior-gaussian-linear}, we have that
+\begin{equation*}
+	p(\theta | \by) = \nor\Big( \wh \theta_\lambda, \frac{\sigma^2}{n} (\bX^\top \bX + \lambda \bI_d)^{-1} \Big)
 \end{equation*}
 where
 \begin{equation*}
-	\wh \theta_\lambda = (n^{-1} \bX^\top \bX + \lambda \bI_d)^{-1} \bX^\top \by = \argmin_{\theta \in \R^d} \Big( \frac 1n \norm{\by - \bX \theta}^2 + \lambda \norm{\theta}^2 \Big).
+	\wh \theta_\lambda = (\bX^\top \bX + n \lambda \bI_d)^{-1} \bX^\top \by = 
+	\argmin_{\theta \in \R^d} \Big( \frac 1n \norm{\by - \bX \theta}^2 + \lambda \norm{\theta}^2 \Big)
 \end{equation*}
-is the ridge-penalized least squares estimator from ???.
-The second trick is that we know how to minimize the Bayes risk~\eqref{eq:ls-bayes-risk}: it can be minimized by looking for
+is the ridge-penalized least squares estimator.
+The second trick is that we \emph{know how to minimize the Bayes risk}~\eqref{eq:ls-bayes-risk}: it can be minimized by looking for
 \begin{equation*}
-	\wh \theta^B \in \argmin_{\theta' \in \R^d} \int_{\R^d} \norm{\theta' - \theta}_{\bSigma}^2 \Pi_{\theta | \by}(d \theta),
+	\wh \theta \in \argmin_{\theta' \in \R^d} \int_{\R^d} \norm{\theta' - \theta}_{\bSigma}^2 \; p(\theta | \by) d \theta,
 \end{equation*}
-which is the average of the loss function with respect to the posterior distribution $\Pi_{\theta | \by}$, as explained in ???.
-But, let us remakr that if $Z$ is a random vector such that $\E \norm{Z}^2 < \infty$, then the function $F : \R^d \go \R^+$ given by $F(t) = \E \norm{Z - t}^2$ is minimized at $t^* = \E[Z]$ whenever $\Sigma \succ 0$
+as explained in Section~\ref{sec:posterior_distribution_and_bayes_estimator}.
+But, let us remark that if $Z$ is a random vector such that $\E \norm{Z}^2 < \infty$, then the function $F : \R^d \go \R^+$ given 
+by $F(t) = \E \norm{Z - t}_{\bSigma}^2$ is minimized at $t^* = \E[Z]$ whenever $\bSigma \succ 0$
 \todo{proof en marge}.
+ICI ICI ICI
+
 This entails that here, the Bayes estimator is indeed
 \begin{equation*}
 	\wh \theta_\lambda = \Big( \frac 1n \bX^\top \bX + \lambda \bI_d\Big)^{-1} \bX^\top \by
