@@ -237,7 +237,7 @@ We say that a random vector $Z \in \R^n$ is \emph{Gaussian} whenever $\inr{u, Z}
 In this case, we write $Z \sim \nor(\mu, \bSigma)$ where $\mu = \E[Z]$ and $\bSigma = \var[Z]$.
 Moreover, if $\bSigma \succ 0$, then $Z$ has density
 \begin{equation*}
-	f_Z(z) = \frac{1}{\sqrt{(2 \pi)^d \det \bSigma}} \exp \Big( - (z - \mu)^\top \bSigma^{-1} (z - \mu) \Big)
+	f_Z(z) = \frac{1}{\sqrt{(2 \pi)^d \det \bSigma}} \exp \Big( - \frac 12 (z - \mu)^\top \bSigma^{-1} (z - \mu) \Big)
 \end{equation*}
 with respect to the Lebesgue measure on $\R^n$.
 If $Z \sim \nor(0, \bI_n)$, we say that $Z$ is \emph{standard Gaussian} and note that in this case 
