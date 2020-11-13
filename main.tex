@@ -137,6 +137,8 @@
 
 \DeclareMathOperator{\new}{new}
 
+\DeclareMathOperator{\remain}{remainder}
+
 
 
 \DeclareMathOperator{\sigmoid}{sigmoid}
@@ -400,74 +402,107 @@ The tentative agenda for the course is as follows:
 \chapter{High dimensional statistics and sparsity}
 \label{chap:high_dimensional_statistics}
 
-These results correspond to recent advances in the field of high-dimensional statistics
-
-
-Let us consider, as we did in Chapter~\ref{chap:linear_regression}, a Gaussian linear model where we observe $(X_1, Y_1), \ldots, (X_n, Y_n)$ that are i.i.d and such that
+This chapter is about some recent advances in the field of high-dimensional statistics, which corresponds to a setting where the sample size $n$ is smaller than the number of features $d$.
+Let us consider again the Gaussian linear model (see Chapter~\ref{chap:linear_regression}), where we observe labels satisfying
 \begin{equation*}
 	Y_i = f(X_i) + \eps_i
 \end{equation*}
-where $X_i \in \R^d$ are vectors of features that we assume deterministic and where $\eps_1, \ldots, \eps_n$ are i.i.d $\nor(0, \sigma^2)$ random variables.
-Let us recall that the features matrix is given by
+for $i=1, \ldots, n$, where $X_i \in \R^d$ are vectors of features that we assume deterministic, where $\eps_1, \ldots, \eps_n$ are i.i.d $\nor(0, \sigma^2)$ random variables and where $f$ is the regression function that we want to estimate.
+
+
+\paragraph{Sparse estimation.}
+
+We consider a set $\cF = \{ f_1, \ldots, f_M \}$ of functions called a \emph{dictionary}, with $M$ which can be much larger than the sample size $n$.  
+We want to learn from data an estimator of $f$ of the form
+\begin{equation*}
+	f_\theta(x) = \sum_{j=1}^M \theta_j f_j(x)
+\end{equation*}
+with the following properties: the \emph{empirical} estimation error
+\begin{equation*}
+	\frac 1n \sum_{i=1}^n (f_\theta(X_i) - f(X_i))^2
+\end{equation*}
+is small and the sparsity of $\theta$, namely
+\begin{equation*}
+	\norm{\theta}_0 = |J(\theta)| = | \{ j=1, \ldots, M : \theta_j \neq 0\} |
+\end{equation*}
+where $|J|$ stands for the cardinality of a set $J$, is small compared to $M$.
+If we are able to satisfy both points, we say that we can find a \emph{sparse} linear combination of elements of $\cF$ to estimate $f$.
+This task is called \emph{sparse coding} or \emph{sparse estimation}, since it would allow to select a subset of elements from a typically redundant dictionary $\cF$ to estimate~$f$.
+Of course, if $M = d$ and $f_j(x) = x_j$, we recover the standard linear regression model, where $f_\theta(x) = x^\top \theta$.
+
+Let us introduce a bunch of notations before diving into the main matter.
+Here, the features matrix is a $n \times M$ matrix given by
 \begin{equation*}
 	\bX = 
 	\begin{bmatrix}
-		X_{1, 1} & \cdots & X_{1, d} \\
+		f_1(X_1) & \cdots & f_M(X_1) \\
 		\vdots & \ddots & \vdots \\
-		X_{n, 1} & \cdots & X_{n, d}
+		f_1(X_n) & \cdots & f_M(X_n)
 	\end{bmatrix}	
 	=
 	\begin{bmatrix}
-		X_1^\top \\
+		\bX_1^\top \\
 		\vdots \\
-		X_n^\top 
+		\bX_n^\top 
 	\end{bmatrix}
 	= 
 	\begin{bmatrix}
-		X^1 \cdots X^d
-	\end{bmatrix}	
-	\in \R^{n \times d},
+		\bX^1 \cdots \bX^M
+	\end{bmatrix}.
 \end{equation*}
-and let us introduce also $\by = [y_1  \cdots, y_n]^\top$.
-
-\todo{ca ne va pas: d'abord introduire le dictionaire, et apres la matrix de features}
-
-We want to estimate the function $f$. 
-We consider a set $\cF = \{ f_1, \ldots, f_M \}$ of functions called a \emph{dictionary}, with $M$ can be much larger than the sample size $n$, and we want to learn from data an estimator of $f$ of the form
+Let us introduce also
 \begin{equation*}
-	f_\theta(x) = \sum_{j=1}^M \theta_j f_j(x).
+	\by =
+	\begin{bmatrix}
+		Y_1 \\
+		\vdots \\
+		Y_n
+	\end{bmatrix},
+	\quad
+	\bf = 
+	\begin{bmatrix}
+		f(X_1) \\
+		\vdots \\
+		f(X_n)
+	\end{bmatrix},
+	\quad
+	\bf_\theta =	
+	\begin{bmatrix}
+		f_\theta(X_1) \\
+		\vdots \\
+		f_\theta(X_n)
+	\end{bmatrix},
+	\quad
+	\beps = 
+	\begin{bmatrix}
+		\eps_1 \\
+		\vdots \\
+		\eps_n
+	\end{bmatrix}.
 \end{equation*}
-We would like to construct a \emph{sparse} representation of $f$ where
-\begin{itemize}
- 	\item The estimation error $\norm{f_\theta - f}_n^2$ is small, where we consider the \emph{empirical norm}
- 	\begin{equation*}
- 		\norm{f_\theta - f}_n^2 = \frac 1n \sum_{i=1}^n (f_\theta(X_i) - f(x_i))^2
- 	\end{equation*}
- 	\item The sparsity of $\theta$, namely
- 	\begin{equation*}
- 		\norm{\theta}_0 = | \{ j=1, \ldots, M : \theta_j \neq 0\} |
- 	\end{equation*}
- 	is \emph{small} compared to $M$, which would mean that a small number of elements of $\cF$ is enough to estimate $f$.
- \end{itemize} 
-Such a representation is said to be a \emph{sparse representation} of $f$ from the dictionary $\cF$.
-Of course, if $M = d$ and $f_j(x) = x_j$, we recover the standard linear regression model, where $f_\theta(x) = x^\top \theta$.
+The problem can be rewritten as the Gaussian linear model
+\begin{equation*}
+	\by = \bX \theta + \beps,
+\end{equation*}
+from Chapter~\ref{chap:linear_regression}, however this time we can have $M \gg n$, namely the matrix $\bX$ can be overdetermined, which means that the dictionary $\cF$ is redundant.
+The notation $\norm{u}$ will stand for the Euclidean norm of $u \in \R^n$.
 
 \paragraph{Oracle inequalities.}
 
-So, we are looking for an estimator $\wh \theta_n$ such that $\norm{\wh \theta}_0 \ll M$ and such that
+We are looking for an estimator $\wh \theta_n$ such that $\norm{\wh \theta_n}_0 \ll M$ and
 \begin{equation}
 	\label{eq:oracle-remainder}
-	\norm{f_{\wh \theta_n} - f}_n^2 \leq \inf_{\theta \in \R^M} \Big\{ 
-	\norm{f_\theta - f}_n^2 + \text{remainder} \Big\}
+	\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \R^M} \Big\{ 
+	\norm{\bf_\theta - \bf}^2 + \remain \Big\}
 \end{equation}
-where $\text{remainder}$ is, ideally, a small quantity that might depend on $n, \cF$ and $\sigma^2$.
-If $\text{remainder}$ is small, then such an inequality would prove that the estimator $f_{\wh \theta}$ performs almost as well as the best element from the dictionary $\inf_{\theta \in \R^M} \norm{f_\theta - f}_n^2$
-Such an inequality is called an \textbf{oracle inequality}, an oracle being a best-performing element from the dictionary $f^\star = f_{\theta^\star} \in \argmin_{\theta \in \R^M} \norm{f_\theta - f}_n^2$. 
+where $\remain$ is, ideally, a small quantity that might depend on $n, \cF$ and $\sigma^2$.
+If $\remain$ is small, then such an inequality would prove that the estimator $f_{\wh \theta_n}$ performs almost as well as the best linear combination of elements from the dictionary $\inf_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$.
+Such an inequality is called an \emph{oracle inequality}, an \emph{oracle} being a best-performing linear combination $f^\star = f_{\theta^\star}$ with $\theta^\star \in \argmin_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$. 
 
-This raises the following questions
+This raises the following questions:
 \begin{itemize}
-	\item How can we construct a sparse estimator $\wh \theta_n$ ? (with a small $\wh \theta_n$ ?)
-	\item What is the value of $\text{remainder}$ in the oracle inequality~\eqref{eq:oracle-remainder} ?
+	\item How can we construct a sparse estimator $\wh \theta_n$ ?
+	\item What is the value of $\remain$ in the inequality~\eqref{eq:oracle-remainder} ?
 \end{itemize}
 We will deal with this problem using a penalization.
 We already talked about the Ridge penalization in Chapter~\ref{??}, which corresponds to the estimator
@@ -491,7 +526,8 @@ where $\norm{\theta}_1 = \sum_{j=1}^M |\theta_j|$ is the $\ell_1$ norm of $\thet
 \begin{itemize}
  	\item The whole set $B = \R^M$ (no constraints on $\theta$)
  	\item The set $B = [0, +\infty)^M$ (positivity constraints on $\theta$)
- \end{itemize} 
+ \end{itemize}
+
 
 It is tempting to use as a penalization the "$\ell_0$ norm", but this leads to a problem where we would need to try out all subset $J \subset \{ 1, \ldots, M \}$ and train a linear model on it, BLABLA, which means $2^M$ problems to solve.
 
@@ -500,7 +536,13 @@ Indeed, the \emph{convex envelope}%
 \sidenote{The convex envelope is the largest convex function which minorizes BLABLA}
 of the function $g_0(x) = 1_{x \neq 0}$ over the interval $[-1, 1]$ is given by $g_1(x) = |x|$, so that the convex envelope of $x \mapsto \norm{x}_0$ over $[-1, 1]^M$ is $\norm{x}_1$.
 
-\todo{dessin l0 et L1}
+\begin{marginfigure}
+	\includegraphics{assets/l0_l1.pdf}
+	\caption{The convex envelope of $x \mapsto \norm{x}_0$ over $[-1, 1]$ is $x \mapsto \norm{x}_1$.}
+	\label{fig:l0-l1}
+\end{marginfigure}
+
+
 \todo{Laplace Prior}
 
 The $\ell_1$ norm therefore appears naturally as a convex relaxation of $\ell_0$.
@@ -552,11 +594,21 @@ This proves that%
 	(T_\lambda(b))_j = \sign(b_j) \odot (|b_j| - \lambda)_+,
 \end{equation}
 The operator $T_\lambda : \R^M \rightarrow \R^M$ is called the soft-thresholding operator.
+See Figure~\ref{fig:soft-thresholding}
+\begin{marginfigure}
+	\includegraphics{assets/soft_thresholding.pdf}
+	\caption{Soft-thresholding and shrinkage with $\lambda = 1$ on a single coordinate.}
+	\label{fig:soft-thresholding}
+\end{marginfigure}
+
+
 It is the operator involved in the proximal gradient algorithm
 \todo{descente de gradient proximal}
 This function is called soft thresholding, and we see that it indeed induces sparsity in $\theta$.
 The fact that the $\ell_1$ norm induces sparsity (namely coordinates with 0) comes precisely from the fact that the absolute value is not differentiable at $0$.
 It can also be understood geometrically by the fact that the $\ell_1$ norm has "spiky" corners at $\pm e_j$ for $j=1, \ldots, M$: when we project a point onto an $\ell_1$ ball, we are likely to obtained a projection that ends at one of the spiky points or a , which are sparse points  BLABLA
+
+\todo{dessin boule l1}
 
 All of the above discussions motivate the use of the $\ell_1$ norm to induce sparsity.
 Let us therefore consider the estimator given by
@@ -573,8 +625,12 @@ This estimator is called the Lasso BLABLA + reference + reference francis + expl
 
 Before studying the we first need to provide some tools from convex optimization.
 
+\todo{Chemin regularization du Lasso}
+
 \section{Some tools from convex optimization} % (fold)
 \label{sec:some_tools_from_convex_optimization}
+
+\todo{tous les $x$ sont des $u$ ou $v$ et $\phi$ pour fonction cvx}
 
 Let us consider a convex function $\phi : \R^d \rightarrow \R$.
 A fundamental notion which generalizes the gradient is the subdifferential, as explained in the next definition.
@@ -600,6 +656,7 @@ For instance, we have for the absolute value that
 		[0, 1] &\text{ if } x  = 0.
 	\end{cases}
 \end{equation*}
+\todo{dessin sous-differentielle}
 Whenever $\phi$ is differentiable at $u$, we have obviously that $\partial \phi(u) = \{  \grad \phi(u) \}$.
 Another obvious%
 \sidenote{TODO: proof}
@@ -628,6 +685,7 @@ which gives in particular for two differentiable functions $\phi_1 : \R \rightar
 	[ \phi_1'(x), \phi_2'(x) ] &\text{ if } \phi_2(x) = \phi_1(x) \\
 	\end{cases}
 \end{equation*}
+\todo{dessin sous-diff du max}
 Another important notation in convex optimization is the indicator function of a convex set $C \subset \R^d$
 \begin{equation*}
 	\delta_C(x) = \begin{cases}
@@ -651,7 +709,8 @@ but $\delta_C(x^\star) = 0$ since $x^\star \in C$ so\todo{pas propre} that the s
 	\partial \delta_C(v) = \{ g \in H : g^\top (v - u) \leq 0 \quad 
 	\text{ for all } u \in C\}
 \end{equation*}
-which is the \emph{normal cone} to $C$ at $u$.\todo{dessin}
+which is the \emph{normal cone} to $C$ at $u$.
+\todo{dessin code normal}
 This proves that an optimality criterion for the problem ??? is given by
 \begin{equation*}
 	\exists g^\star \in \partial \phi(x^\star) \quad \text{ such that } \quad (g^\star)^\top (u - u^\star) \leq 0
