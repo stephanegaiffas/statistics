@@ -402,7 +402,7 @@ The tentative agenda for the course is as follows:
 \chapter{High dimensional statistics and sparsity}
 \label{chap:high_dimensional_statistics}
 
-This chapter is about some recent advances in the field of high-dimensional statistics, which corresponds to a setting where the sample size $n$ is smaller than the number of features $d$.
+This chapter is about high-dimensional statistics, in particular high-dimensional linear regression, which corresponds to a setting where the sample size $n$ is smaller than the number of features $d$.
 Let us consider again the Gaussian linear model (see Chapter~\ref{chap:linear_regression}), where we observe labels satisfying
 \begin{equation*}
 	Y_i = f(X_i) + \eps_i
@@ -422,12 +422,13 @@ with the following properties: the \emph{empirical} estimation error
 	\frac 1n \sum_{i=1}^n (f_\theta(X_i) - f(X_i))^2
 \end{equation*}
 is small and the sparsity of $\theta$, namely
-\begin{equation*}
-	\norm{\theta}_0 = |J(\theta)| = | \{ j=1, \ldots, M : \theta_j \neq 0\} |
-\end{equation*}
-where $|J|$ stands for the cardinality of a set $J$, is small compared to $M$.
+\begin{equation}
+	\label{eq:sparsity}
+	\norm{\theta}_0 = |J(\theta)| = | \{ j=1, \ldots, M : \theta_j \neq 0\} |,
+\end{equation}
+where $|J|$ stands for the cardinality of a set $J$, is small compared to~$M$.
 If we are able to satisfy both points, we say that we can find a \emph{sparse} linear combination of elements of $\cF$ to estimate $f$.
-This task is called \emph{sparse coding} or \emph{sparse estimation}, since it would allow to select a subset of elements from a typically redundant dictionary $\cF$ to estimate~$f$.
+This task is called \emph{sparse coding} or \emph{sparse estimation}, since it would allow to select a subset of elements from a typically \emph{redundant} dictionary $\cF$ to estimate~$f$.
 Of course, if $M = d$ and $f_j(x) = x_j$, we recover the standard linear regression model, where $f_\theta(x) = x^\top \theta$.
 
 Let us introduce a bunch of notations before diving into the main matter.
@@ -480,11 +481,11 @@ Let us introduce also
 		\eps_n
 	\end{bmatrix}.
 \end{equation*}
-The problem can be rewritten as the Gaussian linear model
+The problem can be rewritten as a Gaussian linear model
 \begin{equation*}
-	\by = \bX \theta + \beps,
+	\by = \bX \theta + \beps
 \end{equation*}
-from Chapter~\ref{chap:linear_regression}, however this time we can have $M \gg n$, namely the matrix $\bX$ can be overdetermined, which means that the dictionary $\cF$ is redundant.
+from Chapter~\ref{chap:linear_regression}, however this time we can have $M \gg n$, namely the matrix $\bX$ can be overdetermined: it is not full-rank, in this case we say that the dictionary $\cF$ is \emph{redundant}.
 The notation $\norm{u}$ will stand for the Euclidean norm of $u \in \R^n$.
 
 \paragraph{Oracle inequalities.}
@@ -493,64 +494,68 @@ We are looking for an estimator $\wh \theta_n$ such that $\norm{\wh \theta_n}_0 
 \begin{equation}
 	\label{eq:oracle-remainder}
 	\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \R^M} \Big\{ 
-	\norm{\bf_\theta - \bf}^2 + \remain \Big\}
+	\norm{\bf_\theta - \bf}^2 + \remain(\theta) \Big\}
 \end{equation}
-where $\remain$ is, ideally, a small quantity that might depend on $n, \cF$ and $\sigma^2$.
-If $\remain$ is small, then such an inequality would prove that the estimator $f_{\wh \theta_n}$ performs almost as well as the best linear combination of elements from the dictionary $\inf_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$.
-Such an inequality is called an \emph{oracle inequality}, an \emph{oracle} being a best-performing linear combination $f^\star = f_{\theta^\star}$ with $\theta^\star \in \argmin_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$. 
+where $\remain$ is, ideally, a small quantity that depends on $\theta$, but might depend also on $n, \cF$ and $\sigma^2$.
+If $\remain$ is small, then such an inequality would prove that the estimator $f_{\wh \theta_n}$ performs almost as well as the best linear combination $f^\star = f_{\theta^\star}$ of elements from $\cF$, where $\theta^\star \in \argmin_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$.
+We say that $f^\star$ is an \emph{oracle}, since it depends on $f$, and an inequality of the form~\eqref{eq:oracle-remainder} is called an \emph{oracle inequality}.
 
 This raises the following questions:
 \begin{itemize}
 	\item How can we construct a sparse estimator $\wh \theta_n$ ?
 	\item What is the value of $\remain$ in the inequality~\eqref{eq:oracle-remainder} ?
 \end{itemize}
-We will deal with this problem using a penalization.
-We already talked about the Ridge penalization in Chapter~\ref{??}, which corresponds to the estimator
+We will deal with this problem using a penalization which incudes sparsity in $\theta$.
+We already talked about the Ridge penalization in Chapter~\ref{chap:bayesian_statistics}, which corresponds to the estimator
 \begin{equation}
 	\label{eq:chap-lasso-ridge-estimator}
 	\wh \theta_n^{\mathsf{ridge}} = \argmin_{\theta \in \R^M} 
-	\Big\{ \frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2 + \frac{\lambda}{2} \norm{\theta}_2^2 \Big\},
+	\Big\{ \frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2 + \frac{\lambda}{2} \norm{\theta}^2 \Big\},
 \end{equation}
-where $\norm{\theta}_2$ is the Euclidean norm of $\theta$, also called $\ell_2$ norm.
-We say in Chapter~? that this penalization can be understood as an isotropic Gaussian prior in the Gaussian linear model.
+where $\norm{\theta}$ is the Euclidean norm of $\theta$, also called $\ell_2$-norm.
+We proved in Chapter~\ref{chap:bayesian_statistics} that this penalization can be understood as an isotropic Gaussian prior in the Gaussian linear model, and that $\wh \theta_n^{\mathsf{ridge}}$ is the unique solution to the linear system
+\begin{equation*}
+	(\bX^\top \bX + n \lambda \bI) \theta = \bX^\top \by,
+\end{equation*}
+which has no obvious reasons of being sparse.
+% \todo{Explicit GD sous forme prox}
 
-In this Chapter, we will consider another penalization: the $\ell_1$ norm, since as explined in what follows, it allows to formulate convex problem leading to a sparse estimator $\wh \theta_n$, coming from a \emph{convex relaxation} principle. BLABAL
-
+In this chapter, we will consider another penalization which involves the $\ell_1$ norm, since as explained in what follows, it leads to a simple convex problem which defines a sparse estimator $\wh \theta_n^{\mathsf{lasso}}$, coming from a \emph{convex relaxation} principle.
+\todo{Insert references}
 The estimator we will study is given by
 \begin{equation}
 	\label{eq:lasso-def}
-		\wh \theta_n^{\mathsf{ridge}} = \argmin_{\theta \in \Theta} 
+		\wh \theta_n^{\mathsf{lasso}} = \argmin_{\theta \in \Theta} 
 		\Big\{ \frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2 + \lambda \norm{\theta}_1 \Big\},
 \end{equation}
-where $\norm{\theta}_1 = \sum_{j=1}^M |\theta_j|$ is the $\ell_1$ norm of $\theta$ and where $B \subset \R^M$ is a convex set, main examples being
+where $\norm{\theta}_1 = \sum_{j=1}^M |\theta_j|$ is the $\ell_1$ norm of $\theta$ and where $\Theta \subset \R^M$ is a convex set, main examples being
 \begin{itemize}
- 	\item The whole set $B = \R^M$ (no constraints on $\theta$)
- 	\item The set $B = [0, +\infty)^M$ (positivity constraints on $\theta$)
+ 	\item The whole set $\Theta = \R^M$ (no constraint)
+ 	\item The set $\Theta = [0, +\infty)^M$ (positivity constraint)
+ 	\item The set $\theta = [-R, R]^M$ for some $R > 0$ (box constraint)
  \end{itemize}
 
+In order to induce sparsity, it is tempting to use as a penalization the "$\ell_0$ norm", but this leads to a problem where we would need to try out all subsets $J \subset \{ 1, \ldots, M \}$ and train a linear model on each subset of coordinates $J$, which means $2^M$ problems to solve.
 
-It is tempting to use as a penalization the "$\ell_0$ norm", but this leads to a problem where we would need to try out all subset $J \subset \{ 1, \ldots, M \}$ and train a linear model on it, BLABLA, which means $2^M$ problems to solve.
+\paragraph{Convex relaxation.} % (fold)
 
 The $\ell_1$ can be understood as a \emph{convex relaxation} of $\ell_0$.
-Indeed, the \emph{convex envelope}%
-\sidenote{The convex envelope is the largest convex function which minorizes BLABLA}
-of the function $g_0(x) = 1_{x \neq 0}$ over the interval $[-1, 1]$ is given by $g_1(x) = |x|$, so that the convex envelope of $x \mapsto \norm{x}_0$ over $[-1, 1]^M$ is $\norm{x}_1$.
-
+Indeed, it is easy to see that the \emph{convex envelope}%
+\sidenote{The convex envelope of $g : [a, b] \rightarrow \R$ is, at each point $x \in [a, b]$, the supremum of all convex functions that lie under $g$, namely $g^\text{env}(x) = \sup \{ h(x) : h \text{ convex and } h \leq g \text{ over } [a, b] \} $.}
+of the function $g_0(x) = \ind{x \neq 0}$ over the interval $[-1, 1]$ is given by $g_1(x) = |x|$, so that the convex envelope of $x \mapsto \norm{x}_0$ over $[-1, 1]^M$ is $x \mapsto \norm{x}_1$, see Figure~\ref{fig:l0-l1}.
 \begin{marginfigure}
 	\includegraphics{assets/l0_l1.pdf}
 	\caption{The convex envelope of $x \mapsto \norm{x}_0$ over $[-1, 1]$ is $x \mapsto \norm{x}_1$.}
 	\label{fig:l0-l1}
 \end{marginfigure}
-
-
-\todo{Laplace Prior}
-
 The $\ell_1$ norm therefore appears naturally as a convex relaxation of $\ell_0$.
 Another way of understanding it is to consider the following constrained optimization problem
 \begin{align*}
 	\min \quad &\norm{x}_0 \\ 
-	\text{such that} \quad &x \in C \quad \text{and} \quad \norm{x}_\infty \leq R
+	\text{such that} \quad &x \in C \quad \text{and} \quad \norm{x}_\infty \leq R,
 \end{align*}
+where $C$ is a convex set%
+\sidenote{If $C$ is a polyhedron $C : \{ x \in \R^d : \bA x \leq b \}$, then we say that the constraints are \emph{linear}.}
 which can be reformulated as
 \begin{align*}
 	\min \quad &\bone^\top u \\ 
@@ -558,7 +563,9 @@ which can be reformulated as
 	\quad \text{for all} \quad i=1, \ldots, M \\
 	&x \in C
 \end{align*}
-Such an optimization problem, called a "linear mixed integer program" is hard to solve, since it requires to try out all possible vectors $u \in \{ 0, 1 \}^M$.
+Such an optimization problem is called a "linear mixed integer program" whenever $C$ is a polyhedron. 
+It is hard to solve exactly, since it requires to try out all possible vectors $u \in \{ 0, 1 \}^M$.
+% \todo{references}
 A convex relaxation of this problem is
 \begin{align*}
 	\min \quad &\bone^\top u \\ 
@@ -572,160 +579,156 @@ which can be rewritten as
 	\text{such that} \quad &x \in C \quad \text{and} \quad \norm{x}_\infty 
 	\leq R,
 \end{align*}
-where we see that, once again, the $\ell_1$ norm naturally appear.
+where we see that, once again, the $\ell_1$ norm naturally appears.
+
+% \todo{Laplace Prior}
 
 \paragraph{Soft-thresholding.}
 
 A straightforward computation allows to understand that the $\ell_1$ norm induces sparsity.
-Indeed, we can see that%
-\sidenote{TODO: insert proof}
+Indeed, we can see easily that
 \begin{equation}
 	\label{eq:soft-thresholding1}
-	\argmin_{a \in R} \frac12 (a - b)^2 + \lambda |a| 
-	= \sign(b) (|b| - \lambda)_+,
+	\argmin_{a \in \R} \{ \frac12 (a - b)^2 + \lambda |a| \Big\} 
+	= \sign(b) (|b| - \lambda)_+
 \end{equation}
-where $x_+ = \max(x, 0)$ and $\sign(x) = 1$ if $x > 0$, $\sign(x) = -1$ if $x < 0$ and $\sign(0) = 0$.
-This proves that%
-\sidenote{Since the function is separable}
+for any $b \in \R$, where $x_+ = \max(x, 0)$ and $\sign(x) = 1$ if $x > 0$, $\sign(x) = -1$ if $x < 0$ and $\sign(0) = 0$.
+This proves that
 \begin{equation}
 	\label{eq:soft-thresholding2}
-	\argmin_{a \in \R^M} \frac12 \norm{a - b}_2^2 + \lambda \norm{a}_1 
-	T_\lambda(b) \quad \text{where} \quad 
-	(T_\lambda(b))_j = \sign(b_j) \odot (|b_j| - \lambda)_+,
+	\argmin_{a \in \R^M} \Big\{ \frac12 \norm{a - b}_2^2 + \lambda \norm{a}_1 \Big\}
+	= T_\lambda(b)
 \end{equation}
-The operator $T_\lambda : \R^M \rightarrow \R^M$ is called the soft-thresholding operator.
-See Figure~\ref{fig:soft-thresholding}
-\begin{marginfigure}
+for any $b \in \R^M$, where $T_\lambda : \R^M \rightarrow \R^M$ is the \emph{soft-thresholding} operator given by 
+\begin{equation*}
+	(T_\lambda(b))_j = \sign(b_j) (|b_j| - \lambda)_+
+\end{equation*}
+for $j=1, \ldots, M$, see Figure~\ref{fig:soft-thresholding}.
+We display also in Figure~\ref{fig:soft-thresholding} the \emph{shrinkage} operator $(S_\lambda(b))_j = b_j / (1 + \lambda)$, which corresponds to the Ridge penalization, since $\argmin_{a \in \R} \{ (a - b)^2 + \lambda a^2 \} = b / (1 + \lambda)$.
+\begin{marginfigure}[*-6]
 	\includegraphics{assets/soft_thresholding.pdf}
 	\caption{Soft-thresholding and shrinkage with $\lambda = 1$ on a single coordinate.}
 	\label{fig:soft-thresholding}
 \end{marginfigure}
 
+% % \todo{descente de gradient proximale}
 
-It is the operator involved in the proximal gradient algorithm
-\todo{descente de gradient proximal}
-This function is called soft thresholding, and we see that it indeed induces sparsity in $\theta$.
-The fact that the $\ell_1$ norm induces sparsity (namely coordinates with 0) comes precisely from the fact that the absolute value is not differentiable at $0$.
-It can also be understood geometrically by the fact that the $\ell_1$ norm has "spiky" corners at $\pm e_j$ for $j=1, \ldots, M$: when we project a point onto an $\ell_1$ ball, we are likely to obtained a projection that ends at one of the spiky points or a , which are sparse points  BLABLA
+We observe that the shrinkage operator, which corresponds to the Ridge penalization, does not induce sparsity, while soft-thresholding does.
+The fact that the $\ell_1$ norm induces sparsity (coordinates can be 0) actually comes from the fact that the absolute value is not differentiable at $0$.
+It can be understood geometrically as well, using the fact that a unit $\ell_1$ ball has sparse corners at $\pm e_j$ for $j=1, \ldots, M$ (canonical basis vectors) that are \emph{sparse} vectors: when we project a point onto an $\ell_1$ ball, we are likely to project onto a corner or an edge, that are sets of sparse points.
 
-\todo{dessin boule l1}
+% \todo{dessins boules lp pour p=0.5, 1, 2, 4 et boule l1 en 3D}
 
-All of the above discussions motivate the use of the $\ell_1$ norm to induce sparsity.
-Let us therefore consider the estimator given by
-\begin{equation}
-	\label{eq:lasso-def2}
-	\wh \theta_n = \argmin_{\theta \in \Theta} \Big\{ 
-	\frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2 
-	+ \lambda \norm{\theta}_1 
-	\Big\}.
-\end{equation}
-From now on, we will assume that the features are standardized, which means that the columns of $\bX$ satisfy $\norm{\bX^j}_2^2 = 1$ for all $j=1, \ldots, M$.
+The discussion above motivates the use of the $\ell_1$ norm to induce sparsity.
+Let us therefore consider the estimator $\wh \theta_n^{\mathsf{lasso}}$ given by~\eqref{eq:lasso-def}, that we will simply denote $\wh \theta_n$ in the rest of the chapter.
+In order to study the statistical properties of this estimator, we need some tools from convex optimization.
 
-This estimator is called the Lasso BLABLA + reference + reference francis + expliciter l'optimisation par descente de gradient, descente de gradient par coordonnees
+% \todo{This estimator is called the Lasso BLABLA + reference + reference francis + expliciter l'optimisation par descente de gradient, descente de gradient par coordonnees}
 
-Before studying the we first need to provide some tools from convex optimization.
-
-\todo{Chemin regularization du Lasso}
+% \todo{Chemin regularization du Lasso}
 
 \section{Some tools from convex optimization} % (fold)
 \label{sec:some_tools_from_convex_optimization}
 
-\todo{tous les $x$ sont des $u$ ou $v$ et $\phi$ pour fonction cvx}
-
 Let us consider a convex function $\phi : \R^d \rightarrow \R$.
-A fundamental notion which generalizes the gradient is the subdifferential, as explained in the next definition.
+A fundamental notion which generalizes the differential to non-differentiable convex functions is the \emph{subdifferential}.
 \begin{definition}
 	\label{def:subdifferential}
-	We say that $g \in \R^d$ is a \emph{subgradient} at $u \in \R^d$ if and only if
+	We say that $g \in \R^d$ is a \emph{subgradient} of a convex function $\phi : \R^d \rightarrow \R$ at $u \in \R^d$ if and only if
 	\begin{equation}
 	 	\phi(v) - \phi(u) \geq g^\top (v - u)
 	 \end{equation} 
 	 for any $v \in \R^d$.
 	 The set of all subgradients
 	 \begin{equation*}
-	 	\partial \phi(u) = \{ g \in \R^d : \phi(v) - \phi(u) \geq g^\top (v -u) \quad \text{for all} v in \R^d \}
+	 	\partial \phi(u) = \big\{ g \in \R^d : \phi(v) - \phi(u) \geq g^\top (v -u) 
+	 	\; \text{ for all } \; v \in \R^d \}
 	 \end{equation*}
-	 is called the subdifferential of $\phi$ at $u$.
+	 is called the \emph{subdifferential} of $\phi$ at $u$.
 \end{definition}
-For instance, we have for the absolute value that
-\begin{equation*}
-	\partial |u| = 
-	\begin{cases}
-		\{ 1 \} &\text{ if } x  > 0 \\
-		\{ -1 \} &\text{ if } x < 0 \\
-		[0, 1] &\text{ if } x  = 0.
-	\end{cases}
-\end{equation*}
-\todo{dessin sous-differentielle}
+An example is with $\phi(u) = |u|$, where we have $\partial \phi(u) = \{ 1 \}$ if $u > 0$, $\partial \phi(u) = \{ -1 \}$ if $u < 0$ and $\partial \phi(u) = [-1, 1]$ if $u = 0$.
+\todo{Insert figure}
 Whenever $\phi$ is differentiable at $u$, we have obviously that $\partial \phi(u) = \{  \grad \phi(u) \}$.
-Another obvious%
-\sidenote{TODO: proof}
-claim is that
+Another obvious claim is that
+% \sidenote{TODO: proof}
 \begin{equation*}
 	u^\star \in \argmin_{u \in \R^d} \phi(u) \quad \text{if and only if} \quad 0 \in \partial \phi(u^\star).
 \end{equation*}
 Also, it is easy to see that
 \begin{equation*}
-	\partial \Big( \sum_{k=1}^K \alpha_k \phi_k(x) \Big) =  \alpha_k \sum_{k=1}^K \partial \phi_k(x)
+	\partial \Big( \sum_{k=1}^K \alpha_k \phi_k(u) \Big) =  \alpha_k \sum_{k=1}^K \partial \phi_k(u)
 \end{equation*}
-whenever $\alpha_k \geq 0$ and $\phi_k$ is convex for all $k=1, \ldots, K$.
+whenever $\alpha_k \geq 0$ and $\phi_k$ are convex functions for all $k=1, \ldots, K$.
 Another nice formula allows to express the subdifferential of a maximum of convex functions with the subdifferential of each function.
-Indeed, if $\phi(x) = \max_{k=1}^K \phi_k(x)$, we have
+Indeed, if $\phi(u) = \max_{k=1}^K \phi_k(u)$, we have
+\begin{equation}
+	\label{eq:subdifferential-max}
+	\partial \phi(u) = \conv\Big( \bigcup_{i=1}^d \Big\{ \partial \phi_k(u) : \phi_k(u) = \phi(u) \Big\} \Big),
+\end{equation}
+where $\conv(A)$ stands for the convex hull of a set $A$.
+\todo{Insert figure}
+For instance, if $\phi_1 : \R \rightarrow \R$ and $\phi_2 : \R \rightarrow \R$ are convex and differentiable functions, we have
 \begin{equation*}
-	\partial \phi(x) = \conv\Big( \bigcup_{i=1}^d \Big\{ \partial \phi_k(x) : \phi_k(x) = \phi(x) \Big\} \Big)
-\end{equation*}
-as illustrated in Figure~???
-\todo{mettre figure}
-which gives in particular for two differentiable functions $\phi_1 : \R \rightarrow \R$ and $\phi_2 : \R \rightarrow \R$
-\begin{equation*}
-	\partial \max(\phi_1, \phi_2)(x) = 
+	\partial \max(\phi_1, \phi_2)(u) = 
 	\begin{cases}
-	\{ \phi_2'(x) \} &\text{ if } \phi_2(x) > \phi_1(x) \\
-	\{ \phi_1'(x) \} &\text{ if } \phi_2(x) < \phi_1(x) \\
-	[ \phi_1'(x), \phi_2'(x) ] &\text{ if } \phi_2(x) = \phi_1(x) \\
+	\{ \phi_2'(u) \} &\text{ if } \phi_2(u) > \phi_1(u) \\
+	\{ \phi_1'(u) \} &\text{ if } \phi_2(u) < \phi_1(u) \\
+	[ \phi_1'(u), \phi_2'(u) ] &\text{ if } \phi_2(u) = \phi_1(u) \\
 	\end{cases}
 \end{equation*}
-\todo{dessin sous-diff du max}
-Another important notation in convex optimization is the indicator function of a convex set $C \subset \R^d$
+\todo{Insert figure}
+Another useful definition is the indicator function of a convex set $C \subset \R^d$
 \begin{equation*}
-	\delta_C(x) = \begin{cases}
-		0 &\text{if } x \in C \\
-		+\infty &\text{if } x \notin C.
+	\delta_C(u) = \begin{cases}
+		0 &\text{if } u \in C \\
+		+\infty &\text{if } u \notin C.
 	\end{cases}
 \end{equation*}
 If allows to reformulate a \emph{constrained} problem as an \emph{unconstrained} one, namely to rewrite
 \begin{equation*}
-	x^\star \in \argmin_{x \in C} \phi(x) \quad \text{ as } \quad x^\star \in \argmin_{x \in \R^d} \{ \phi(x) + \delta_C(x) \} 
+	u^\star \in \argmin_{u \in C} \phi(u) \quad \text{ as } \quad u^\star \in \argmin_{u \in \R^d} \{ \phi(u) + \delta_C(u) \}
 \end{equation*}
-which means that $0 \in \partial \phi(x^\star) + \partial \delta_C(x^\star)$, namely that there is $g^\star \in \partial \phi(x^\star)$ such that $-g^\star \in \partial \delta_C(x^\star)$.
-But it is easy to understand what the subdifferential of the indicator function $\delta_C$ is, since $g \in \partial \delta_C(x^\star)$ with $x^\star \in C$ means%
-\sidenote{using the definition of the subdifferential ????}
+which means that $0 \in \partial \phi(u^\star) + \partial \delta_C(u^\star)$, namely that there is $g^\star \in \partial \phi(u^\star)$ such that $-g^\star \in \partial \delta_C(u^\star)$.
+But it is easy to understand what the subdifferential of the indicator function $\delta_C$ is, since $g \in \partial \delta_C(u^\star)$ with $u^\star \in C$ means%
+\sidenote{using the definition of the subdifferential}
 that
 \begin{equation*}
-	\delta_C(x) - \delta_C(x^\star) \geq q^\top (x - x^\star) \quad \text{for all} \quad x \in \R^d,
+	\delta_C(u) - \delta_C(u^\star) \geq g^\top (u - u^\star) \quad \text{for all} \quad u \in \R^d,
 \end{equation*}
-but $\delta_C(x^\star) = 0$ since $x^\star \in C$ so\todo{pas propre} that the subdifferential of the indicator function is given by
+but $\delta_C(u^\star) = 0$ so that, for any $u \in C$, we have
 \begin{equation*}
-	\partial \delta_C(v) = \{ g \in H : g^\top (v - u) \leq 0 \quad 
-	\text{ for all } u \in C\}
+	\partial \delta_C(u) = \big\{ g \in \R^d : g^\top (v - u) \leq 0 \quad 
+	\text{ for all } v \in C \big\},
 \end{equation*}
 which is the \emph{normal cone} to $C$ at $u$.
-\todo{dessin code normal}
-This proves that an optimality criterion for the problem ??? is given by
-\begin{equation*}
-	\exists g^\star \in \partial \phi(x^\star) \quad \text{ such that } \quad (g^\star)^\top (u - u^\star) \leq 0
-\end{equation*}
-\todo{j'ai un moins devant dans mes note}
+\todo{Insert figure}
+% utiliser par exemple https://www.stat.cmu.edu/~ryantibs/convexopt-F13/lectures/06-sgs.pdf
+This proves the following proposition.
+\begin{proposition}
+	\label{prop:optimality-criterion}
+	Let $\phi : \R^d \rightarrow \R$ be a convex function and $C \subset \R^d$ be a convex set. 
+	An optimality criterion for the problem
+	\begin{equation*}
+		u^\star \in \argmin_{u \in C} \phi(u)
+	\end{equation*}
+	is given by
+	\begin{equation*}
+		\exists g^\star \in \partial \phi(u^\star) \quad \text{such that} 
+		\quad (g^\star)^\top (u - u^\star) \geq 0
+	\end{equation*}
+	for all $u \in C$, where $\partial \phi(u^\star)$ is the subdifferential of $\phi$ at $u^\star$.
+\end{proposition}
+%\todo{j'ai un moins devant dans mes note}
 
 Another property about the subdifferential is the following.
 \begin{proposition}[Monotonicity of the subdifferential]
-	Given a convex function $\phi : \R^d \rightarrow \R$, any $u_1, u_2 \in \R^d$ and any $g_1 \in \partial \phi(u_1)$ and $g_2 \in \phi(u_2)$, we have
+	Given a convex function $\phi : \R^d \rightarrow \R$, any $u_1, u_2 \in \R^d$ and any $g_1 \in \partial \phi(u_1)$ and $g_2 \in \partial \phi(u_2)$, we have
 	\begin{equation*}
 		(u_1 - u_2)^\top (g_1 - g_2) \geq 0.
 	\end{equation*}
 \end{proposition}
 The proof is straightforward.%
-\sidenote{Just use Definition~? to write that $\phi(u_2) - \phi(u_1) \geq g_1^\top(u_2 - u_1)$ and that $\phi(u_1) - \phi(u_2) \geq g_2^\top(u_1 - u_2)$ and add the two.}
+\sidenote{Just use Definition~\ref{def:subdifferential} to write that $\phi(u_2) - \phi(u_1) \geq g_1^\top(u_2 - u_1)$ and that $\phi(u_1) - \phi(u_2) \geq g_2^\top(u_1 - u_2)$ and add the two.}
 
 \paragraph{Subdifferential of $\ell_1$ norm.} 
 
@@ -741,44 +744,47 @@ Let us introduce the set
 	I(u) = \big\{ i \in \{ 1, \ldots 2^d \} : e_i^\top u = \norm{u}_1 \big\}.
 \end{equation*}
 Each function $\phi_i$ is differentiable and $\grad \phi_i(u) = e_i$. 
-So, we can apply ??? to obtain that
+So, we can apply Equation~\eqref{eq:subdifferential-max} to obtain that
 \begin{align*}
 	\partial \norm{u}_1 &= \conv\Big( \bigcup_{i \in I(u)} \{ e_i \} \Big) \\
 	&= \big\{ \sign(u) + f : f \in \R^d, \; \norm{f}_\infty \leq 1, \; f^\top u = 0 
-	\big\},
+	\big\}.
 \end{align*}
-where we recall that $\sign$ is given by ???
-For instance if $d = 4$ and $u = [17 \;\; -42 \;\; 0 \;\; 3]^\top$ then $\partial \norm{u}_1 = \{ 1 \} \times \{ -1 \} \times [-1, 1] \times \{ 1 \}$.
-\todo{introduire ou pas ici les notations supp etc} ?
+For instance if $d = 4$ and $u = [17 \; -42 \; 0 \; 3]^\top$ then $\partial \norm{u}_1 = \{ 1 \} \times \{ -1 \} \times [-1, 1] \times \{ 1 \}$.
 
 \section{Oracle inequalities for the Lasso} % (fold)
 
-The material used in this Section is based on Bickel Ritov Tsybakov and Lunici Koltchinskii Tsyb... ~\sidecite{}.
-We consider the Gaussian linear model
-\begin{equation*}
-	Y_i = f(X_i) + \eps_i
-\end{equation*}
-where $X_1, \ldots, X_n$ are deterministic and where $\eps_1, \ldots, \eps_n$ is iid and $\nor(0, \sigma^2)$.
-We consider a finite dictionary $\cF = \{ f_1, \ldots, f_M \}$ and introduce
-\begin{equation*}
-	f_\theta(x) = \sum_{j=1}^M \theta_j f_j(x).
-\end{equation*}
-Note that this means that $f_\theta(X_i) = \theta^\top \bX_i$, where $\bX_i$ is the $i$-th row of the features matrix
-\begin{equation*}
-	\bX = \begin{bmatrix}
-		f_1(X_1) & \cdots & f_M(X_1) \\
-		\vdots & \ddots & \vdots \\ 
-		f_1(X_n) & \cdots & f_M(X_n) \\
-	\end{bmatrix}
-\end{equation*}
-Throughout the section, we will assume that the columns are standardize, namely that $\norm{\bX^j}_2 = 1$, or equivalently that $\norm{f_j}_n = 1$.\todo{notations}
-Introduce the Lasso estimator
+% From now on, we will assume that the features are standardized, which means that the columns of $\bX$ satisfy $\norm{\bX^j}_2^2 = 1$ for all $j=1, \ldots, M$.
+
+The material used in this Section is based on \todo{references: Bickel Ritov Tsybakov and Lunici Koltchinskii Tsyb...}
+
+% We consider the Gaussian linear model
+% \begin{equation*}
+% 	Y_i = f(X_i) + \eps_i
+% \end{equation*}
+% where $X_1, \ldots, X_n$ are deterministic and where $\eps_1, \ldots, \eps_n$ is iid and $\nor(0, \sigma^2)$.
+% We consider a finite dictionary $\cF = \{ f_1, \ldots, f_M \}$ and introduce
+% \begin{equation*}
+% 	f_\theta(x) = \sum_{j=1}^M \theta_j f_j(x).
+% \end{equation*}
+% Recall that $f_\theta(X_i) = \theta^\top \bX_i$, where $\bX_i$ is the $i$-th row of the features matrix and we 
+% \begin{equation*}
+% 	\bX = \begin{bmatrix}
+% 		f_1(X_1) & \cdots & f_M(X_1) \\
+% 		\vdots & \ddots & \vdots \\ 
+% 		f_1(X_n) & \cdots & f_M(X_n) \\
+% 	\end{bmatrix}
+% \end{equation*}
+
+Throughout the section, we will assume that the columns are standardized, namely that $\norm{\bX^j}_2 = 1$.
+This is a rather unrestrictive assumption (we could do without it) that follows good-practice when using linear methods in machine learning.
+Let us recall that the Lasso estimator is given by
 \begin{equation}
 	\label{eq:lasso-def-oracle-sec}
 	\begin{split}
 	\wh \theta_n &= \argmin_{\theta \in \Theta} \Big\{ \frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2 + \lambda \norm{\theta}_1 \Big\} \\
 	&= \argmin_{\theta \in \Theta} \Big\{ 
-	\frac 1n \norm{\by - \bX \theta}_2^2 + \lambda \norm{\theta}_1 
+	\frac 1n \norm{\by - \bf_\theta}^2 + \lambda \norm{\theta}_1 
 	\Big\},
 	\end{split}
 \end{equation}
@@ -786,43 +792,54 @@ for some convex set $\Theta \subset \R^M$, where
 \begin{equation*}
 	\lambda = 2 \sigma \sqrt{\frac{2(x + \log M)}{n}}
 \end{equation*}
-with $x > 0$ to be explained later and with $\sigma > 0$ the standard deviation of the noise. \todo{notation pour $\bf$ et autres}
+with $x > 0$ which corresponds to a confidence level (see Theorem~\ref{thm:oracle-slow} and~\ref{thm:oracle-fast} below) and with $\sigma > 0$ the standard-deviation of the noise.
+%  \todo{notation pour $\bf$ et autres}
 \begin{theorem}
 	\label{thm:oracle-slow}
 	If $\wh \theta_n$ is given by~\eqref{eq:lasso-def-oracle-sec}, we have that
 	\begin{equation*}
-		\norm{\bf_{\wh \theta_n} - \bf}_n^2 \leq \inf_{\theta \in \Theta} 
-		\Big\{ \norm{\bf_{\theta} - \bf}_n^2  + 2 \lambda \norm{\theta}_1 \Big\}
+		\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \Theta} 
+		\Big\{ \norm{\bf_{\theta} - \bf}^2  + 2 \lambda \norm{\theta}_1 \Big\}
 	\end{equation*}
 	with a probability larger than $1 - e^{-x}$.
 \end{theorem}
-This inequality is called a slow oracle inequality since it is of the order $1 / \sqrt{n}$.
+This inequality is called a \emph{slow oracle inequality} since the remainder is $O(1 / \sqrt{n})$.
 The proof of Theorem~\ref{thm:oracle-slow} is given in Section~\ref{sec:lasso-proofs} below.
-In order to obtain a faster rate, of order $1/n$, we need an extra assumption on the matrix of features $\bX$.
+In order to obtain a faster $O(1 / n)$ rate, we need an extra assumption on the matrix of features $\bX$.
 Let us introduce the $M \times M$ matrix 
 \begin{equation*}
 	\bG = \frac 1n \bX^\top \bX = 
-	\Big[ \frac 1n \inr{\bf_j, \bf_{j'}}_n \Big]_{1 \leq j, j' \leq M}.
+	\Big[ \frac 1n \inr{\bf_j, \bf_{j'}} \Big]_{1 \leq j, j' \leq M},
 \end{equation*}
-Note that if $M > n$, then we have that
+where $\bf_j = [f_j(X_1) \cdots f_j(X_n)] \in \R^n$ and $\inr{\cdot, \cdot}$ is the inner product on $\R^n$.
+Note that if $M > n$, we have that
 \begin{equation*}
-	\min_{t \in \R^M} \frac{t^\top \bG t}{\norm{t}_2} 
-	= \min_{t \in \R^M} \frac{\norm{\bX t}_2}{\sqrt n \norm{t}_2} = 0
+	\min_{t \in \R^M} \frac{t^\top \bG t}{\norm{t}} 
+	= \min_{t \in \R^M} \frac{\norm{\bX t}}{\sqrt n \norm{t}} = 0
 \end{equation*}
-since $\bX : \R^M \rightarrow \R^n$ and $\ker(\bX) \neq \{ 0 \}$ hence its smallest eigenvalue is zero.
+since $\bX : \R^M \rightarrow \R^n$ and $\ker(\bX) \neq \{ 0 \}$ hence the smallest eigenvalue of $\bG$ is zero.
 
-The assumption we ask going to require asks that the smallest \emph{restrained} eigenvalue to \emph{sparse} vectors is positive.
+The assumption we are going to use requires that the smallest eigenvalue \emph{restricted} to \emph{sparse} vectors is positive.
 For $\theta \in \R^M$ and $c_0 > 0$, let us introduce the cone
 \begin{equation*}
-	C_{\theta, c_0} = \{ t \in \R^M : \norm{t_{J(\theta)^\complement}}_1 \leq c_0 \norm{t_{J(\theta)}}_1 \}
+	C_{\theta, c_0} = \big\{ t \in \R^M : \norm{t_{J(\theta)^\complement}}_1 
+	\leq c_0 \norm{t_{J(\theta)}}_1 \big\},
 \end{equation*}
-where $J(\theta) = \{ j \in \{1, \ldots, M\} : \theta_j \neq 0 \}$ and $t_J$ stands for the vector with coordinates $(t_J)_j = t_j$ if $j \in J$ and $(t_J)_j = 0$ for $j \notin J$ and $J^\complement = \{ 1, \ldots, M \} - J$.
+where
+\begin{itemize}
+	\item $J(\theta) = \{ j \in \{1, \ldots, M\} : \theta_j \neq 0 \}$ is the 
+	\emph{support} of $\theta$,
+	\item $t_J \in \R^M$ stands for the vector with coordinates $(t_J)_j = t_j$ if $j \in J$ and $(t_J)_j = 0$ for $j \notin J$,
+	\item $J^\complement = \{ 1, \ldots, M \} \setminus J$.
+\end{itemize}
 If $t \in C_{\theta, c_0}$, then both the vectors $t$ and $\theta$ almost share the same support, since the coefficients of $t_{J(\theta)}$ dominate those of $t_{J(\theta)^\complement}$.
 Then, we can introduce 
-\begin{equation*}
+\begin{equation}
+	\label{eq:def-mu-re}
 	\mu_{c_0}(\theta) = \inf \Big\{ \mu > 0 : 
-	\norm{t_{J(\theta)}}_2 \leq \frac{\mu}{\sqrt n} \norm{\bX t}_2 \Big\}.
-\end{equation*}
+	\norm{t_{J(\theta)}} \leq \frac{\mu}{\sqrt n} \norm{\bX t} 
+	\; \text{ for all } \; t \in C_{\theta, c_0} \Big\}.
+\end{equation}
 Note that the function $c_0 \mapsto \mu_{c_0}(\theta)$ is decreasing.
 If $c_0 = \infty$, then $C_{\theta, c_0} = \R^M$, while if $c_0 = 0$ then
 $C_{\theta, c_0} = \{ t \in \R^M : J(t) = J(\theta) \}$ and in this case
@@ -834,17 +851,17 @@ the inverse of the smallest eigenvalue of the submatrix $(\bG)_{J \times J}$ wit
 	\label{thm:oracle-fast}
 	If $\wh \theta_n$ is given by~\eqref{eq:lasso-def-oracle-sec}, we have that
 	\begin{equation*}
-		\norm{\bf_{\wh \theta_n} - \bf}_n^2 \leq \inf_{\theta \in \Theta} 
-		\bigg\{ \norm{\bf_{\theta} - \bf}_n^2  + c \mu_3(\theta)^2 \sigma^2 \frac{x + \log M}{n} \norm{\theta}_0 \bigg\}
+		\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \Theta} 
+		\bigg\{ \norm{\bf_{\theta} - \bf}^2  + c \mu_3(\theta)^2 \sigma^2 \frac{x + \log M}{n} \norm{\theta}_0 \bigg\}
 	\end{equation*}
-	with a probability larger than $1 - e^{-x}$, where $c = ?$, where $\mu_3(\theta)$ is given by ??? and $\norm{\theta}_0$ is the sparsity of $\theta$ given by ??
+	with a probability larger than $1 - e^{-x}$, where $c = ?$, where $\mu_3(\theta)$ is given by~\eqref{eq:def-mu-re} with $c_0 = 3$ and $\norm{\theta}_0$ is the sparsity of $\theta$ given by~\eqref{eq:sparsity}.
 \end{theorem}
+\todo{References again}
 The proof of Theorem~\ref{thm:oracle-fast} is given in Section~\ref{sec:lasso-proofs} below.
-It is a remarkable theorem, since it show that $\wh \theta_n$, which is a convex problem, is almost as good as the best \emph{sparse} representation of $f$ using the dictionary $\cF$.
-Indeed, the rate obtained herein is of order $(\log M) \norm{\theta}_0 / n$, namely the ambient dimension $M$ appears only through $\log M$, while $\norm{\theta}_0$ corresponds to the "useful" dimension given by the number of elements of $\cF$ useful to be included in the linear combination $f_\theta$.
+It proves that the Lasso estimator $\wh \theta_n$ realizes a balance between an \emph{approximation} or \emph{estimation} term $\norm{\bf_{\theta} - \bf}^2$ and a \emph{complexity} term which involves  the sparsity of $\theta$.
 
-What is remarkable is that Lasso achieved, according to Theorem~\ref{thm:oracle-fast}, a balance between an \emph{approximation} or \emph{estimation} term $\norm{\bf_{\theta} - \bf}_n^2$ and a \emph{complexity} terms which involves only the sparsity of $\theta$.
-
+It is a remarkable theorem, since it shows that the Lasso estimator, which is the solution of a simple convex problem, is almost as good as the best \emph{sparse} representation of $f$ using the dictionary $\cF$.
+Indeed, the rate obtained herein is of order $(\log M) \norm{\theta}_0 / n$, namely the ambient dimension $M$ appears only through $\log M$, while $\norm{\theta}_0$ corresponds to the "useful" dimension given by the number of elements of $\cF$ that are statistically useful to estimate $f$.
 \begin{definition}[Restricted eigenvalues]
 	We say that $\bX$ satisfies the $\text{RE}(s, c_0)$ assumption for some $c_0 > 0$ and some $s \in \{ 1, \ldots, M \}$ whenever
 	\begin{equation*}
@@ -863,26 +880,26 @@ Note that we have
 	\norm{t}_0 \leq s}}
 	\; \frac{1}{\mu_{c_0}(t)}.
 \end{equation*}
-Note that whenever $\bX$ satisfies $\text{RE}(s, 1)$, then any sub-matrix formed by 
-any subset of $2 s$ columns of $\bX$ has full rank.%
-\sidenote{Suppose by contradiction that there is $t \in \R^M$ such that $\norm{t}_0 = 2s$ and $\bX t = 0$. Then, we can choose disjoint set $J_0, J_1 \subset \{ 1, \ldots, M\}$ such that $J(t) = J_0 \cup J_1$ with $|J_0| = s$ and $|J_1| = s$ and such that $\norm{t_{J_1}}_1 \leq \norm{t_{J_0}}_1$. 
+Moreover, whenever $\bX$ satisfies $\text{RE}(s, 1)$, any sub-matrix of $\bX$ formed by any subset of $2 s$ columns from $\bX$ has full rank.%
+\sidenote{Suppose by contradiction that there is $t \in \R^M$ such that $\norm{t}_0 = 2s$ and $\bX t = 0$. Then, we can choose disjoint sets $J_0, J_1 \subset \{ 1, \ldots, M\}$ such that $J(t) = J_0 \cup J_1$ with $|J_0| = s$ and $|J_1| = s$ and such that $\norm{t_{J_1}}_1 \leq \norm{t_{J_0}}_1$. 
 But obviously $\norm{t_{J_1}}_1 = \norm{t_{J_0^\complement}}_1$ so $\norm{t_{J_0^\complement}}_1 \leq \norm{t_{J_0}}_1$, which contradicts the $\text{RE}(s, 1)$ assumption.}
 
 An immediate corollary of Theorem~\ref{thm:oracle-fast} is the following oracle inequality, which holds under the $\text{RE}(s, 3)$ assumption:
 \begin{equation*}
-	\norm{\bf_{\wh \theta_n} - \bf}_n^2 \leq 
+	\norm{\bf_{\wh \theta_n} - \bf}^2 \leq 
 	\inf_{\substack{\theta \in \Theta \\ \norm{\theta}_0 \leq s}}
-	\bigg\{ \norm{\bf_{\theta} - \bf}_n^2  + \frac{c \sigma^2}{\kappa(s, 3)^2} 
-	\; s \; \frac{x + \log M}{n} \bigg\}.
+	\bigg\{ \norm{\bf_{\theta} - \bf}^2  + \frac{c \sigma^2}{\kappa(s, 3)^2} 
+	\; \frac{s(x + \log M)}{n} \bigg\}
 \end{equation*}
+with a probability larger than $1 - e^{-x}$.
 In this inequality, the convergence rate is of order $(s \log M) / n$, where $s$ is the sparsity of the best $\theta$.
-Several remarks are necessary at this point.
+Let us finish this chapter with several remarks before diving into the proofs.
 \begin{itemize}
 	\item The rate of convergence depends on the ambient dimension $M$ only through $\log M$ and depends linearly on the sparsity $s$ of $\theta \in \R^M$. This is a remarkable property called \emph{dimension reduction} or \emph{adaptation to the sparsity} of the Lasso estimator.
-	\item This is not the optimal rate, the minimax optimal rate among $s$-sparse vector being $s \log(M / s) / n$, see ???
-	\item There several improvements of these oracle inequalities in literature: beyond Gaussian noise, using the integrated estimator error $\int_{\R^M} (f_{\wh \theta_n}(x) - f(x))^2 P_X(dx)$ instead of the empirical one used here, and we can remove the dependency of $\lambda$ on the confidence level $x > 0$, see ??
-	\item From Theorem~\ref{thm:oracle-fast} we can deduce bounds on the estimator error $\norm{\wh \theta_n - \theta^\star}_p$ of the true parameter $\theta^\star$ and the we can give guarantees on the \emph{signed support recovery} of the parameter, through controls on the probability 
-	$\P[ \sign(\wh \theta_n) = \sign(\theta^\star)]$, see~???
+	\item This is not the optimal rate, the minimax optimal rate among $s$-sparse vector being $s \log(M / s) / n$. \todo{reference}
+	\item There are several improvements of these oracle inequalities in literature: beyond Gaussian noise, using the integrated estimator error $\int_{\R^M} (f_{\wh \theta_n}(x) - f(x))^2 P_X(dx)$ instead of the empirical one used here, and we can remove the dependency of $\lambda$ on the confidence level $x > 0$.
+	\item From Theorem~\ref{thm:oracle-fast}, we can derive bounds on the estimator error $\norm{\wh \theta_n - \theta^\star}_p$ (measured by the $\ell_p$ norm, $p \geq 1$) of the true parameter $\theta^\star$ and the we can give guarantees on the \emph{signed support recovery} of the parameter, through controls on the probability 
+	$\P[ \sign(\wh \theta_n) = \sign(\theta^\star)]$.\todo{references}
 \end{itemize}
 
 \section{Proofs} % (fold)
@@ -930,8 +947,8 @@ Let us start with the noise. It is fairly easy, since
 	\nor\Big( 0, \sigma^2 \frac{\norm{\bf_j}_n^2}{n} \Big) 
 	= \nor\Big( 0, \frac{\sigma^2}{n} \Big).
 \end{equation*}
-So, recalling that $\P[|Z| \geq z] \leq 2e^{-z^2 / 2}$ whenever $Z \sim \nor(0, 1)$ for any $z > 0$%
-\sidenote{proof}
+So, recalling that $\P[|Z| \geq z] \leq 2e^{-z^2 / 2}$ whenever $Z \sim \nor(0, 1)$ for any $z > 0$,%
+\todo{insert side proof}
 we obtain
 \begin{equation*}
 	\P \bigg[ \Big| \frac 1n \sum_{i=1}^n \eps_i f_j(X_i) \Big| \geq \sigma \sqrt{\frac{2 x}{n}} \bigg] \leq 2 e^{-x}
@@ -944,25 +961,25 @@ satisfies $\P[A] \geq 1 - 2e^{-x}$.
 The definition of $\wh \theta_n$ entails that
 \begin{equation}
 	\label{eq:proof-oracle-slow-step1}
-	\norm{\by - \bf_{\wh \theta_n}}_n^2 + \lambda \norm{\wh \theta_n}_1 
-	\leq \norm{\by - \bf_\theta}_n^2 + \lambda \norm{\theta}_1
+	\norm{\by - \bf_{\wh \theta_n}}^2 + \lambda \norm{\wh \theta_n}_1 
+	\leq \norm{\by - \bf_\theta}^2 + \lambda \norm{\theta}_1
 \end{equation}
 for any $\theta \in \Theta$ and an easy computation gives
 \begin{equation}
 	\label{eq:proof-oracle-slow-step2}
 	\begin{split}
-	&\norm{\by - \bf_{\wh \theta_n}}_n^2 - \norm{\by - \bf_\theta}_n^2 \\
-	&= \norm{\bf_{\wh \theta_n}}_n^2 + \norm{\bf}_n^2 + 2 \inr{\by, \bf_{\theta} - \bf_{\wh \theta_n}}_n \\
-	&= \norm{\bf_{\wh \theta_n}}_n^2 + \norm{\bf}_n^2 + 2 \inr{\bf, \bf_{\theta} - \bf_{\wh \theta_n}}_n + 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}}_n \\
-	&= \norm{\bf_{\wh \theta_n} - \bf}_n^2 - \norm{\bf_\theta - \bf}_n^2 + 
-	2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}}_n.
+	&\norm{\by - \bf_{\wh \theta_n}}^2 - \norm{\by - \bf_\theta}^2 \\
+	&= \norm{\bf_{\wh \theta_n}}^2 + \norm{\bf}^2 + 2 \inr{\by, \bf_{\theta} - \bf_{\wh \theta_n}} \\
+	&= \norm{\bf_{\wh \theta_n}}^2 + \norm{\bf}^2 + 2 \inr{\bf, \bf_{\theta} - \bf_{\wh \theta_n}} + 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}} \\
+	&= \norm{\bf_{\wh \theta_n} - \bf}^2 - \norm{\bf_\theta - \bf}^2 + 
+	2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}}.
 	\end{split}
 \end{equation}
 But on the event $A$, we have that
 \begin{equation}
 	\label{eq:proof-oracle-slow-step3}
 	\begin{split}
-	| 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}}_n | 
+	| 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}} | 
 	&= \Big| \frac 2n \sum_{j=1}^M ((\wh \theta_n)_j - \theta_j ) 
 	\sum_{i=1}^n \eps_i f_j(X_i) \Big| \\
 	&\leq \sum_{j=1}^M | (\wh \theta_n)_j - \theta_j | 2 \sigma \sqrt{\frac{2 (x + \log M)}{n}} \\
@@ -971,11 +988,11 @@ But on the event $A$, we have that
 \end{equation}
 so that, combining Inequalities~\eqref{eq:proof-oracle-slow-step1},~\eqref{eq:proof-oracle-slow-step2} and~\eqref{eq:proof-oracle-slow-step3}, we end up with
 \begin{align*}
-	\norm{\bf_{\wh \theta_n} - \bf}_n^2 &\leq \norm{\bf_\theta - \bf}_n^2 
-	+ \lambda \norm{\wh \theta_n - \theta}_1 
+	\norm{\bf_{\wh \theta_n} - \bf}^2 &\leq \norm{\bf_\theta - \bf}^2 
+	+ \lambda \norm{\wh \theta - \theta}_1 
 	+ \lambda \norm{\theta}_1 
-	- \lambda \norm{\wh \theta_n}_1 \\
-	&\leq \norm{\bf_\theta - \bf}_n^2 + 2 \lambda \norm{\theta}_1,
+	- \lambda \norm{\wh \theta}_1 \\
+	&\leq \norm{\bf_\theta - \bf}^2 + 2 \lambda \norm{\theta}_1,
 \end{align*}
 which concludes the proof of Theorem~\ref{thm:oracle-slow}. $\hfill \square$
 
