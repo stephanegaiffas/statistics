@@ -388,9 +388,9 @@ The tentative agenda for the course is as follows:
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-\input{chap02_statistical_models}
+% % \input{chap02_statistical_models}
 
-\input{chap03_statistical_inference}
+% % \input{chap03_statistical_inference}
 
 \input{chap04_linear_regression}
 
@@ -1005,7 +1005,52 @@ which concludes the proof of Theorem~\ref{thm:oracle-slow}. $\hfill \square$
 \subsection{Proof of Theorem~\ref{thm:oracle-fast}} % (fold)
 \label{sub:proof_of_theorem_thm:oracle-fast}
 
-\todo{type the proof of the Theorem}
+Let us recall that we study the estimator
+\begin{equation*}
+	\wh \theta_n \in \argmin_{\theta \in \Theta} \big\{ R_n(\theta) + \pen(\theta) \big\},
+\end{equation*}
+where $\Theta \subset \Theta$ is a convex set and $R_n(\theta) n^{-1} \sum_{i=1}^n (Y_i - f_\theta(X_i))^2$ and $\pen(\theta) = 2 \lambda \norm{\theta}_1$.
+The function $\theta \mapsto R_n(\theta)$ is differentiable and $\grad R_n(\theta) = - \frac 2n \bX^\top (\bX \theta - \by)$ so that $\partial(R_n + \pen)(\theta) = - \frac 2n \bX^\top (\bX \theta - \by) + 2\partial \pen(\theta)$, namely we have using Proposition~\ref{prop:optimality-criterion} that $\wh \theta_n$ is a minimizer if and only if there is $\wh g \in \partial \pen(\wh \theta_n)$ such that
+\begin{equation}
+	\Big \langle \frac 2n \bX^\top (\bX \wh \theta_n - \by + 2 \wh g, \wh \theta - \theta \Big \rangle \geq 0 \quad \text{for all} \theta \in \Theta.
+\end{equation}
+Let us choose for now an arbitrary $\theta \in \Theta$ and note $J = J(\theta)$.
+This conditions writes
+\begin{equation*}
+	\frac 2n \big \langle  \bX^\top \bX \wh \theta, \wh \theta - \theta \big \rangle 
+	- \frac 2n \big \langle \bX^\top \by, \wh \theta - \theta \big \rangle
+	+ 2 \inr{\wh g, \wh \theta - \theta} \leq 0,
+\end{equation*}
+namely, recalling that $\bX \theta = \bf_\theta$, 
+\begin{equation*}
+	\frac 2n \langle \bf_{\wh \theta}, \bf_{\wh \theta} - \bf_{\theta} \rangle 
+	- \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta} 
+	- \frac 2n \inr{\beps, \bf_{\wh \theta} - \bf_\theta}
+	+ 2 \inr{\wh g, \wh \theta - \theta} \leq 0,
+\end{equation*}
+that we can rewrite as 
+\begin{equation*}
+	\frac 2n \inr{ \bf_{\wh \theta} - \bf, \bf_{\wh \theta} - \bf_{\theta}}
+	+ 2 \inr{\wh g - g, \wh \theta - \theta} 
+	\leq - 2 \inr{g, \wh \theta - \theta} 
+	+ \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta} 
+\end{equation*}
+for any $g \in \partial \pen(\theta)$, and we note that the monotonicity of the subdifferential entails that $\inr{\wh g - g, \wh \theta - \theta} \geq 0$.
+But and easy computation gives (Al-Kachi)
+\begin{equation*}
+	2 \inr{ \bf_{\wh \theta} - \bf, \bf_{\wh \theta} - \bf_{\theta}} 
+	= \norm{\bf_{\wh \theta} - \bf_{\theta}}^2 
+	+ \norm{\bf_{\wh \theta} - \bf}^2
+	- \norm{\bf_{\theta} - \bf}^2
+\end{equation*}
+so that
+\begin{equation*}
+	\norm{\bf_{\wh \theta} - \bf_{\theta}}^2 + \norm{\bf_{\wh \theta} - \bf}^2 
+	\leq \norm{\bf_{\theta} - \bf}^2
+	+ 2 \inr{\wh g - g, \wh \theta - \theta} 
+    - 2 \inr{g, \wh \theta - \theta} 
+	+ \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta}.
+\end{equation*}
 
 % subsection proof_of_theorem_thm:oracle-fast (end)
 
