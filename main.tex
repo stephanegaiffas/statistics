@@ -388,15 +388,15 @@ The tentative agenda for the course is as follows:
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 
-% % \input{chap02_statistical_models}
+% \input{chap02_statistical_models}
 
-% % \input{chap03_statistical_inference}
+% \input{chap03_statistical_inference}
 
-\input{chap04_linear_regression}
+% \input{chap04_linear_regression}
 
-\input{chap05_bayesian_statistics}
+% \input{chap05_bayesian_statistics}
 
-\input{chap06_lasso}
+% \input{chap06_lasso}
 
 \setchapterpreamble[u]{\margintoc}
 \chapter{High dimensional statistics and sparsity}
@@ -493,8 +493,9 @@ The notation $\norm{u}$ will stand for the Euclidean norm of $u \in \R^n$.
 We are looking for an estimator $\wh \theta_n$ such that $\norm{\wh \theta_n}_0 \ll M$ and
 \begin{equation}
 	\label{eq:oracle-remainder}
-	\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \R^M} \Big\{ 
-	\norm{\bf_\theta - \bf}^2 + \remain(\theta) \Big\}
+	\frac 1n \norm{\bf_{\wh \theta_n} - \bf}^2 
+	\leq \inf_{\theta \in \R^M} \Big\{ 
+	\frac 1n  \norm{\bf_\theta - \bf}^2 + \remain(\theta) \Big\}
 \end{equation}
 where $\remain$ is, ideally, a small quantity that depends on $\theta$, but might depend also on $n, \cF$ and $\sigma^2$.
 If $\remain$ is small, then such an inequality would prove that the estimator $f_{\wh \theta_n}$ performs almost as well as the best linear combination $f^\star = f_{\theta^\star}$ of elements from $\cF$, where $\theta^\star \in \argmin_{\theta \in \R^M} \norm{\bf_\theta - \bf}^2$.
@@ -521,8 +522,7 @@ which has no obvious reasons of being sparse.
 % \todo{Explicit GD sous forme prox}
 
 In this chapter, we will consider another penalization which involves the $\ell_1$ norm, since as explained in what follows, it leads to a simple convex problem which defines a sparse estimator $\wh \theta_n^{\mathsf{lasso}}$, coming from a \emph{convex relaxation} principle.
-\todo{Insert references}
-The estimator we will study is given by
+This estimator is called the \emph{Lasso} (Least Absolute Shrinkage and Selection Operator), introduced in~\sidecite{tibshirani1996regression} and is given by
 \begin{equation}
 	\label{eq:lasso-def}
 		\wh \theta_n^{\mathsf{lasso}} = \argmin_{\theta \in \Theta} 
@@ -534,7 +534,6 @@ where $\norm{\theta}_1 = \sum_{j=1}^M |\theta_j|$ is the $\ell_1$ norm of $\thet
  	\item The set $\Theta = [0, +\infty)^M$ (positivity constraint)
  	\item The set $\theta = [-R, R]^M$ for some $R > 0$ (box constraint)
  \end{itemize}
-
 In order to induce sparsity, it is tempting to use as a penalization the "$\ell_0$ norm", but this leads to a problem where we would need to try out all subsets $J \subset \{ 1, \ldots, M \}$ and train a linear model on each subset of coordinates $J$, which means $2^M$ problems to solve.
 
 \paragraph{Convex relaxation.} % (fold)
@@ -617,7 +616,7 @@ We observe that the shrinkage operator, which corresponds to the Ridge penalizat
 The fact that the $\ell_1$ norm induces sparsity (coordinates can be 0) actually comes from the fact that the absolute value is not differentiable at $0$.
 It can be understood geometrically as well, using the fact that a unit $\ell_1$ ball has sparse corners at $\pm e_j$ for $j=1, \ldots, M$ (canonical basis vectors) that are \emph{sparse} vectors: when we project a point onto an $\ell_1$ ball, we are likely to project onto a corner or an edge, that are sets of sparse points.
 
-% \todo{dessins boules lp pour p=0.5, 1, 2, 4 et boule l1 en 3D}
+\todo{dessins boules lp pour p=0.5, 1, 2, 4 et boule l1 en 3D}
 
 % Pour la boule L1 3D, voir https://plotly.com/python/3d-mesh/
 % https://stackoverflow.com/questions/9170838/surface-plots-in-matplotlib
@@ -636,7 +635,12 @@ In order to study the statistical properties of this estimator, we need some too
 \label{sec:some_tools_from_convex_optimization}
 
 Let us consider a convex function $\phi : \R^d \rightarrow \R$.
-A fundamental notion which generalizes the differential to non-differentiable convex functions is the \emph{subdifferential}.
+A fundamental notion which generalizes the differential to non-differentiable convex functions is the \emph{subdifferential}, see Figure~\ref{fig:subdifferential}.
+\begin{marginfigure}
+	\includegraphics{assets/subdifferential.pdf}
+	\caption{An illustration of the subgradients of a convex function at $x=-1$. The subdifferential is equal to the interval $[-0.4, 1]$.}
+	\label{fig:subdifferential}
+\end{marginfigure}
 \begin{definition}
 	\label{def:subdifferential}
 	We say that $g \in \R^d$ is a \emph{subgradient} of a convex function $\phi : \R^d \rightarrow \R$ at $u \in \R^d$ if and only if
@@ -652,7 +656,6 @@ A fundamental notion which generalizes the differential to non-differentiable co
 	 is called the \emph{subdifferential} of $\phi$ at $u$.
 \end{definition}
 An example is with $\phi(u) = |u|$, where we have $\partial \phi(u) = \{ 1 \}$ if $u > 0$, $\partial \phi(u) = \{ -1 \}$ if $u < 0$ and $\partial \phi(u) = [-1, 1]$ if $u = 0$.
-\todo{Insert figure}
 Whenever $\phi$ is differentiable at $u$, we have obviously that $\partial \phi(u) = \{  \grad \phi(u) \}$.
 Another obvious claim is that
 % \sidenote{TODO: proof}
@@ -750,37 +753,20 @@ Let us introduce the set
 \end{equation*}
 Each function $\phi_i$ is differentiable and $\grad \phi_i(u) = e_i$. 
 So, we can apply Equation~\eqref{eq:subdifferential-max} to obtain that
-\begin{align*}
+\begin{equation}
+	\label{eq:subdifferential-l1}
+	\begin{split}
 	\partial \norm{u}_1 &= \conv\Big( \bigcup_{i \in I(u)} \{ e_i \} \Big) \\
-	&= \big\{ \sign(u) + f : f \in \R^d, \; \norm{f}_\infty \leq 1, \; f^\top u = 0 
+	&= \big\{ \sign(u) + h : h \in \R^d, \; \norm{h}_\infty \leq 1, \; h^\top u = 0 
 	\big\}.
-\end{align*}
+	\end{split}
+\end{equation}
 For instance if $d = 4$ and $u = [17 \; -42 \; 0 \; 3]^\top$ then $\partial \norm{u}_1 = \{ 1 \} \times \{ -1 \} \times [-1, 1] \times \{ 1 \}$.
 
 \section{Oracle inequalities for the Lasso} % (fold)
 
-% From now on, we will assume that the features are standardized, which means that the columns of $\bX$ satisfy $\norm{\bX^j}_2^2 = 1$ for all $j=1, \ldots, M$.
-
-The material used in this Section is based on \todo{references: Bickel Ritov Tsybakov and Lunici Koltchinskii Tsyb...}
-
-% We consider the Gaussian linear model
-% \begin{equation*}
-% 	Y_i = f(X_i) + \eps_i
-% \end{equation*}
-% where $X_1, \ldots, X_n$ are deterministic and where $\eps_1, \ldots, \eps_n$ is iid and $\nor(0, \sigma^2)$.
-% We consider a finite dictionary $\cF = \{ f_1, \ldots, f_M \}$ and introduce
-% \begin{equation*}
-% 	f_\theta(x) = \sum_{j=1}^M \theta_j f_j(x).
-% \end{equation*}
-% Recall that $f_\theta(X_i) = \theta^\top \bX_i$, where $\bX_i$ is the $i$-th row of the features matrix and we 
-% \begin{equation*}
-% 	\bX = \begin{bmatrix}
-% 		f_1(X_1) & \cdots & f_M(X_1) \\
-% 		\vdots & \ddots & \vdots \\ 
-% 		f_1(X_n) & \cdots & f_M(X_n) \\
-% 	\end{bmatrix}
-% \end{equation*}
-
+The material used in this Section is based on~\sidecite{bickel2009,koltchinskii2011}.
+Also, a very nice broader book on the topic of high-dimensional statistics is~\cite{giraud2014introduction}.
 Throughout the section, we will assume that the columns are standardized, namely that $\norm{\bX^j}_2 = 1$.
 This is a rather unrestrictive assumption (we could do without it) that follows good-practice when using linear methods in machine learning.
 Let us recall that the Lasso estimator is given by
@@ -803,10 +789,10 @@ with $x > 0$ which corresponds to a confidence level (see Theorem~\ref{thm:oracl
 	\label{thm:oracle-slow}
 	If $\wh \theta_n$ is given by~\eqref{eq:lasso-def-oracle-sec}, we have that
 	\begin{equation*}
-		\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \Theta} 
-		\Big\{ \norm{\bf_{\theta} - \bf}^2  + 2 \lambda \norm{\theta}_1 \Big\}
+		\frac 1n \norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \Theta} 
+		\Big\{ \frac 1n \norm{\bf_{\theta} - \bf}^2  + 2 \lambda \norm{\theta}_1 \Big\}
 	\end{equation*}
-	with a probability larger than $1 - e^{-x}$.
+	with a probability larger than $1 - 2 e^{-x}$.
 \end{theorem}
 This inequality is called a \emph{slow oracle inequality} since the remainder is $O(1 / \sqrt{n})$.
 The proof of Theorem~\ref{thm:oracle-slow} is given in Section~\ref{sec:lasso-proofs} below.
@@ -819,17 +805,18 @@ Let us introduce the $M \times M$ matrix
 where $\bf_j = [f_j(X_1) \cdots f_j(X_n)] \in \R^n$ and $\inr{\cdot, \cdot}$ is the inner product on $\R^n$.
 Note that if $M > n$, we have that
 \begin{equation*}
-	\min_{t \in \R^M} \frac{t^\top \bG t}{\norm{t}} 
+	\min_{t \in \R^M} \frac{\sqrt{t^\top \bG t}}{\norm{t}} 
 	= \min_{t \in \R^M} \frac{\norm{\bX t}}{\sqrt n \norm{t}} = 0
 \end{equation*}
 since $\bX : \R^M \rightarrow \R^n$ and $\ker(\bX) \neq \{ 0 \}$ hence the smallest eigenvalue of $\bG$ is zero.
 
 The assumption we are going to use requires that the smallest eigenvalue \emph{restricted} to \emph{sparse} vectors is positive.
 For $\theta \in \R^M$ and $c_0 > 0$, let us introduce the cone
-\begin{equation*}
+\begin{equation}
+	\label{eq:def-cone-C}
 	C_{\theta, c_0} = \big\{ t \in \R^M : \norm{t_{J(\theta)^\complement}}_1 
 	\leq c_0 \norm{t_{J(\theta)}}_1 \big\},
-\end{equation*}
+\end{equation}
 where
 \begin{itemize}
 	\item $J(\theta) = \{ j \in \{1, \ldots, M\} : \theta_j \neq 0 \}$ is the 
@@ -849,19 +836,20 @@ Note that the function $c_0 \mapsto \mu_{c_0}(\theta)$ is decreasing.
 If $c_0 = \infty$, then $C_{\theta, c_0} = \R^M$, while if $c_0 = 0$ then
 $C_{\theta, c_0} = \{ t \in \R^M : J(t) = J(\theta) \}$ and in this case
 \begin{equation*}
-	\mu_{c_0}(\theta) = \frac{1}{\lambda_{\min}(\bG_{J(\theta) \times J(\theta)})}
+	\mu_{c_0}(\theta) 
+	= \frac{1}{\lambda_{\min}(\bG_{J(\theta) \times J(\theta)})^{1/2}}
 \end{equation*}
-the inverse of the smallest eigenvalue of the submatrix $(\bG)_{J \times J}$ with $J = J(\theta)$ corresponding to the subset of rows and columns with index in $J$.
+the square-root of the inverse of the smallest eigenvalue of the submatrix $(\bG)_{J \times J}$ with $J = J(\theta)$ corresponding to the subset of rows and columns with index in $J$.
 \begin{theorem}
 	\label{thm:oracle-fast}
-	If $\wh \theta_n$ is given by~\eqref{eq:lasso-def-oracle-sec}, we have that
-	\begin{equation*}
-		\norm{\bf_{\wh \theta_n} - \bf}^2 \leq \inf_{\theta \in \Theta} 
-		\bigg\{ \norm{\bf_{\theta} - \bf}^2  + c \mu_3(\theta)^2 \sigma^2 \frac{x + \log M}{n} \norm{\theta}_0 \bigg\}
-	\end{equation*}
-	with a probability larger than $1 - e^{-x}$, where $c = ?$, where $\mu_3(\theta)$ is given by~\eqref{eq:def-mu-re} with $c_0 = 3$ and $\norm{\theta}_0$ is the sparsity of $\theta$ given by~\eqref{eq:sparsity}.
+	If $\wh \theta_n$ is given by~\eqref{eq:lasso-def-oracle-sec} where we replace $\lambda$ by $2 \lambda$, we have that
+	\begin{align*}
+		\frac 1n &\norm{\bf_{\wh \theta_n} - \bf}^2 \\
+		&\leq \inf_{\theta \in \Theta} 
+		\bigg\{ \frac 1n  \norm{\bf_{\theta} - \bf}^2  + 18 \mu_3(\theta)^2 \sigma^2 \frac{x + \log M}{n} \norm{\theta}_0 \bigg\}
+	\end{align*}
+	with a probability larger than $1 - 2 e^{-x}$, where $\mu_3(\theta)$ is given by~\eqref{eq:def-mu-re} with $c_0 = 3$ and $\norm{\theta}_0$ is the sparsity of $\theta$ given by~\eqref{eq:sparsity}.
 \end{theorem}
-\todo{References again}
 The proof of Theorem~\ref{thm:oracle-fast} is given in Section~\ref{sec:lasso-proofs} below.
 It proves that the Lasso estimator $\wh \theta_n$ realizes a balance between an \emph{approximation} or \emph{estimation} term $\norm{\bf_{\theta} - \bf}^2$ and a \emph{complexity} term which involves  the sparsity of $\theta$.
 
@@ -876,7 +864,7 @@ Indeed, the rate obtained herein is of order $(\log M) \norm{\theta}_0 / n$, nam
 			\;
 		\min_{\substack{t \neq 0 \\ 
 		\norm{t_{J^\complement}}_1 \leq c_0 \norm{t_J}_1}}
-		\frac{\norm{\bX t}_2}{\sqrt n \norm{t_J}_2} > 0.
+		\frac{\norm{\bX t}}{\sqrt n \norm{t_J}} > 0.
 	\end{equation*}
 \end{definition}
 Note that we have
@@ -891,9 +879,9 @@ But obviously $\norm{t_{J_1}}_1 = \norm{t_{J_0^\complement}}_1$ so $\norm{t_{J_0
 
 An immediate corollary of Theorem~\ref{thm:oracle-fast} is the following oracle inequality, which holds under the $\text{RE}(s, 3)$ assumption:
 \begin{equation*}
-	\norm{\bf_{\wh \theta_n} - \bf}^2 \leq 
+	\frac 1n \norm{\bf_{\wh \theta_n} - \bf}^2 \leq 
 	\inf_{\substack{\theta \in \Theta \\ \norm{\theta}_0 \leq s}}
-	\bigg\{ \norm{\bf_{\theta} - \bf}^2  + \frac{c \sigma^2}{\kappa(s, 3)^2} 
+	\bigg\{ \frac 1n  \norm{\bf_{\theta} - \bf}^2  + \frac{18 \sigma^2}{\kappa(s, 3)^2} 
 	\; \frac{s(x + \log M)}{n} \bigg\}
 \end{equation*}
 with a probability larger than $1 - e^{-x}$.
@@ -901,47 +889,15 @@ In this inequality, the convergence rate is of order $(s \log M) / n$, where $s$
 Let us finish this chapter with several remarks before diving into the proofs.
 \begin{itemize}
 	\item The rate of convergence depends on the ambient dimension $M$ only through $\log M$ and depends linearly on the sparsity $s$ of $\theta \in \R^M$. This is a remarkable property called \emph{dimension reduction} or \emph{adaptation to the sparsity} of the Lasso estimator.
-	\item This is not the optimal rate, the minimax optimal rate among $s$-sparse vector being $s \log(M / s) / n$. \todo{reference}
+	\item This is not the optimal rate, the minimax optimal rate among $s$-sparse vector (and in a $\ell_q$ ball) being $s \log(M / s) / n$, see~\sidecite{verzelen2012}.
 	\item There are several improvements of these oracle inequalities in literature: beyond Gaussian noise, using the integrated estimator error $\int_{\R^M} (f_{\wh \theta_n}(x) - f(x))^2 P_X(dx)$ instead of the empirical one used here, and we can remove the dependency of $\lambda$ on the confidence level $x > 0$.
 	\item From Theorem~\ref{thm:oracle-fast}, we can derive bounds on the estimator error $\norm{\wh \theta_n - \theta^\star}_p$ (measured by the $\ell_p$ norm, $p \geq 1$) of the true parameter $\theta^\star$ and the we can give guarantees on the \emph{signed support recovery} of the parameter, through controls on the probability 
-	$\P[ \sign(\wh \theta_n) = \sign(\theta^\star)]$.\todo{references}
+	$\P[ \sign(\wh \theta_n) = \sign(\theta^\star)]$, see~\sidecite{zhao2006model}.
 \end{itemize}
 
 \section{Proofs} % (fold)
 \label{sec:lasso-proofs}
 
-Let us recall the following set of notations: $\norm{x}_p$ stands for the $\ell_p$ norm of a vector $x$ and
-\begin{equation*}
-	\by =
-	\begin{bmatrix}
-		Y_1 \\
-		\vdots \\
-		Y_n
-	\end{bmatrix},
-	\quad
-	\bf = 
-	\begin{bmatrix}
-		f(X_1) \\
-		\vdots \\
-		f(X_n)
-	\end{bmatrix},
-	\quad
-	\bf_\theta =	
-	\begin{bmatrix}
-		f_\theta(X_1) \\
-		\vdots \\
-		f_\theta(X_n)
-	\end{bmatrix},
-	\quad
-	\beps = 
-	\begin{bmatrix}
-		\eps_1 \\
-		\vdots \\
-		\eps_n
-	\end{bmatrix}.
-\end{equation*}
-Also, we will write \todo{empirical norm notation} for all vectors
-\todo{introduire le produit scalaire empirique}
 
 \subsection{Proof of Theorem~\ref{thm:oracle-slow}} % (fold)
 \label{sub:proof_of_theorem_thm:oracle-slow}
@@ -953,51 +909,52 @@ Let us start with the noise. It is fairly easy, since
 	= \nor\Big( 0, \frac{\sigma^2}{n} \Big).
 \end{equation*}
 So, recalling that $\P[|Z| \geq z] \leq 2e^{-z^2 / 2}$ whenever $Z \sim \nor(0, 1)$ for any $z > 0$,%
-\todo{insert side proof}
+% \todo{insert side proof}
 we obtain
 \begin{equation*}
 	\P \bigg[ \Big| \frac 1n \sum_{i=1}^n \eps_i f_j(X_i) \Big| \geq \sigma \sqrt{\frac{2 x}{n}} \bigg] \leq 2 e^{-x}
 \end{equation*}
 and using an union bound, we obtain that the event
 \begin{equation*}
-	A = \bigcap_{j=1}^M \bigg\{ \Big| \frac 1n \sum_{i=1}^n \eps_i f_j(X_i) \Big| \geq \sigma \sqrt{\frac{2 (x + \log M)}{n}} \bigg\}
+	A = \bigcap_{j=1}^M \bigg\{ \Big| \frac 1n \sum_{i=1}^n \eps_i f_j(X_i) \Big| \leq \sigma \sqrt{\frac{2 (x + \log M)}{n}} \bigg\}
 \end{equation*}
 satisfies $\P[A] \geq 1 - 2e^{-x}$.
-The definition of $\wh \theta_n$ entails that
+The definition of $\wh \theta$ entails that
 \begin{equation}
 	\label{eq:proof-oracle-slow-step1}
-	\norm{\by - \bf_{\wh \theta_n}}^2 + \lambda \norm{\wh \theta_n}_1 
-	\leq \norm{\by - \bf_\theta}^2 + \lambda \norm{\theta}_1
+	\frac 1n  \norm{\by - \bf_{\wh \theta}}^2 + \lambda \norm{\wh \theta}_1 
+	\leq \frac 1n  \norm{\by - \bf_\theta}^2 + \lambda \norm{\theta}_1
 \end{equation}
 for any $\theta \in \Theta$ and an easy computation gives
 \begin{equation}
 	\label{eq:proof-oracle-slow-step2}
 	\begin{split}
-	&\norm{\by - \bf_{\wh \theta_n}}^2 - \norm{\by - \bf_\theta}^2 \\
-	&= \norm{\bf_{\wh \theta_n}}^2 + \norm{\bf}^2 + 2 \inr{\by, \bf_{\theta} - \bf_{\wh \theta_n}} \\
-	&= \norm{\bf_{\wh \theta_n}}^2 + \norm{\bf}^2 + 2 \inr{\bf, \bf_{\theta} - \bf_{\wh \theta_n}} + 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}} \\
-	&= \norm{\bf_{\wh \theta_n} - \bf}^2 - \norm{\bf_\theta - \bf}^2 + 
-	2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}}.
+	&\frac 1n \norm{\by - \bf_{\wh \theta}}^2 - \frac 1n \norm{\by - \bf_\theta}^2 \\
+	&= \frac 1n  \norm{\bf_{\wh \theta}}^2 + \frac 1n  \norm{\bf}^2 + \frac 2n  \inr{\by, \bf_{\theta} - \bf_{\wh \theta}} \\
+	&= \frac 1n \norm{\bf_{\wh \theta}}^2 + \frac 1n \norm{\bf}^2 + \frac 2n  \inr{\bf, \bf_{\theta} - \bf_{\wh \theta}} + \frac 2n  \inr{\beps, \bf_{\theta} - \bf_{\wh \theta}} \\
+	&= \frac 1n \norm{\bf_{\wh \theta} - \bf}^2 - \frac 1n \norm{\bf_\theta - \bf}^2 + 
+	\frac 2n  \inr{\beps, \bf_{\theta} - \bf_{\wh \theta}}.
 	\end{split}
 \end{equation}
 But on the event $A$, we have that
 \begin{equation}
 	\label{eq:proof-oracle-slow-step3}
 	\begin{split}
-	| 2 \inr{\beps, \bf_{\theta} - \bf_{\wh \theta_n}} | 
-	&= \Big| \frac 2n \sum_{j=1}^M ((\wh \theta_n)_j - \theta_j ) 
+	\frac 2n | \inr{\beps, \bf_{\theta} - \bf_{\wh \theta}} | 
+	&= \Big| \frac 2n \sum_{j=1}^M (\wh \theta_j - \theta_j ) 
 	\sum_{i=1}^n \eps_i f_j(X_i) \Big| \\
-	&\leq \sum_{j=1}^M | (\wh \theta_n)_j - \theta_j | 2 \sigma \sqrt{\frac{2 (x + \log M)}{n}} \\
-	&= \lambda \norm{\wh \theta_n - \theta}_1,	
+	&\leq \sum_{j=1}^M | \wh \theta_j - \theta_j | 2 \sigma \sqrt{\frac{2 (x + \log M)}{n}} \\
+	&= \lambda \norm{\wh \theta - \theta}_1,	
 	\end{split}
 \end{equation}
 so that, combining Inequalities~\eqref{eq:proof-oracle-slow-step1},~\eqref{eq:proof-oracle-slow-step2} and~\eqref{eq:proof-oracle-slow-step3}, we end up with
 \begin{align*}
-	\norm{\bf_{\wh \theta_n} - \bf}^2 &\leq \norm{\bf_\theta - \bf}^2 
+	\frac 1n \norm{\bf_{\wh \theta} - \bf}^2 &
+	\leq \frac 1n \norm{\bf_\theta - \bf}^2 
 	+ \lambda \norm{\wh \theta - \theta}_1 
 	+ \lambda \norm{\theta}_1 
 	- \lambda \norm{\wh \theta}_1 \\
-	&\leq \norm{\bf_\theta - \bf}^2 + 2 \lambda \norm{\theta}_1,
+	&\leq \frac 1n \norm{\bf_\theta - \bf}^2 + 2 \lambda \norm{\theta}_1,
 \end{align*}
 which concludes the proof of Theorem~\ref{thm:oracle-slow}. $\hfill \square$
 
@@ -1005,55 +962,137 @@ which concludes the proof of Theorem~\ref{thm:oracle-slow}. $\hfill \square$
 \subsection{Proof of Theorem~\ref{thm:oracle-fast}} % (fold)
 \label{sub:proof_of_theorem_thm:oracle-fast}
 
+% \todo{attention au facteur 2 devant la penalisation}
+
 Let us recall that we study the estimator
-\begin{equation*}
-	\wh \theta_n \in \argmin_{\theta \in \Theta} \big\{ R_n(\theta) + \pen(\theta) \big\},
-\end{equation*}
-where $\Theta \subset \Theta$ is a convex set and $R_n(\theta) n^{-1} \sum_{i=1}^n (Y_i - f_\theta(X_i))^2$ and $\pen(\theta) = 2 \lambda \norm{\theta}_1$.
-The function $\theta \mapsto R_n(\theta)$ is differentiable and $\grad R_n(\theta) = - \frac 2n \bX^\top (\bX \theta - \by)$ so that $\partial(R_n + \pen)(\theta) = - \frac 2n \bX^\top (\bX \theta - \by) + 2\partial \pen(\theta)$, namely we have using Proposition~\ref{prop:optimality-criterion} that $\wh \theta_n$ is a minimizer if and only if there is $\wh g \in \partial \pen(\wh \theta_n)$ such that
 \begin{equation}
-	\Big \langle \frac 2n \bX^\top (\bX \wh \theta_n - \by + 2 \wh g, \wh \theta - \theta \Big \rangle \geq 0 \quad \text{for all} \theta \in \Theta.
+	\label{eq:lasso-def-proof}
+	\wh \theta \in \argmin_{\theta \in \Theta} \big\{ R_n(\theta) + 2 \pen(\theta) \big\},
+\end{equation}
+where $\Theta \subset \Theta$ is a convex set, where 
+\begin{equation*}
+	R_n(\theta) = \frac 1n \sum_{i=1}^n (Y_i - f_\theta(X_i))^2	
+	= \frac 1n \norm{\by - \bf_{\theta}}^2
+\end{equation*}
+is convex and differentiable and $\pen(\theta) = \lambda \norm{\theta}_1$ is convex.
+We have $\grad R_n(\theta) = - \frac 2n \bX^\top (\by - \bX \theta)$ so that
+\begin{equation*}
+	\partial(R_n + \pen)(\theta) = - \frac 2n \bX^\top (\by - \bX \theta) + 2 \lambda 
+	\partial \norm{\theta}_1.
+\end{equation*}
+Using Proposition~\ref{prop:optimality-criterion}, we have that~\eqref{eq:lasso-def-proof} is equivalent to the fact that there is $\wh g \in \partial \norm{\wh \theta}_1$ such that
+\begin{equation}
+	\label{eq:lasso-proof-cond1}
+	\Big \langle - \frac 2n \bX^\top (\by - \bX \wh \theta) + 2 \lambda \wh g, \wh \theta - \theta \Big \rangle \leq 0 \quad \text{for all} \quad \theta \in \Theta.
 \end{equation}
 Let us choose for now an arbitrary $\theta \in \Theta$ and note $J = J(\theta)$.
-This conditions writes
+We can rewrite inequality~\eqref{eq:lasso-proof-cond1} as
 \begin{equation*}
 	\frac 2n \big \langle  \bX^\top \bX \wh \theta, \wh \theta - \theta \big \rangle 
 	- \frac 2n \big \langle \bX^\top \by, \wh \theta - \theta \big \rangle
-	+ 2 \inr{\wh g, \wh \theta - \theta} \leq 0,
+	+ 2 \lambda \inr{\wh g, \wh \theta - \theta} \leq 0,
 \end{equation*}
-namely, recalling that $\bX \theta = \bf_\theta$, 
-\begin{equation*}
-	\frac 2n \langle \bf_{\wh \theta}, \bf_{\wh \theta} - \bf_{\theta} \rangle 
-	- \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta} 
-	- \frac 2n \inr{\beps, \bf_{\wh \theta} - \bf_\theta}
-	+ 2 \inr{\wh g, \wh \theta - \theta} \leq 0,
-\end{equation*}
+and, recalling that $\bX \theta = \bf_\theta$ and that $\by = \bf + \beps$, we have
+\begin{align*}
+	\frac 2n \langle \bf_{\wh \theta}, \bf_{\wh \theta} &- \bf_{\theta} \rangle 
+	- \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta} \\
+	&- \frac 2n \inr{\beps, \bf_{\wh \theta} - \bf_\theta}
+	+ 2 \lambda \inr{\wh g, \wh \theta - \theta} \leq 0,
+\end{align*}
 that we can rewrite as 
-\begin{equation*}
+\begin{align*}
 	\frac 2n \inr{ \bf_{\wh \theta} - \bf, \bf_{\wh \theta} - \bf_{\theta}}
-	+ 2 \inr{\wh g - g, \wh \theta - \theta} 
-	\leq - 2 \inr{g, \wh \theta - \theta} 
-	+ \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta} 
-\end{equation*}
-for any $g \in \partial \pen(\theta)$, and we note that the monotonicity of the subdifferential entails that $\inr{\wh g - g, \wh \theta - \theta} \geq 0$.
-But and easy computation gives (Al-Kachi)
+	&+ 2 \lambda  \inr{\wh g - g, \wh \theta - \theta} \\
+	\leq &- 2 \lambda  \inr{g, \wh \theta - \theta} 
+	+ \frac 2n  \inr{\beps,  \bf_{\wh \theta} - \bf_\theta} 
+\end{align*}
+for any $g \in \partial \norm{\theta}_1$. 
+But, the monotonicity of the subdifferential entails that $\inr{\wh g - g, \wh \theta - \theta} \geq 0$ and and easy computation gives (Al-Kachi)
 \begin{equation*}
 	2 \inr{ \bf_{\wh \theta} - \bf, \bf_{\wh \theta} - \bf_{\theta}} 
 	= \norm{\bf_{\wh \theta} - \bf_{\theta}}^2 
 	+ \norm{\bf_{\wh \theta} - \bf}^2
 	- \norm{\bf_{\theta} - \bf}^2
 \end{equation*}
-so that
+so that we end up with
+\begin{align*}
+	\frac 1n \norm{\bf_{\wh \theta} - \bf}^2 &
+	+ \frac 1n \norm{\bf_{\wh \theta} - \bf_{\theta}}^2 \\
+	&\leq \frac 1n \norm{\bf_{\theta} - \bf}^2
+    - 2 \lambda \inr{g, \wh \theta - \theta} 
+	+ \frac 2n  \inr{\beps,  \bf_{\wh \theta} - \bf_\theta}.
+\end{align*}
+for any $g \in \partial \norm{\theta}_1$.
+Now, we need to use what the subdifferential of the $\ell_1$ norm is.
+Using~\eqref{eq:subdifferential-l1}, we can write $g = \sign(\theta) + h$ for any $h$ such that where $h_J = 0$ and $\norm{h}_\infty \leq 1$.
+We have 
 \begin{equation*}
-	\norm{\bf_{\wh \theta} - \bf_{\theta}}^2 + \norm{\bf_{\wh \theta} - \bf}^2 
-	\leq \norm{\bf_{\theta} - \bf}^2
-	+ 2 \inr{\wh g - g, \wh \theta - \theta} 
-    - 2 \inr{g, \wh \theta - \theta} 
-	+ \frac 2n  \inr{\bf,  \bf_{\wh \theta} - \bf_\theta}.
+	|\inr{\sign(\theta), \wh \theta - \theta}| = |\inr{\sign(\theta), (\wh \theta - \theta)_J}| \leq \norm{(\wh \theta - \theta)_J}_1.
 \end{equation*}
+and we can choose $h$ such that
+\begin{equation*}
+	\inr{h, \wh \theta - \theta} = \inr{h, \wh \theta_{J^\complement}} 
+	= \norm{\wh \theta_{J^\complement}}_1 
+	= \norm{(\wh \theta - \theta)_{J^\complement}}_1.
+\end{equation*}
+This leads to
+\begin{align*}
+	\frac 1n \norm{\bf_{\wh \theta} - \bf}^2 &+ \frac 1n \norm{\bf_{\wh \theta} - \bf_{\theta}}^2
+	+ 2 \lambda \norm{\wh \theta_{J^\complement}}_1 \\
+	&\leq \frac 1n \norm{\bf_{\theta} - \bf}^2
+    + 2 \lambda \norm{(\wh \theta - \theta)_J}_1
+	+ \frac 2n  \inr{\beps,  \bf_{\wh \theta} - \bf_\theta}.
+\end{align*}
+If $\norm{\bf_{\wh \theta} - \bf}^2 + \norm{\bf_{\wh \theta} - \bf_{\theta}}^2 - \norm{\bf_{\theta} - \bf}^2 \leq 0$, then $\norm{\bf_{\wh \theta} - \bf}^2 \leq \norm{\bf_{\theta} - \bf}^2$, which concludes the proof, so let us consider from now on the other case, which entails that
+\begin{equation}
+	\label{eq:lasso-proof-on-A}
+	2 \lambda \norm{\wh \theta_{J^\complement}}_1 
+	\leq 2 \lambda \norm{(\wh \theta - \theta)_J}_1
+	+ \frac 2n  \inr{\beps,  \bf_{\wh \theta} - \bf_\theta}.
+\end{equation}
+On the event $A$,%
+\sidenote{see the proof of Theorem~\ref{thm:oracle-slow}}
+we have $\frac 1n \norm{\bX^\top \beps}_\infty \leq \lambda / 2$ where we recall that $\lambda = 2 \sigma \sqrt{2 (x + \log M) / n}$.
+This entails 
+\begin{align*}
+	\frac 2n \inr{\beps,  \bf_{\wh \theta} - \bf_\theta} &=
+	\frac 2n \inr{\bX^\top \beps, \wh \theta - \theta} \\
+	&= \frac 2n \inr{\bX^\top \beps, (\wh \theta - \theta)_J} 
+	+ \frac 2n \inr{\bX^\top \beps, \wh \theta_{J^\complement}} \\
+	&\leq \lambda \norm{(\wh \theta - \theta)_J}_1 
+	+ \lambda \norm{\wh \theta_{J^\complement}}_1,
+\end{align*}
+which combined with~\eqref{eq:lasso-proof-on-A} gives $\norm{\wh \theta_{J^\complement}}_1 \leq 3 \norm{(\wh \theta - \theta)_J}_1$ on $A$, 
+namely that $\wh \theta - \theta \in C_{\theta, 3}$ where we recall that $C_{\theta, 3}$ is given by~\eqref{eq:def-cone-C}.
+This means that, on $A$, using~\eqref{eq:def-mu-re}, we can write in this case that
+\begin{equation*}
+	\norm{(\wh \theta - \theta)_J} \leq \frac{\mu(\theta)}{\sqrt n} \norm{\bX (\wh \theta - \theta)}
+\end{equation*}
+with $\mu(\theta) = \mu_3(\theta)$, which entails that
+\begin{align*}
+	\frac 1n \norm{\bf_{\wh \theta} - \bf}^2 
+	&+ \frac 1n \norm{\bf_{\wh \theta} - \bf_{\theta}}^2
+	+ \lambda \norm{\wh \theta_{J^\complement}}_1 \\
+	&\leq \frac 1n \norm{\bf_{\theta} - \bf}^2 
+	+ 3 \lambda \norm{(\wh \theta - \theta)_J}_1 \\
+	\marginnote{using Cauchy-Schwarz}
+	&\leq \frac 1n \norm{\bf_{\theta} - \bf}^2 + 3 \lambda |J|^{1/2} \norm{(\wh \theta - \theta)_J} \\
+	&\leq \frac 1n \norm{\bf_{\theta} - \bf}^2 + 3 \mu(\theta) \lambda |J|^{1/2} 
+	\frac{1}{\sqrt n} \norm{\bX (\wh \theta - \theta)} \\
+	&= \frac 1n \norm{\bf_{\theta} - \bf}^2 + 3 \mu(\theta) \lambda |J|^{1/2} 
+	\frac{1}{\sqrt n} \norm{\bf_{\wh \theta} - \bf_\theta},
+\end{align*}
+which concludes the proof since using the fact that $ax - x^2 \leq a^2 / 4$ for any $x, a > 0$, we have
+\begin{align*}
+	\frac 1n \norm{\bf_{\wh \theta} - \bf}^2 
+	\leq \frac 1n \norm{\bf_{\theta} - \bf}^2 + 9 \mu(\theta)^2 \lambda^2 |J|.
+\end{align*}
+$\hfill \square$
+
+\input{chap07_mle_exponential_models}
+
 
 % subsection proof_of_theorem_thm:oracle-fast (end)
-
 
 % subsection proof_of_theorem_thm:oracle-slow (end)
 

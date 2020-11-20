@@ -1,4 +1,3 @@
-
 \setchapterpreamble[u]{\margintoc}
 \chapter{Bayesian statistics}
 \label{chap:bayesian_statistics}
@@ -405,7 +404,7 @@ so that the Bayes risk with uniform prior $\mu(d \theta) = p(\theta) d\theta$ wh
 	R_B(\wh \theta, \mu) &= \int_0^1 \E_\theta[ (\wh \theta - \theta)^2] d \theta 
 	= \frac{1}{6(n+2)}.
 \end{align*}
-Using the exact same arguments, it is easy to see that if we use the prior distribution $\beta(a, b)$ instead of $\uni([0, 1])$ (which is a particular case, since $\uni([0, 1]) = \beta(1, 1)$) the posterior distribution is given by
+Using the exact same arguments, it is easy to see that if we use the prior distribution $\bet(a, b)$ instead of $\uni([0, 1])$ (which is a particular case, since $\uni([0, 1]) = \bet(1, 1)$) the posterior distribution is given by
 \begin{equation*}
 	p(\theta | x) = \bet(a + x, b + n - x + b),
 \end{equation*}
@@ -415,6 +414,10 @@ which leads to a Bayesian estimator (for the square loss) given by
 \end{equation*}
 In this example, the prior and the posterior both belong to the family of $\bet$ distributions. 
 In such a case, we say that the $\bin$ and $\bet$ distributions are \emph{conjugated}, which corresponds to a situation where the posterior distribution can be \emph{explicitly} computed.
+\begin{definition}[Conjugated distributions]
+	Given a prior $\mu(d \theta) = p(\theta) \lambda(d \theta)$ and a model $P_\theta(dx) = p(x | \theta) \nu(dx)$, we say that the distributions of the prior and of the model are \emph{conjugated} whenever the prior and the posterior distribution belong to the same family of distributions.
+\end{definition}
+
 
 \subsection{Gaussian sample with a Gaussian prior}
 
@@ -444,7 +447,7 @@ and that the Bayes estimator for the square loss is given by
 \begin{equation*}
 	\wh \theta = \frac{1}{n + \sigma^2 / \tau^2} \sum_{i=1}^n X_i.
 \end{equation*}
-This proves, in particular, that the Gaussian family is \emph{conjugate} with itself.
+This proves, in particular, that the Gaussian family is \emph{conjugated} with itself.
 
 
 \subsection{Bayesian linear regression with a Gaussian prior} % (fold)
@@ -740,7 +743,7 @@ which concludes the proof of Proposition~\ref{prop:cond-gaussian-vector}. $\hfil
 
 
 
-\subsection{Proof of the lower bound from Theorem~\ref{thm:least-squares-minimax}} % (fold)
+\subsection{Proof of the lower bound from Theorem~\ref{thm:least-squares-minimax}}
 \label{sec:proof_of_the_minimax_lower_bound_}
 
 We have now all the tools required to prove the lower bound involved in Theorem~\ref{thm:least-squares-minimax} from Chapter~\ref{chap:linear_regression}, namely that
@@ -808,22 +811,22 @@ Let us recall that $\wh \bSigma = n^{-1} \bX^\top \bX = n^{-1} \sum_{i=1}^n X_i 
 	\label{lem:excess_risk_ridge}
 	The excess risk of the ridge estimator $\wh \theta_\lambda$ given by~\eqref{eq:ridge-estimator-lower-bound} is given by
 	\begin{align*}
-		\E [\cE(\wh \theta_\lambda)] &= \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \\
+		\E_\theta [\cE(\wh \theta_\lambda)] &= \lambda^2 \E \norm{\theta}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \\
 		& \quad + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big)
 	\end{align*}
-	under the assumption that $Y_i = X_i^\top \theta^* + \eps_i$ for $\eps_i \sim \nor(0, \sigma^2)$.
+	under the assumption that $Y_i = X_i^\top \theta + \eps_i$ for $\eps_i \sim \nor(0, \sigma^2)$.
 \end{lemma}
 We inject the formula given by Lemma~\ref{lem:excess_risk_ridge} to end up with the lower bound
 \begin{equation*}
-	\E_{\theta^* \sim \Pi_\lambda} \Big[ \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2  + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big) \Big].
+	\E_{\theta \sim \Pi_\lambda} \Big[ \lambda^2 \E \norm{\theta}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2  + \frac{\sigma^2}{n} \E \tr \Big( (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \wh \bSigma \Big) \Big].
 \end{equation*}
-So, using Fubini, and since $\E_{\theta^* \sim \Pi_\lambda} [\theta^* (\theta^*)^\top] = \frac{\sigma^2}{\lambda n} \bI_d$ by definition of $\Pi_\lambda$, we end up with
+So, using Fubini, and since $\E_{\theta \sim \Pi_\lambda} [\theta \theta^\top] = \frac{\sigma^2}{\lambda n} \bI_d$ by definition of $\Pi_\lambda$, we end up with
 \begin{align*}
-	\E_{\theta^* \sim \Pi_\lambda} \Big[ \lambda^2 & \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} 
+	\E_{\theta \sim \Pi_\lambda} \Big[ \lambda^2 & \E \norm{\theta}_{(\wh \bSigma_\lambda)^{-1} 
 	\bSigma (\wh \bSigma_\lambda)^{-1}}^2 \Big] \\
 	\marginnote{using $\tr[x] = x$ for $x \in \R$ }
-	&= \lambda^2 \; \E \; \E_{\theta^* \sim \Pi_\lambda} \tr \Big[ (\theta^*)^\top (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta^* \Big] \\
-	&= \lambda^2 \; \E \; \E_{\theta^* \sim \Pi_\lambda} \tr \Big[(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta^*  (\theta^*)^\top \Big] \\
+	&= \lambda^2 \; \E \; \E_{\theta \sim \Pi_\lambda} \tr \Big[ \theta^\top (\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta \Big] \\
+	&= \lambda^2 \; \E \; \E_{\theta \sim \Pi_\lambda} \tr \Big[(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1} \theta \theta^\top \Big] \\
 	&= \frac{\sigma^2}{n} \; \E \tr \Big[(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}
 	\lambda \bI_d \Big],
 \end{align*}
@@ -853,25 +856,25 @@ This proves the desired lower bound of the minimax risk, up to the proof of Lemm
 
 \paragraph{Proof of Lemma~\ref{lem:excess_risk_ridge}.}
 
-Let us recall that $Y_i = X_i^\top \theta^* + \eps_i$ with $\eps_i \sim \nor(0, \sigma^2)$ and that each $\eps_i$ is independent of $X_1, \ldots, X_n$.
+Let us recall that $Y_i = X_i^\top \theta + \eps_i$ with $\eps_i \sim \nor(0, \sigma^2)$ and that each $\eps_i$ is independent of $X_1, \ldots, X_n$.
 We have
 \begin{equation*}
-	\frac 1n \sum_{i=1}^n Y_i X_i = \frac 1n \sum_{i=1}^n X_i X_i^\top \theta^* 
-	+ \frac 1n \sum_{i=1}^n \eps_i X_i = \wh \bSigma \theta^* + \frac 1n \sum_{i=1}^n \eps_i X_i,
+	\frac 1n \sum_{i=1}^n Y_i X_i = \frac 1n \sum_{i=1}^n X_i X_i^\top \theta 
+	+ \frac 1n \sum_{i=1}^n \eps_i X_i = \wh \bSigma \theta + \frac 1n \sum_{i=1}^n \eps_i X_i,
 \end{equation*}
 so that
 \begin{equation*}
-	\E_{\theta^*} [\cE(\wh \theta_\lambda)] 
-	=  \E_{\theta^*} \norm{\wh \theta_\lambda - \theta^*}_{\bSigma}^2 
-	= \E \Big\| (\wh \bSigma_\lambda)^{-1} \Big(\wh \bSigma \theta^* + \frac 1n \sum_{i=1}^n \eps_i X_i \Big) - \theta^* \Big\|_{\bSigma}^2,
+	\E_{\theta} [\cE(\wh \theta_\lambda)] 
+	=  \E_{\theta} \norm{\wh \theta_\lambda - \theta}_{\bSigma}^2 
+	= \E \Big\| (\wh \bSigma_\lambda)^{-1} \Big(\wh \bSigma \theta + \frac 1n \sum_{i=1}^n \eps_i X_i \Big) - \theta \Big\|_{\bSigma}^2,
 \end{equation*}
 but using $(\wh \bSigma_\lambda)^{-1} (\wh \bSigma + \lambda \bI_d - \lambda \bI_d) = \bI_d - \lambda 
 (\wh \bSigma_\lambda)^{-1}$ we obtain
 \begin{align*}
-	\E_{\theta^*} [\cE(\wh \theta_\lambda)] &= \E \Big\| (\wh \bSigma_\lambda)^{-1} \frac 1n \sum_{i=1}^n \eps_i X_i - \lambda (\wh \bSigma_\lambda)^{-1} \theta^* \Big\|_{\bSigma}^2 \\
-	&= \E \bigg[ \E \bigg[ \Big\| \frac 1n \sum_{i=1}^n \eps_i X_i - \lambda \theta^* \Big\|_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg| X_1, \ldots, X_n \bigg] \bigg] \\
-	&= \E \bigg[ \E \bigg[ \Big\| \frac 1n \sum_{i=1}^n \eps_i X_i \Big\|_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg| X_1, \ldots, X_n \bigg] \bigg]  + \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \\
-	&= \frac{\sigma^2}{n^2} \E \bigg[ \sum_{i=1}^n \norm{X_i}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg]  + \lambda^2 \E \norm{\theta^*}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2,
+	\E_{\theta} [\cE(\wh \theta_\lambda)] &= \E \Big\| (\wh \bSigma_\lambda)^{-1} \frac 1n \sum_{i=1}^n \eps_i X_i - \lambda (\wh \bSigma_\lambda)^{-1} \theta \Big\|_{\bSigma}^2 \\
+	&= \E \bigg[ \E \bigg[ \Big\| \frac 1n \sum_{i=1}^n \eps_i X_i - \lambda \theta \Big\|_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg| X_1, \ldots, X_n \bigg] \bigg] \\
+	&= \E \bigg[ \E \bigg[ \Big\| \frac 1n \sum_{i=1}^n \eps_i X_i \Big\|_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg| X_1, \ldots, X_n \bigg] \bigg]  + \lambda^2 \E \norm{\theta}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \\
+	&= \frac{\sigma^2}{n^2} \E \bigg[ \sum_{i=1}^n \norm{X_i}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2 \bigg]  + \lambda^2 \E \norm{\theta}_{(\wh \bSigma_\lambda)^{-1} \bSigma (\wh \bSigma_\lambda)^{-1}}^2,
 \end{align*}
 where we used repeatedly that $\E[\eps_i | X_1, \ldots, X_n] = 0$, $\E[\eps_i \eps_j | X_1, \ldots, X_n] = 0$ for any $i \neq j$ and $\E[\eps_i^2 | X_1, \ldots, X_n] = \sigma^2$.
 But 
