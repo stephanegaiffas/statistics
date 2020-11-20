@@ -120,7 +120,7 @@ For instance, the $\nor(0, 1)$ distribution has density $\phi(x) = e^{-x^2/2} / 
 This means that realizations of a $\nor(0, 1)$ distribution can take any value in $\R$, while real samples are usually bounded.
 However, we can prove that if $Z \sim \nor(0, 1)$, then $\Phi(x) := \P[Z \leq x]$ satisfies
 \begin{marginfigure}
-	\includegraphics{images/gaussian_queue.pdf}
+	\includegraphics{gaussian_queue.pdf}
 	\caption{Illustration of the lower and upper bounds proposed in Equation~\eqref{eq:gaussian_queue}.}
 \end{marginfigure}%
 \begin{equation}
@@ -243,7 +243,7 @@ An interesting example of \emph{non-identifiable} model is given by \emph{mixtur
 \end{align*}
 for any $x \in \R^d$, where $\theta = (\pi_k, \mu_k, \bSigma_k)_{k=1, \ldots, K}$ and $K \geq 1$ is an integer corresponding to the number of ``clusters''.
 \begin{figure}[htbp]
-	\includegraphics{images/gmm.pdf}
+	\includegraphics{gmm.pdf}
 	\caption{$500$ realizations of a Gaussian mixture with $d=2$, $K=3$ $\pi = [\pi_1, \pi_2, \pi_3] = [0.1, 0.6, 0.3]$, $\mu_1 = [-1, 1]$, $\mu_2 = [0, 1]$, $\mu_3 = [-0.5, 0.5]$ and $\bSigma_1 = \bSigma_2 = \bSigma_3 = 0.01 \times \bI_2$.}
 \end{figure}
 Such a mixture density is non-identifiable, since we have $f_{\theta} = f_{\sigma(\theta)}$
