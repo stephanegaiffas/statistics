@@ -267,14 +267,14 @@ Another obvious claim is that
 \end{equation*}
 Also, it is easy to see that
 \begin{equation*}
-	\partial \Big( \sum_{k=1}^K \alpha_k \phi_k(u) \Big) =  \alpha_k \sum_{k=1}^K \partial \phi_k(u)
+	\partial \Big( \sum_{k=1}^K \alpha_k \phi_k(u) \Big) = \sum_{k=1}^K \alpha_k \partial \phi_k(u)
 \end{equation*}
 whenever $\alpha_k \geq 0$ and $\phi_k$ are convex functions for all $k=1, \ldots, K$.
 Another nice formula allows to express the subdifferential of a maximum of convex functions with the subdifferential of each function.
 Indeed, if $\phi(u) = \max_{k=1}^K \phi_k(u)$, we have
 \begin{equation}
 	\label{eq:subdifferential-max}
-	\partial \phi(u) = \conv\Big( \bigcup_{i=1}^d \Big\{ \partial \phi_k(u) : \phi_k(u) = \phi(u) \Big\} \Big),
+	\partial \phi(u) = \conv\Big( \bigcup_{k=1}^K \Big\{ \partial \phi_k(u) : \phi_k(u) = \phi(u) \Big\} \Big),
 \end{equation}
 where $\conv(A)$ stands for the convex hull of a set $A$.
 For instance, if $\phi_1 : \R \rightarrow \R$ and $\phi_2 : \R \rightarrow \R$ are convex and differentiable functions, we have%
@@ -367,10 +367,11 @@ So, we can apply Equation~\eqref{eq:subdifferential-max} to obtain that
 	\label{eq:subdifferential-l1}
 	\begin{split}
 	\partial \norm{u}_1 &= \conv\Big( \bigcup_{i \in I(u)} \{ e_i \} \Big) \\
-	&= \big\{ \sign(u) + h : h \in \R^d, \; \norm{h}_\infty \leq 1, \; h^\top u = 0 
-	\big\}.
+	&= \big\{ \sign(u) + h : h \in \R^d, \; \norm{h}_\infty \leq 1, \; h \odot u = 0 
+	\big\},
 	\end{split}
 \end{equation}
+where $h \odot u$ is the Hadamard product given by $(h \odot u)_j = h_j u_j$.
 For instance if $d = 4$ and $u = [17 \; -42 \; 0 \; 3]^\top$ then $\partial \norm{u}_1 = \{ 1 \} \times \{ -1 \} \times [-1, 1] \times \{ 1 \}$.
 
 \section{Oracle inequalities for the Lasso} % (fold)
@@ -415,8 +416,8 @@ Let us introduce the $M \times M$ matrix
 where $\bf_j = [f_j(X_1) \cdots f_j(X_n)] \in \R^n$ and $\inr{\cdot, \cdot}$ is the inner product on $\R^n$.
 Note that if $M > n$, we have that
 \begin{equation*}
-	\min_{t \in \R^M} \frac{\sqrt{t^\top \bG t}}{\norm{t}} 
-	= \min_{t \in \R^M} \frac{\norm{\bX t}}{\sqrt n \norm{t}} = 0
+	\min_{t \in \R^M \setminus \{ 0 \}} \frac{\sqrt{t^\top \bG t}}{\norm{t}} 
+	= \min_{t \in \R^M \setminus \{ 0 \}} \frac{\norm{\bX t}}{\sqrt n \norm{t}} = 0
 \end{equation*}
 since $\bX : \R^M \rightarrow \R^n$ and $\ker(\bX) \neq \{ 0 \}$ hence the smallest eigenvalue of $\bG$ is zero.
 
@@ -698,3 +699,4 @@ which concludes the proof since using the fact that $ax - x^2 \leq a^2 / 4$ for 
 	\leq \frac 1n \norm{\bf_{\theta} - \bf}^2 + 9 \mu(\theta)^2 \lambda^2 |J|.
 \end{align*}
 $\hfill \square$
+
