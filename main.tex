@@ -160,7 +160,7 @@
 
 \newcommand{\wh}{\widehat}
 \newcommand{\wt}{\widetilde}
-
+\newcommand{\wb}{\widebar}
 \newcommand{\ind}[1]{\mathbf 1_{#1}}
 \newcommand{\grad}{\nabla}
 
@@ -189,7 +189,79 @@
 
 \DeclareMathOperator{\sign}{sign}
 
-% \makeindex[columns=3, title=Alphabetical Index, intoc] % Make LaTeX produce the files required to compile the index
+\usepackage{amsmath}
+
+
+%% This code makes a widebar using https://tex.stackexchange.com/questions/16337/can-i-get-a-widebar-without-using-the-mathabx-package
+\makeatletter
+\let\save@mathaccent\mathaccent
+\newcommand*\if@single[3]{%
+  \setbox0\hbox{${\mathaccent"0362{#1}}^H$}%
+  \setbox2\hbox{${\mathaccent"0362{\kern0pt#1}}^H$}%
+  \ifdim\ht0=\ht2 #3\else #2\fi
+  }
+%The bar will be moved to the right by a half of \macc@kerna, which is computed by amsmath:
+\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
+%If there's a superscript following the bar, then no negative kern may follow the bar;
+%an additional {} makes sure that the superscript is high enough in this case:
+\newcommand*\widebar[1]{\@ifnextchar^{{\wide@bar{#1}{0}}}{\wide@bar{#1}{1}}}
+%Use a separate algorithm for single symbols:
+\newcommand*\wide@bar[2]{\if@single{#1}{\wide@bar@{#1}{#2}{1}}{\wide@bar@{#1}{#2}{2}}}
+\newcommand*\wide@bar@[3]{%
+  \begingroup
+  \def\mathaccent##1##2{%
+%Enable nesting of accents:
+    \let\mathaccent\save@mathaccent
+%If there's more than a single symbol, use the first character instead (see below):
+    \if#32 \let\macc@nucleus\first@char \fi
+%Determine the italic correction:
+    \setbox\z@\hbox{$\macc@style{\macc@nucleus}_{}$}%
+    \setbox\tw@\hbox{$\macc@style{\macc@nucleus}{}_{}$}%
+    \dimen@\wd\tw@
+    \advance\dimen@-\wd\z@
+%Now \dimen@ is the italic correction of the symbol.
+    \divide\dimen@ 3
+    \@tempdima\wd\tw@
+    \advance\@tempdima-\scriptspace
+%Now \@tempdima is the width of the symbol.
+    \divide\@tempdima 10
+    \advance\dimen@-\@tempdima
+%Now \dimen@ = (italic correction / 3) - (Breite / 10)
+    \ifdim\dimen@>\z@ \dimen@0pt\fi
+%The bar will be shortened in the case \dimen@<0 !
+    \rel@kern{0.6}\kern-\dimen@
+    \if#31
+      \overline{\rel@kern{-0.6}\kern\dimen@\macc@nucleus\rel@kern{0.4}\kern\dimen@}%
+      \advance\dimen@0.4\dimexpr\macc@kerna
+%Place the combined final kern (-\dimen@) if it is >0 or if a superscript follows:
+      \let\final@kern#2%
+      \ifdim\dimen@<\z@ \let\final@kern1\fi
+      \if\final@kern1 \kern-\dimen@\fi
+    \else
+      \overline{\rel@kern{-0.6}\kern\dimen@#1}%
+    \fi
+  }%
+  \macc@depth\@ne
+  \let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
+  \mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
+  \macc@set@skewchar\relax
+  \let\mathaccentV\macc@nested@a
+%The following initialises \macc@kerna and calls \mathaccent:
+  \if#31
+    \macc@nested@a\relax111{#1}%
+  \else
+%If the argument consists of more than one symbol, and if the first token is
+%a letter, use that letter for the computations:
+    \def\gobble@till@marker##1\endmarker{}%
+    \futurelet\first@char\gobble@till@marker#1\endmarker
+    \ifcat\noexpand\first@char A\else
+      \def\first@char{}%
+    \fi
+    \macc@nested@a\relax111{\first@char}%
+  \fi
+  \endgroup
+}
+\makeatother
 
 % \makeglossaries % Make LaTeX produce the files required to compile the glossary
 
@@ -392,416 +464,17 @@ The tentative agenda for the course is as follows:
 
 \input{chap03_statistical_inference}
 
-% \input{chap04_linear_regression}
+\input{chap04_linear_regression}
 
-% \input{chap05_bayesian_statistics}
+\input{chap05_bayesian_statistics}
 
-% \input{chap06_lasso}
+\input{chap06_lasso}
 
-% \input{chap07_mle_exponential_models}
-
-
-\setchapterpreamble[u]{\margintoc}
-\chapter{Maximum likelihood estimation, application to exponential models}
-\label{chap:maximum_likelihood_estimation}
-
-
-\emph{Maximum likelihood estimation} is a fundamental and very general approach for statistical inference of model parameters.
-In this chapter, we consider a statistical experiment with data $X : \Omega \go \cX$ and model $\{ P_\theta : \theta \in \Theta \}$ with $\Theta \subset \R^d$ dominated by a $\sigma$-finite measure $\mu$ on $\cX$, so that we can define the family of densities 
-\begin{equation*}
-	\marginnote{This uses the Radon-Nikodym theorem}
-	f_\theta(x) = \frac{d P_\theta}{d \mu (x)} 
-\end{equation*}
-on $\cX$, see Definition~\ref{def:dominated-model} from Chapter~\ref{chap:statistical_models}.
-\begin{definition}
-	The \emph{likelihood} function $L : \Theta \go \R^+$ is defined as
-	\begin{equation*}
-		L(\theta) := L(\theta; X) = f_\theta(X).
-	\end{equation*}
-	We also introduce the \emph{log-likelihood} $\ell : \Theta \go \R$ given by
-	\begin{equation*}
-		\ell(\theta) := \ell(\theta; X) := \log f_\theta(X)
-	\end{equation*}
-	whenever $f_\theta(X) > 0$ almost surely for all $\theta \in \Theta$.
-\end{definition}
-The likelihood and log-likelihood are random functions since they depend on the data $X$.
-
-
-\paragraph{Maximum likelihood estimation.} % (fold)
-
-We want to infer $\theta$, namely we want to find $\theta_0 \in \Theta$ such that $X \sim P_{\theta_0}$.
-Given the data $X$, the likelihood $L(\theta; X)$ is the ``probability'' to observe $X$ whenever the parameter is $\theta$. 
-So, in order to find $\theta_0$, it is natural to look for $\theta$ that maximizes $\theta \mapsto L(\theta)$ (or equivalently $\theta \mapsto \ell(\theta)$) on $\Theta$, since such a $\theta$ would \emph{maximize the probability of observing} $X$ (since we do observe it).
-This simple principle is fundamental and motivates the following definition.
-\begin{definition}[Maximum Likelihood Estimator]
-	We say that $\wh \theta \in \Theta$ is a \emph{maximum likelihood estimator} (MLE) if
-	\begin{equation*}
-		L(\wh \theta; X) = \sup_{\theta \in \Theta} L(\theta; X),
-	\end{equation*}
-	or equivalently that
-	\begin{equation*}
-		\wh \theta \in \argmax_{\theta \in \Theta} L(\theta; X).
-	\end{equation*}
-\end{definition}
-Whenever it exists, a MLE $\wh \theta$ depends on $X$ and on the choice of the model $\{ f_\theta : \theta \in \Theta \}$.
-If $X = (X_1, \ldots, X_n)$ with $X_i$ iid and density $f_\theta$ then
-\begin{equation*}
-	L_n(\theta) = L(\theta; X) = L(\theta; X_1, \ldots, X_n) = \prod_{i=1}^n f_\theta(X_i)
-\end{equation*}
-and
-\begin{equation*}
-	\ell_n(\theta) = \ell(\theta; X) = \ell(\theta; X_1, \ldots, X_n) = \sum_{i=1}^n \log f_\theta(X_i).
-\end{equation*}
-In this case we say that $L$ and $\ell$ are the likelihood and log-likelihood functions of the \emph{$n$-sampled experiment}.
-The existence and uniqueness of the maximum likelihood estimator is not granted in general (even on non-pathological examples).%
-\marginnote{In the next Chapter, we will see an example where the maximum likelihood estimator of logistic regression (a widely used model for classification) does not exist when data is linearly separable}
-
-\section{A theoretical motivation} % (fold)
-\label{sec:a_theoretical_motivation}
-
-Let $X_1, \ldots, X_n$ be iid with distribution $P_{\theta_0} = f_{\theta_0} \cdot \mu$.
-Assuming $\E_{\theta_0} | \log f_{\theta}(X_1) | < +\infty$ for any $\theta \in \Theta$,
-we have that
-\begin{equation}
-	\label{eq:likelihood-kullback-limit}
-	\begin{split}
-	\frac 1n \ell_n(\theta_0) - \frac 1n \ell_n(\theta) &= \frac 1n \sum_{i=1}^n \big(
-	 \log f_{\theta_0}(X_i) - \log f_{\theta}(X_i) \big) \\
-	\marginnote{This convergence holds in $P_{\theta_0}$-probability using the law of large numbers}
-	& \gopro \E_{\theta_0} \big[ \log f_{\theta_0}(X_1) - \log f_{\theta}(X_1) \big] \\
-	&= h(P_{\theta_0}, P_\theta),		
-	\end{split}
-\end{equation}
-where we introduce the quantity
-\begin{equation*}
-	h(P_{\theta_0}, P_\theta) = \int_{\cX} \log \Big( 
-	\frac{f_{\theta_0}(x)}{f_{\theta}(x)} \Big) f_{\theta_0}(x) \mu(dx)
-\end{equation*}
-which is called the \emph{relative entropy} between $P_{\theta_0}$ and $P_\theta$.
-This is a fundamental quantity which deserves a definition.
-\begin{definition}
-	\label{def:relative-entropy}
-	Let $P$ and $Q$ be two probability measures on a measurable space $(\Omega, \cA)$. 
-	The quantity given by
-	\begin{equation*}
-		h(P, Q) = \E_P \Big[ \log \Big( \frac{dP}{dQ} \Big) \Big] = \int \log \Big( \frac{dP}{dQ}(\omega) \Big)  P(d \omega)
-	\end{equation*}
-	when $P \ll Q$ and $h(P, Q) = +\infty$ otherwise is called the \emph{relative entropy} between $P$ and $Q$.
-	It is also called the \emph{Kullback-Liebler divergence} or the \emph{information divergence}.
-\end{definition}
-Let us give some properties about $h(P, Q)$.
-First of all, if $P \ll Q$ then
-\begin{equation*}
-	h(P, Q) = \E_P \Big[\log \frac{dP}{dQ} \Big] = \E_Q \Big[\frac{dP}{dQ} 
-	\log \frac{dP}{dQ} \Big].
-\end{equation*}
-It is always well-defined, eventually it is $+\infty$ since $x \log \geq -e^{-1}$ for any $x \in (0, +\infty)$.
-Also, if $P \ll Q$ then
-\begin{equation*}
-	\marginnote{using Jensen's inequality}
-	h(P, Q) = \E_Q\Big[ \frac{dP}{dQ} \log \frac{dP}{dQ} \Big] 
-	\geq \E_Q\Big[ \frac{dP}{dQ} \Big] \log \E_Q\Big[ \frac{dP}{dQ} \Big] 
-	= 0,
-\end{equation*}
-and note also that $h(P, Q) = 0 \Leftrightarrow P = Q$ since $\phi(x) = x \log x$ is strictly convex.
-
-Using~\eqref{eq:likelihood-kullback-limit}, we have that 
-$(\ell_n(\theta_0) - \ell_n(\theta)) / n \approx h(P_{\theta_0}, P_\theta)$ for $n$ large and as explained above 
-$h(P_{\theta_0}, P_\theta) = 0$ iff $P_{\theta_0} = P_{\theta}$, namely iff $\theta = \theta_0$ whenever the model is identifiable (see Definition~\ref{def:identifiable-model} from Chapter~\ref{chap:statistical_models}).
-This motivates the use of the maximum likelihood estimator, since maximizing $\ell_n(\theta)$ means minimizing $(\ell_n(\theta_0) - \ell_n(\theta)) / n$, that we expect to be minimal at $\theta \approx \theta_0$ when the model is identifiable.
-
-The MLE is a very general principle that can be used for virtually any statistical model.
-Its theoretical study requires smoothness assumptions on the family of densities $f_\theta$ regarded as functions of the parameter $\theta$.
-In this Chapter, we study the MLE in the specific family of \emph{exponential models} for two reasons: exponential models contain most parametric models that are of interest in practice, and  their study is interesting by itself, since they are the basis of generalized linear models that we will study in the next Chapter.
-We will see that when $\{ f_\theta : \theta \in \Theta \}$ is an exponential model, the MLE is easy to study, since it corresponds to another estimation approach called \emph{method of moments}.
-But, keep in mind that MLE goes way beyond the setting considered here.
-\begin{example}
-	Let us consider $X \sim \gam(a, \lambda)$, namely the likelihood function
-	\begin{equation*}
-		L(a, \lambda) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x} = \exp( \theta^\top T(x) - g(\theta))
-	\end{equation*}
-	with $\theta = [a - 1 \; \lambda]^\top$, $T(x) = [\log x \; x]^\top$ and $g(\theta) = \log \Gamma(a) - a \log \lambda$.
-	This is an example of a so-called \emph{exponential model}. Most parametric distributions can be written in this way (Poisson, Exponential, Binomial, Gaussian, etc.), using if necessary a reparametrization (we defined $\theta = [a - 1 \; \lambda]^\top$ in this example).
-\end{example}
-
-\section{Exponential models} % (fold)
-\label{sec:exponential_models}
-
-Let us first describe the so-called \emph{canonical exponotial model}.
-
-\begin{definition}[Canonical exponential model]
-	\label{def:canonical-exponential-model}
-	Let $\mu$ be a $\sigma$-finite measure on a measurable space $\cX$ and let $T : \cX \go \R^d$ be a measurable function. 
-	We define
-	\begin{equation*}
-		\Theta_{\dom} = \Big \{ \theta \in \R^d : Z(\theta) := \int_{\cX} e^{\theta^\top T(x)} \mu(dx) < +\infty \Big\}
-	\end{equation*}
-	and $\Theta = \inte(\Theta_{\dom})$, the interior of $\Theta_{\dom}$.
-	We introduce the density
-	\begin{equation*}
-		f_\theta(x) = \exp\big(\theta^\top T(x) - \log Z(\theta) \big)
-	\end{equation*}
-	with respect to $\mu$ for $\theta \in \Theta$ and define $P_\theta = f_\theta \cdot \mu$. 
-	The family $\{ P_\theta : \theta \in \Theta \}$ is called a \emph{canonical exponential model} and the function $\theta \mapsto Z(\theta)$ is called the \emph{partition function} of the model.
-	\marginnote{We discussed sufficient statistics in Section~\ref{sec:statistics} of Chapter~\ref{chap:statistical_models}}
-	Also, we call $T$ the \emph{sufficient statistic} of the model.
-\end{definition}
-We consider $\{ P_\theta \in \Theta \}$ instead of $\{ P_\theta \in \Theta_{\dom} \}$ since we will perform differential calculus and use the inversion theorem on this open domain.
-\begin{proposition}
-		The set $\Theta_{\dom}$ is convex (if it is not empty) and the function $\Theta_{\dom} \go \R$ defined by $\Theta \mapsto \log Z(\theta)$ is convex.
-\end{proposition}
-\begin{proof}
-	Note that if $\theta_1, \theta_2 \in \Theta_{\dom}$ and $\alpha \in [0, 1]$ we have
-	\begin{align*}
-		Z(\alpha \theta_1 + (1 - \alpha) \theta_2) &= \int_{\cX} 
-		\big( e^{\theta_1^\top T(x)} \big)^\alpha 
-		\big( e^{\theta_2^\top T(x)} \big)^{1 - \alpha} \mu(dx) \\
-		\marginnote{Using H\"older's inequality}
-		&\leq \Big( \int_{\cX} e^{\theta_1^\top T(x)} \mu(dx) \Big)^{\alpha} \\
-		& \quad \times \Big(\int_{\cX} e^{\theta_2^\top T(x)} \mu(dx) \Big)^{1 - \alpha} < +\infty
-	\end{align*}
-	which proves that $\alpha \theta_1 + (1 - \alpha) \theta_2 \in \Theta_{\dom}$ and also that $\log Z$ is convex since we have
-	\begin{equation*}
-		\log Z(\alpha \theta_1 + (1 - \alpha) \theta_2) \leq \alpha \log Z(\theta_1) + (1 - \alpha) \log Z(\theta_2). \qedhere
-	\end{equation*}
-\end{proof}
-
-\begin{definition}[Canonical and minimal exponential model]
-	\label{def:canonical-minimal-exponential-model}
-	We say that a canonical exponential model is minimal if $T(x)$ does not belong, $\mu$-almost surely, to any hyperplane $H \subset \R^d$, namely if 
-	\begin{equation*}
-		\mu[ \{ x \in \cX : T(x) \in H \}] < 1
-	\end{equation*}
-	for any hyperplane $H$.
-\end{definition}
-
-\begin{proposition}
-	If a canonical exponential model is minimal, then it is identifiable.
-\end{proposition}
-
-\begin{proof}
-Let us consider $\theta_1, \theta_2 \in \Theta$ such that $\theta_1 \neq \theta_2$ and such that $P_{\theta_1} = P_{\theta_2}$.
-This entails $f_{\theta_1} = f_{\theta_2}$ and
-\begin{equation*}
-	(\theta_1 - \theta_2)^\top T(x) - \log (Z(\theta_1) / Z(\theta_2)) = 0
-\end{equation*}
- $\mu$-almost surely, which contradicts the fact that the model is minimal according to Definition~\ref{def:canonical-minimal-exponential-model}. \qedhere
-\end{proof}
-
-From now on, we suppose that the model is \emph{minimal}.
-It is a natural assumption: it means that the coordinates of the sufficient statistic $T(x)$ are not almost-surely linearly redundant.
-Let us recall also that $\Theta = \inte(\Theta_{\dom}) \neq \emptyset$.
-
-\begin{theorem}
-	\label{thm:canonical-exponential-model-moments}
-	Consider a canonical exponential model. Its partition function $\theta \mapsto \log Z(\theta)$ is $C^\infty$ on $\Theta$ and we have
-	\begin{equation*}
-		\E_\theta[ |T_j(X)|^k ] < +\infty
-	\end{equation*}
-	 for any $j=1, \ldots, d$, any $k \in \N$ (all the moments of $T(X)$ with $X \sim P_\theta$ are finite) and any $\theta \in \Theta$. 
-	 Furthermore, the following relations
-	\begin{equation*}
-	 	\marginnote{$\grad F(\theta)$ is the gradient of $F$ at $\theta$ while $\grad^2 F(\theta)$ is the Hessian matrix of $F$ at $\theta$}	
-		\grad \log Z(\theta) = \E_\theta[T(X)] \quad \text{and} \quad \grad^2 \log Z(\theta) = \var_\theta[T(X)]
-	\end{equation*}
-	 hold for any $\theta \in \Theta$.
-\end{theorem}
-The proof of Theorem~\ref{thm:canonical-exponential-model-moments} is left as an exercise, where we just need to use dominated convergence to inverse differentiation and expectation.
-Let us just do the following computation, which explains why the first moment of the sufficient statistic is equal to the gradient of the partition function:
-\begin{align*}
-	\grad \log Z(\theta) &= \grad \log \E_{X \sim \mu} \big[ \exp(\theta^\top T(X)) \big] \\
-	&= \frac{\E_{X \sim \mu} \big[ T(X) \exp(\theta^\top T(X)) \big]}{\E_{X \sim \mu} \big[ \exp(\theta^\top T(X)) \big]} \\
-	&= \E_{\theta} [T(X)],
-\end{align*}
-where we just used the definition of $P_\theta$ in the last equality.
-\begin{corollary}
-	We have $\grad^2 \log Z(\theta) \succ 0$ for all $\theta \in \Theta$ iff the model is minimal.
-\end{corollary}
-\begin{proof}
-	For any $u \in \R^d$ we have $u^\top \grad^2 \log Z(\theta)  u = u^\top \var_\theta[T(X)] u = \var_\theta[u^\top T(X)]$ so that $\grad^2 \log Z(\theta)$ is not positive definite iff $u^\top T(x) $ is constant $\mu$ almost-surely.
-\end{proof}
-Note that we recover here the fact that $\theta \mapsto \log Z(\theta)$ is strictly convex when the model is minimal, since $\grad^2 \log Z(\theta) \succ 0$ for any $\theta \in \Theta$.
-A consequence of this is that the differential of $S(\theta) = \grad \log Z(\theta)$, which is the Hessian matrix $\grad^2 \log Z(\theta)$, is \emph{invertible} for any $\theta \in \Theta$.
-
-The following computation is insightful:
-\begin{align*}
-	h(P_\theta, P_{\theta'}) &= \E_{\theta} \Big[ \log \frac{d P_\theta}{d P_{\theta'}}(X) \Big] \\
-	&= \E_\theta \Big[ (\theta - \theta')^\top T(X) 
-	- \log \frac{Z(\theta)}{Z(\theta')} \Big] \\
-	&= \log Z(\theta') - \log Z(\theta) -  (\theta' - \theta)^\top \grad \log Z(\theta)
-\end{align*}
-which means that $h(P_\theta, P_{\theta'})$ is equivalent to a local ``linearization'' of $\log Z(\theta)$ and therefore approximately equal to
-\begin{equation*}
-	h(P_\theta, P_{\theta'}) \approx \frac 12 (\theta' - \theta)^\top \grad^2 \log Z(\theta) (\theta' - \theta)
-\end{equation*}
-for $\theta \approx \theta'$. This makes a connection between the \emph{local curvature} of the model $\theta$ and its identifiability.
-\todo{Natural gradient, Optimization, Fisher versus likelihood Hessian}
-Another proposition goes as follows.
-\begin{proposition}
-	The function $\theta \mapsto \log Z(\theta)$ is injective on $\Theta$ if and only if the model is identifiable.
-\end{proposition}
-\begin{proof}
-	We have that 
-	\begin{equation*}
-		h(P_\theta, P_{\theta'}) + h(P_{\theta'}, P_{\theta}) = \inr{ \grad \log Z(\theta)  - \grad \log Z(\theta'), \theta - \theta'}	
-	\end{equation*}
-	which is $\geq 0$ by convexity.
-	If $ \log Z(\theta') =  \log Z(\theta)$ and $\theta \neq \theta'$ then $h(P_\theta, P_{\theta'}) = h(P_{\theta'}, P_\theta) = 0$ so that $P_\theta = P_{\theta'}$. Now, if $P_\theta = P_{\theta'}$ for $\theta \neq \theta'$, we have $\E_\theta[T(X)] = \E_{\theta'}[T(X)]$ and therefore $\log Z(\theta') =  \log Z(\theta)$ using Theorem~\ref{thm:canonical-exponential-model-moments}.
-\end{proof}
-
-\todo{ICI ICI ICI ICI}
-
-We proved several properties about the function $S : \Theta \go \R^d$ given by $S(\theta) = \grad \log Z(\theta)$.
-\begin{itemize}
-	\item $S$ is injective on $\Theta$;
-	\item $S$ is $C^\infty$ on $\Theta$;
-	\item The differential of $S$ is invertible on $\Theta$.
-\end{itemize}
-
-We can therefore apply the theorem of global inversion to say that the function
-\begin{align*}
-	S : \Theta &\rightarrow S(\Theta)
-	\theta \mapsto \grad \log Z(\theta)
-\end{align*}
-is a \textbf{diffeomorphism} and that $S(\Theta)$ is an open subset of $\R^d$ and that its inverse
-$S^{-1}$ is also $C^\infty$.
-We therefore proved the follwoing theorem.
-\begin{theorem}
-	In an exponential and canonical model we have that $S : \Theta \rightarrow S(\Theta)$ given by $S(\theta) = \grad \log Z(\theta)$ is a diffeomorphism, that $S(\Theta)$ is open and $S^{-1}$ is also $C^\infty$.
-\end{theorem} 
-
-\section{Maximum likelihood estimation in an exponential model} % (fold)
-\label{sec:maximum_likelihood_estimation_in_an_exponential_model}
-
-Let is consider a sample $X_1, \ldots, X_n$ iid from a canonical and minimal exponential model.
-The likelihood write
-\begin{equation*}
-	L(\theta; x_1, \ldots, x_n) = \exp \Big( \langle \theta, \sum_{i=1}^n T(x_i) - n \log Z(\theta \rangle \Big)
-\end{equation*}
-namely 
-\begin{equation*}
-	\frac 1n \ell(\theta; x_1, \ldots, x_n) = \langle \theta, \sum_{i=1}^n T(x_i) 
-	- n \log Z(\theta)
-\end{equation*}
-where we introduced $\bar t_n = n^{-1} \sum_{i=1}^n T(X_i)$.
-
-\begin{proposition}
-	In this model the log-likelihood if striclty concave
-\end{proposition}
-
-\begin{proof}
-Obvious since $\langle \theta, \sum_{i=1}^n T(x_i) \rangle$ is linear hence concave and $\log Z(\theta)$ is stricly convex
-\end{proof}
-
-\begin{proposition}
-	If there exist $\wh \theta_n \argmin_{\theta \in \Theta} \ell(theta; X_1, \ldots, X_n)$ then it satisfies
-	\begin{equation*}
-		 \grad \log Z(\wh \theta_n) = \bar T_n
-	\end{equation*}
-	and $\wh \theta \in \Theta$.
-\end{proposition}
-This means that whenvefer the MLE exists, it is a solution in $\Theta$ of the equaiton $ \grad \log Z(\wh \theta_n) = \bar T_n$ whcih menas htat it is equal to the estimator obtain with the so-called \emph{moments method} $\wh \theta_n = S^{-1}(\bar T_n)$.
-Let us give an example.
-
-\paragraph{Example.}
-
-Consider a iid sample $X_1, \ldots, X_n$ with $\gam(a, \lambda)$ distribution and recall that its density can be write as
-\begin{equation*}
-	f_{a, \lambda}(x) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x}
-	= \exp(\theta^\top T(x) - \log Z(\theta))
-\end{equation*}
-where $\theta = \begin{bmatrix} a - 1 \\ \lambda \end{bmatrix}$ and $T(x) = \begin{bmatrix} \log X\\ -X \end{bmatrix}$ and
-\begin{equation*}
-	\grad \log Z(\theta) = 
-	\begin{bmatrix}
-	\frac{\Gamma'(a)}{\Gamma(a)} - \log \lambda \\
-	a / \lambda	
-	\end{bmatrix}
-\end{equation*}
-so that we beed to find solutions to the Equations
-\begin{align*}
-	\frac{\Gamma'(a)}{\Gamma(a)} - \log \lambda &= \frac{1}{n} \sum_{i=1}^n \log X_i  \\
-	\frac {a}{\lambda} &= \frac{1}{n} \sum_{i=1}^n X_i 
-\end{align*}
-The solutions are not explicti, but can be easily obtained using a convex optimization algorithm, since we now that the objective is convex.
-
-
-So in summary, we can say about MLE in a canonical exponential model
-\begin{itemize}
-	\item We can compute it, when it exists, using an optimiztion algothim, since the function $\mapsto \ell(\theta ; X_1, \ldots, X_n)$ is convex and smoooth
-	\item In theorey, it is, when it exists the solution to the equation $\grad \ell_n(\theta) = 0$, and strict concavity entails tha tit si a global miniminzer of $\ell_n(\theta)$.
-\end{itemize}
-
-
-\begin{definition}
-	Consider a model BLALBA with log-likelihood function BLABLA
-	We call $\grad \ell_n(\theta)$ the \emph{score} function of the model and we call \emph{Fisher information} the matrix
-	\begin{equation*}
-		I_n(\theta) = \var_\theta[ \grad \ell_n(\theta) ],
-	\end{equation*}
-	which is the covariance matrix of the score.
-\end{definition}
-
-Note that this definition goes way beyond the particular case of exponential models considered in this Chapter.
-But a nice aspect of exponential models is that, as explained above, MLE corresponds to moment of methods and BLABLA
-
-Let us give some remarks/properties concerning the score and the Fisher information.
-The score is a \emph{centered} random vector, since
-\begin{align*}
-	\E_\theta [\grad \ell_n(\theta)] = n \E_\theta[ (\bar T_n - \grad \log Z(\theta))] = n \E_\theta[ T(X_1) - \grad \log Z(\theta))]  = 0
-\end{align*}
-using the previous proposition and
-\begin{equation*}
-	I_n(\theta) = \var_\theta[\grad \ell_n(\theta)] = n \var_\theta[\grad \ell_n(\theta)] = n \var_\theta[T(X_1)] = n I_1(\theta)
-\end{equation*}
-but also $=n \grad^2 \log Z(\theta)$ usign the previous propocision
-
-We can therefore use the multivariate TCL
-\begin{equation*}
-	\sqrt n (\bar T_n - \grad \log Z(\theta)) \gosto \nor(0, I_1(\theta))
-\end{equation*}
-but since $\wh \theta_n = S^{-1} (\bar T_n)$ we want to use the $\Delta$-method with $\varphi(x) = S^{-1}(x)$ (citer). 
-This is given by the following theorem
-
-\begin{theorem}[Multivariate $\Delta$-method]
-	Let $(a_n)$ be a sequence of positive number such that $a_n \rightarrow +•\infty$ and $(X_n)$ be a sequence of random vectors $X_n, X \in \R^d$ and $\varphi$ be a function that is differentiable at $x \in \R^d$.
-	Then fi $a_n( X_n - x) \gosto X$ we have
-	\begin{equation*}
-		a_n (\varphi(X_n) - \varphi(x)) \gosto J_f(x) X
-	\end{equation*}
-	where $J_f(x)$ is the Jacobian matrix of $f$ at $x$
-\end{theorem}
-Thisis exactly the same thing as in the univariate case.
-We apply this theorem with $\varphi = S^{-1}$, so that $J_\varphi(x) = (\grad^2 \log Z(\theta))^{-1} = I_1(\theta)^{-1}$ (the inverse of the Hessian matrix of $\varphi$ at $x$)
-and we end up with
-\begin{equation*}
-	\sqrt (\wh \theta_n - \theta) \gosto \nor(0, I_1(\theta)^{-1})
-\end{equation*}
-since $\var[I_1(\theta)^{-1} Z] = I_1(\theta)^{-1} \var[ Z] I_1(\theta)^{-1} = I_1(\theta)^{-1}$
-This proves the following theorem
-
-\begin{theorem}
-	If $\{ P_\theta : \theta \in \Theta \}$ is a canonical exponential model in which the maximum likelihood estimator $\wh \theta_n$ exists, we have
-	\begin{equation*}
-		\sqrt n (\wh \theta_n - \theta) \gosto \nor(0, I_1(\theta)^{-1})
-	\end{equation*}
-	where $I_1(\theta)^{-1}$ is the Fisher information matrix defined at ???
-\end{theorem}
-This shows that the MLE is asymtotically normal and hat atthe ``asymptotic variance '' is the inversr o fthe Fisher information.
-In this sense, the Fisher information quantifies the difficuly of the estimation and the performance of the MLE, using an asynptotic point of view.
-
-Once again, this asymptotic results here hold only when the model is well-specified, namely whenever the \emph{true distribution} of data $P_X$ belongs to the model, namely whenever $P_X = P_{\theta^\star}$ for some $\theta^\star \in \Theta$.
-If the model is misscpecified, then MLE quicly deteriorates BLABLA
-
-\section{Proofs} % (fold)
-\label{sec:proofs_chap_mle}
+\input{chap07_mle_exponential_models}
 
 
 % section proofs (end)
-
 % paragraph example_ (end)
-
-
 
 % section maximum_likelihood_estimation_in_an_exponential_model (end)
 
