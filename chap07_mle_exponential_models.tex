@@ -1,4 +1,6 @@
 
+
+
 \setchapterpreamble[u]{\margintoc}
 \chapter{Maximum likelihood estimation, application to exponential models}
 \label{chap:maximum_likelihood_estimation}
@@ -118,7 +120,7 @@ But, keep in mind that MLE goes way beyond the setting considered here.
 	\begin{equation*}
 		L(a, \lambda) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x} = \exp( \theta^\top T(x) - \log Z(\theta))
 	\end{equation*}
-	with $\theta = [a - 1 \; \lambda]^\top$, $T(x) = [\log x \; x]^\top$ and $Z(\theta) = \Gamma(a) / \lambda^a$.
+	with $\theta = [a - 1 \; \lambda]^\top$, $T(x) = [\log x \; -x]^\top$ and $Z(\theta) = \Gamma(a) / \lambda^a$.
 	This is an example of a so-called \emph{exponential model}. Most parametric distributions can be written in this way (Poisson, Exponential, Binomial, Gaussian, etc.), using if necessary a reparametrization (we defined $\theta = [a - 1 \; \lambda]^\top$ in this example).
 \end{example}
 
@@ -166,11 +168,11 @@ We consider $\{ P_\theta \in \Theta \}$ instead of $\{ P_\theta \in \Theta_{\dom
 
 \begin{definition}[Canonical and minimal exponential model]
 	\label{def:canonical-minimal-exponential-model}
-	We say that a canonical exponential model is minimal if $T(x)$ does not belong, $\mu$-almost surely, to any hyperplane $H \subset \R^d$, namely if 
+	We say that a canonical exponential model is minimal if $T(x)$ does not belong, $P_\theta$-almost surely for all $\theta \in \Theta$, to any hyperplane $H \subset \R^d$, namely if 
 	\begin{equation*}
-		\mu[ \{ x \in \cX : T(x) \in H \}] < 1
+		P_\theta[ \{ x \in \cX : T(x) \in H \}] < 1
 	\end{equation*}
-	for any hyperplane $H$.
+	for any hyperplane $H$ and any $\theta \in \Theta$.
 \end{definition}
 
 \begin{proposition}
@@ -179,15 +181,15 @@ We consider $\{ P_\theta \in \Theta \}$ instead of $\{ P_\theta \in \Theta_{\dom
 
 \begin{proof}
 Let us consider $\theta_1, \theta_2 \in \Theta$ such that $\theta_1 \neq \theta_2$ and such that $P_{\theta_1} = P_{\theta_2}$.
-This entails $f_{\theta_1} = f_{\theta_2}$ and
+This entails $f_{\theta_1}(x) = f_{\theta_2}(x)$ for any $x \in \cX$ and in particular that
 \begin{equation*}
-	(\theta_1 - \theta_2)^\top T(x) - \log (Z(\theta_1) / Z(\theta_2)) = 0
+	(\theta_1 - \theta_2)^\top T(X) - \log (Z(\theta_1) / Z(\theta_2)) = 0
 \end{equation*}
- $\mu$-almost surely, which contradicts the fact that the model is minimal according to Definition~\ref{def:canonical-minimal-exponential-model}. \qedhere
+$P_\theta$-almost surely for any $\theta \in \Theta$, which contradicts the fact that the model is minimal according to Definition~\ref{def:canonical-minimal-exponential-model} with the hyperplane $H = \{ x \in \cX : (\theta_1 - \theta_2)^\top T(x) = \log (Z(\theta_1) / Z(\theta_2)) \}$. \qedhere
 \end{proof}
 
 From now on, we suppose that the model is \emph{minimal}.
-It is a natural assumption: it means that the coordinates of the sufficient statistic $T(x)$ are not almost-surely linearly redundant.
+It is a natural assumption: it means that the coordinates of the sufficient statistic $T(X)$ are not almost-surely linearly redundant.
 Let us recall also that $\Theta = \inte(\Theta_{\dom}) \neq \emptyset$.
 
 \begin{theorem}
@@ -207,6 +209,7 @@ Let us recall also that $\Theta = \inte(\Theta_{\dom}) \neq \emptyset$.
 The proof of Theorem~\ref{thm:canonical-exponential-model-moments} is left as an exercise, where we just need to use dominated convergence to inverse differentiation and expectation.
 Let us just do the following computation, which explains why the first moment of the sufficient statistic is equal to the gradient of the partition function:
 \begin{align*}
+	\marginnote{We use the notation $X \sim \mu$ to indicate that we integrate with respect to $\mu$ even if $\mu$ is not a probability measure}
 	\grad \log Z(\theta) &= \grad \log \E_{X \sim \mu} \big[ \exp(\theta^\top T(X)) \big] \\
 	&= \frac{\E_{X \sim \mu} \big[ T(X) \exp(\theta^\top T(X)) \big]}{\E_{X \sim \mu} \big[ \exp(\theta^\top T(X)) \big]} \\
 	&= \E_{\theta} [T(X)],
@@ -217,7 +220,7 @@ where we just used the definition of $P_\theta$ in the last equality.
 	We have $\grad^2 \log Z(\theta) \succ 0$ for all $\theta \in \Theta$ iff the model is minimal.
 \end{corollary}
 \begin{proof}
-	For any $u \in \R^d$ we have $u^\top \grad^2 \log Z(\theta)  u = u^\top \var_\theta[T(X)] u = \var_\theta[u^\top T(X)]$ so that $\grad^2 \log Z(\theta)$ is not positive definite iff $u^\top T(x) $ is constant $\mu$ almost-surely.
+	For any $u \in \R^d$ and $\theta \in \Theta$ we have $u^\top \grad^2 \log Z(\theta)  u = u^\top \var_\theta[T(X)] u = \var_\theta[u^\top T(X)]$ so that $\grad^2 \log Z(\theta)$ is not positive definite iff $u^\top T(X) $ is constant $P_\theta$ almost-surely.
 \end{proof}
 Note that we recover here the fact that $\theta \mapsto \log Z(\theta)$ is strictly convex when the model is minimal, since $\grad^2 \log Z(\theta) \succ 0$ for any $\theta \in \Theta$.
 A consequence of this is that the differential of $S(\theta) = \grad \log Z(\theta)$, which is the Hessian matrix $\grad^2 \log Z(\theta)$, is \emph{invertible} for any $\theta \in \Theta$.
@@ -254,8 +257,7 @@ We proved the following properties about the function $S : \Theta \go \R^d$ give
 	\item We know that $S$ is $C^\infty$ on $\Theta$ using Theorem~\ref{thm:canonical-exponential-model-moments};
 	\item The differential of $S$ is invertible on $\Theta$ if the model is minimal using Corollary~\ref{cor:exponential-model-minimal-positive-hessian}.
 \end{enumerate}
-We can therefore apply the theorem of global inversion to say that $S$
-is a diffeomorphism, that $S(\Theta)$ is open and that its inverse
+We can therefore apply the theorem of global inversion to say that $S$ is a diffeomorphism, that $S(\Theta)$ is open and that its inverse
 $S^{-1}$ is also $C^\infty$.
 We therefore proved the following theorem.
 \begin{theorem}
@@ -297,13 +299,13 @@ Proposition~\ref{prop:mle-is-moments-in-canonical-exponential} proves that, when
 	f_{a, \lambda}(x) = \frac{\lambda^a}{\Gamma(a)} x^{a - 1} e^{-\lambda x}
 	= \exp(\theta^\top T(x) - \log Z(\theta))
 \end{equation*}
-for $x \geq 0$, where $\theta = [a - 1 \; \lambda]^\top$, $T(x) = [\log x \; x]^\top$ and $Z(\theta) = \Gamma(a) / \lambda^a$.
+for $x \geq 0$, where $\theta = [a - 1 \; \lambda]^\top$, $T(x) = [\log x \; - x]^\top$ and $Z(\theta) = \Gamma(a) / \lambda^a$.
 We have
 \begin{equation*}
 	\grad \log Z(\theta) = 
 	\begin{bmatrix}
 	\frac{\Gamma'(a)}{\Gamma(a)} - \log \lambda \\
-	a / \lambda	
+	-a / \lambda	
 	\end{bmatrix}
 \end{equation*}
 so that finding a closed-form estimator means finding a solution to
@@ -318,6 +320,25 @@ In summary, what we learned so far about the MLE in a minimal and canonical expo
 	\item When the MLE exists, we can express it as $\wh \theta_n = S^{-1}(\wb T_n)$, although in general we cannot inverse explicitly $S$, as observed in the previous example;
 	\item When the MLE exists, we can compute it approximately using a convex optimization algorithm, since the log-likelihood $\ell_n(\theta)$ is strictly concave and smooth.
 \end{itemize}
+
+Note that the MLE does not always exist, as shown in the next simple example.
+
+\begin{remark}
+  Consider $X_1, \ldots, X_n$ iid with geometric distribution, namely a density $f_p(x) = (1 - p)^{x-1} p$ with respect to the counting measure, for $x \in \N \setminus \{ 0 \}$ and $p \in (0, 1)$. We can write it as an exponential model since
+  \begin{equation*}
+    f_p(x) = \exp\big( (x - 1) \log(1 - p) + \log p \big),
+  \end{equation*}
+  so that the sufficient statistic is $T(x) = 1 - x$ and the canonical parameter is $\theta = - \log(1 - p)$ namely $p = 1 - e^{-\theta}$, so that in canonical form, this exponential model writes
+  \begin{equation*}
+      f_\theta(x) = \exp \big( (1 - x) \theta  + \log(1 - e^{-\theta}) \big),
+  \end{equation*}
+  and the log-likelihood is given by
+  \begin{equation*}
+      \ell_n(\theta) = \Big(n - \sum_{i=1}^n X_i \Big) \theta + n \log(1 - e^{-\theta}).
+  \end{equation*}
+  On the event $E = \{ X_1 = \cdots = X_n = 1 \}$ which has a probability $\P_\theta[E] = (1 - e^{-\theta})^n > 0$ (although going towards zero quickly), the MLE does not exist since on $E$ we have $\ell_n(\theta) = n \log(1 - e^{-\theta})$ which is concave and strictly increasing.
+\end{remark}
+
 
 \begin{definition}[Score and Fisher information]
 	\label{def:score-and-fisher}
@@ -362,9 +383,9 @@ The multivariate $\Delta$-method is given by the following theorem.
 \end{theorem}
 The proof of Theorem~\ref{thm:multivariate-delta-method} is omitted since it follows the exact same proof as that of Theorem~\ref{thm:delta-method}.
 We apply%
-\sidenote{We can thanks to Theorem~\ref{thm:canonical-minimal-exponential-model-inversion}}
+\sidenote{Thanks to Theorem~\ref{thm:canonical-minimal-exponential-model-inversion}}
 Theorem~\ref{thm:multivariate-delta-method} with $\varphi = S^{-1}$, 
-so that $J_\varphi(x) = (\grad^2 \log Z(\theta))^{-1} = I_1(\theta)^{-1}$ and we end up with
+so that $J_\varphi(S(\theta)) = (\grad^2 \log Z(\theta))^{-1} = I_1(\theta)^{-1}$ and we end up with
 \begin{equation*}
 	\marginnote{This a convergence in $P_\theta$-distribution}
 	\sqrt n (\wh \theta_n - \theta) \gosto \nor\big( 0, I_1(\theta)^{-1} \big)
