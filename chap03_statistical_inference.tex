@@ -482,7 +482,8 @@ Intuitively, $\beta(\theta)$ should be increasing with $\theta$, since when $\th
 This can be nicely formalized using the notion of \emph{stochastic domination}.
 \begin{proposition}
 	\label{prop:stochastic-ordering}
-	Let $P$ and $Q$ be two probability measures on the same probability space. We say that \emph{$Q$ stochastically dominates $P$}, that we denote $P \lest Q$, whenever one of the following equivalent points is granted:
+	Let $P$ and $Q$ be two probability measures on the same real probability space. 
+	We say that \emph{$Q$ stochastically dominates $P$}, that we denote $P \lest Q$, whenever one of the following equivalent points is granted:
 	\begin{enumerate}
 		\item There are two real random variables $X \sim P$ and $Y \sim Q$ (on the same probability space) such that $\P[X \leq Y] = 1$;
 		\item We have $F_P(x) \geq F_Q(x)$ for any $x \in \R$, where $F_P$ and $F_Q$ are the distribution functions of $P$ and $Q$, or equivalently, $P[(x, +\infty)] \leq Q[(x, +\infty)]$ for any $x \in \R$;%

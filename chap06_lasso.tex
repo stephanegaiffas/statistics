@@ -378,7 +378,7 @@ For instance if $d = 4$ and $u = [17 \; -42 \; 0 \; 3]^\top$ then $\partial \nor
 
 The material used in this Section is based on~\sidecite{bickel2009,koltchinskii2011}.
 Also, a very nice broader book on the topic of high-dimensional statistics is~\cite{giraud2014introduction}.
-Throughout the section, we will assume that the columns are standardized, namely that $\norm{\bX^j}_2 = 1$.
+Throughout the section, we will assume that the columns are standardized, namely that $\norm{\bX^j}_2 = \sqrt n$.
 This is a rather unrestrictive assumption (we could do without it) that follows good-practice when using linear methods in machine learning.
 Let us recall that the Lasso estimator is given by
 \begin{equation}
@@ -514,11 +514,13 @@ Let us finish this chapter with several remarks before diving into the proofs.
 \label{sub:proof_of_theorem_thm:oracle-slow}
 
 Let us start with the noise. It is fairly easy, since
-\begin{equation*}
-	\frac 1n \sum_{i=1}^n \eps_i f_j(X_i) \sim 
-	\nor\Big( 0, \sigma^2 \frac{\norm{\bf_j}_n^2}{n} \Big) 
-	= \nor\Big( 0, \frac{\sigma^2}{n} \Big).
-\end{equation*}
+\begin{align*}
+	\frac 1n \sum_{i=1}^n \eps_i f_j(X_i) 
+	&\sim \nor\Big( 0, \frac{\sigma^2}{n^2} \sum_{i=1}^n f_j(X_i)^2 \Big) \\
+	&= \nor\Big( 0, \frac{\sigma^2}{n^2} \norm{\bX_j}^2 \Big) \\
+	\marginnote{We assumed that $\norm{\bX_j} = \sqrt n$}
+	&= \nor\Big( 0, \frac{\sigma^2}{n} \Big).
+\end{align*}
 So, recalling that $\P[|Z| \geq z] \leq 2e^{-z^2 / 2}$ whenever $Z \sim \nor(0, 1)$ for any $z > 0$,%
 % \todo{insert side proof}
 we obtain

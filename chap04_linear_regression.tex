@@ -140,7 +140,7 @@ The next theorem proves that the uniqueness of the least-squares estimator is eq
 		\item $\bX^\top \bX = \sum_{i=1}^n X_i X_i^\top \succ 0$ almost surely
 		\item The least squares estimator is uniquely defined and given by
 		\begin{equation*}
-			\wh \theta_n = (\bX \bX)^{-1} \bX^\top \by
+			\wh \theta_n = (\bX^\top \bX)^{-1} \bX^\top \by
 		\end{equation*}
 		almost surely.
 	\end{enumerate}
@@ -355,7 +355,7 @@ Moreover, since $\bX$ is full rank, we have $\dim V = d$ and $\dim V^\perp = n -
 \end{equation*}
 and
 \begin{equation*}
-	\frac{\norm{\bX(\wh \theta_n - \theta)}^2}{\sigma^2 } = \norm{\proj_{V}(\beps / \sigma)}^2 \sim \chisq(n-d).
+	\frac{\norm{\bX(\wh \theta_n - \theta)}^2}{\sigma^2 } = \norm{\proj_{V}(\beps / \sigma)}^2 \sim \chisq(d).
 \end{equation*}
 This proves the following theorem.
 \begin{theorem}
@@ -679,7 +679,7 @@ where $V_{\text{intra}}$ is the so-called \emph{intra-class variance}%
 \sidenote{A \emph{class} corresponds here to a sample $i$}
 which corresponds to the average of the weighted%
 \sidenote{weighted by the sample proportions $n_i / n$ for $i=1, \ldots, k$}
- variances $\frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - X_{i, \bullet})^2$ of each sample  $i=1, \ldots, k$ and second, we have
+ variances $\frac{1}{n_i} \sum_{j=1}^{n_i} (X_{i, j} - \bar X_{i, \bullet})^2$ of each sample  $i=1, \ldots, k$ and second, we have
 \begin{equation*}
   \| X_E - X_F \|^2 = \sum_{i=1}^k n_i (\bar X_{i, \bullet} - \bar X)^2 =: n V_{\text{inter}},
 \end{equation*}
@@ -755,8 +755,8 @@ Note that if $(X, Y) \sim P$ with $P \in \cC(\P_X, \sigma^2)$, then
 \begin{align*}
 	\cE(\theta) &= \E [ (Y - X^\top \theta)^2 - (Y - X^\top \theta^\star)^2] \\
 	&= \E [ (\theta^\star - \theta)^\top X (2 Y - X^\top (\theta + \theta^\star))] \\
-	&= \E [ (\theta^\star - \theta)^\top X (X^\top (\theta + \theta^\star) + 2 \eps)] \\
-	&= \E [ (\theta^\star - \theta)^\top X X^\top (\theta + \theta^\star)] \\
+	&= \E [ (\theta^\star - \theta)^\top X (X^\top (\theta^\star - \theta) + 2 \eps)] \\
+	&= \E [ (\theta^\star - \theta)^\top X X^\top (\theta^\star - \theta)] \\
 	&= \norm{\theta^\star - \theta}_{\bSigma}^2,
 \end{align*}%
 \marginnote[*-5]{We use here the fact that $Y = X^\top \theta^\star + \eps$ and that $\E[\eps | X] = 0$ almost surely.}%
@@ -828,7 +828,7 @@ By combining Proposition~\ref{prop:trace-inv-convex} and Jensen's inequality, we
 \begin{equation*}
 	\E [\tr({\wt \bSigma}^{-1}) ] \geq \tr (\E [\wt \bSigma]^{-1} ),
 \end{equation*}
-but $\E[\wt \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma^{-1}] \bSigma^{-1/2} = \bI_d$, so the lower bound 
+but $\E[\wt \bSigma] = \bSigma^{-1/2} \E [\wh \bSigma] \bSigma^{-1/2} = \bI_d$, so the lower bound 
 \begin{equation*}
 	\E [\tr( \wt \bSigma^{-1})] \geq d
 \end{equation*}
