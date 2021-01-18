@@ -371,21 +371,21 @@ This proves the following theorem.
 Theorem~\ref{thm:gaussian-ols-distribution} has many consequences for the inference of $\theta$ and $\sigma^2$ in the Gaussian linear model.
 If $\sigma^2$ is known, the set
 \begin{equation*}
-	\cE = \Big \{ t \in \R^d : \frac{1}{\sigma^2} \norm{(\bX^\top \bX)^{1/2} (\wh \theta_n - t)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
+	\cE = \Big \{ t \in \R^d : \frac{1}{\sigma^2} \norm{\bX (\wh \theta_n - t)}^2 \leq q_{\chisq(d)}(1 - \alpha)  \Big\}
 \end{equation*}
 where $q_{\chisq(d)}(1 - \alpha)$ is the quantile function of the $\chisq(d)$ distribution at $1 - \alpha$, is a \emph{confidence set}%
 \sidenote{we call also $\cE$ a confidence \emph{ellipsoid}}
 for $\theta$ in the Gaussian linear model at level $1 - \alpha$, since it satisfies by construction the coverage property $\P_\theta[ \theta \in \cE] = 1 - \alpha$.
 If $\sigma^2$ is unknown (which is always the case), we use the fact%
-\sidenote{We proved above that the numerator $\norm{(\bX^\top \bX)^{1/2}(\wh \theta_n - \theta)}^2 / \sigma^2$ has $\chisq(d)$ distribution while the denominator $(n-d) \wh \sigma^2 / \sigma^2$ has $\chisq(n - d)$ distribution and that both are independent, so that the definition~\eqref{eq:fisher-definition} of the Fisher distribution entails the result.}
+\sidenote{We proved above that the numerator $\norm{\bX (\wh \theta_n - \theta)}^2 / \sigma^2$ has $\chisq(d)$ distribution while the denominator $(n-d) \wh \sigma^2 / \sigma^2$ has $\chisq(n - d)$ distribution and that both are independent, so that the definition~\eqref{eq:fisher-definition} of the Fisher distribution entails the result.}
 that
 \begin{equation*}
-	\frac{\norm{(\bX^\top \bX)^{1/2}(\wh \theta_n - \theta)}^2}{d \wh \sigma^2} \sim \fis(d, n-d)
+	\frac{\norm{\bX (\wh \theta_n - \theta)}^2}{d \wh \sigma^2} \sim \fis(d, n-d)
 \end{equation*}
 and consider instead the ellipsoid
 \begin{equation}
 	\label{eq:fisher-ellipsoid-construction}
-	\Big \{ \theta \in \R^d : \frac{1}{d \wh \sigma^2} \norm{(\bX^\top \bX)^{1/2} (\wh \theta - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\},
+	\Big \{ \theta \in \R^d : \frac{1}{d \wh \sigma^2} \norm{\bX (\wh \theta_n - \theta)}^2 \leq q_{\fis(d, n - d)}(1 - \alpha)  \Big\},
 \end{equation}
 which is by construction a confidence set at level $1 - \alpha$.
 Note the cute trick involved in~\eqref{eq:fisher-ellipsoid-construction}: the ratio structure allows to cancel out $\sigma^2$, leading to a statistic that does not depend on $\sigma^2$, with a \emph{known} distribution.
